@@ -272,7 +272,7 @@ footer strong { color:var(--white); }
 // ═══════════════════════════════════════
 // KONFIGURASI — SUDAH DIISI, JANGAN UBAH
 // ═══════════════════════════════════════
-const SHEET_ID  = '1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8';
+const SHEET_ID  = '1Oj3W8dGV_PMkM8nZVInXyBQ5w-xy5HS10OC27t2nvAQ';
 const SHEET_TAB = 'Sheet1';
 const FORM_URL  = 'https://forms.gle/nuJWVeCKtFs9RJum8';
 
@@ -329,27 +329,28 @@ async function loadJobs() {
     const json = JSON.parse(txt.substring(47).slice(0,-2));
     const rows = json.table.rows;
 
-    // Kolom Sheet (urutan wajib sama):
-    // A=Timestamp, B=Status, C=Urgent, D=Featured,
-    // E=Perusahaan, F=Tipe Kapal, G=Trade, H=Posisi,
-    // I=Requirements, J=Kontak, K=Free of Charge, L=Tanggal
+    // Kolom Sheet (sesuai struktur aktual):
+    // A(0)=Timestamp, B(1)=Timestamp(hidden), C(2)=Status, D(3)=Urgent,
+    // E(4)=Tanggal Tayang, F(5)=Free of Charge, G(6)=Kontak,
+    // H(7)=Requirements, I(8)=Posisi, J(9)=Trade,
+    // K(10)=Tipe Kapal, L(11)=Perusahaan, M(12)=Featured
 
     const parsed = rows
-      .filter(r => r.c[1]?.v?.toString().toUpperCase() === 'APPROVED')
+      .filter(r => r.c[2]?.v?.toString().toUpperCase() === 'APPROVED')
       .map((r,i) => ({
         id:       i,
-        urgent:   r.c[2]?.v?.toString().toLowerCase() === 'ya',
-        featured: r.c[3]?.v?.toString().toLowerCase() === 'ya',
-        company:  r.c[4]?.v || '',
-        vessel:   r.c[5]?.v || '',
-        trade:    r.c[6]?.v || 'International',
-        positions:(r.c[7]?.v||'').split(',').map(p=>({
+        urgent:   r.c[3]?.v?.toString().toLowerCase() === 'ya',
+        featured: r.c[12]?.v?.toString().toLowerCase() === 'ya',
+        company:  r.c[11]?.v || '',
+        vessel:   r.c[10]?.v || '',
+        trade:    r.c[9]?.v  || 'International',
+        positions:(r.c[8]?.v||'').split(',').map(p=>({
           title: p.trim(),
-          reqs:  (r.c[8]?.v||'').split('\n').map(s=>s.replace(/^[•\-–]\s*/,'')).filter(Boolean)
+          reqs:  (r.c[7]?.v||'').split('\n').map(s=>s.replace(/^[•\-–]\s*/,'')).filter(Boolean)
         })),
-        contact:  r.c[9]?.v  || '',
-        free:     r.c[10]?.v?.toString().toLowerCase() !== 'tidak',
-        date:     r.c[11]?.v || 'Baru'
+        contact:  r.c[6]?.v  || '',
+        free:     r.c[5]?.v?.toString().toLowerCase() !== 'tidak',
+        date:     r.c[4]?.v  || 'Baru'
       }))
       .filter(j => j.company);
 
