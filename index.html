@@ -7,185 +7,98 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy:       #07111f;
-  --navy-2:     #0d1e33;
-  --navy-3:     #112540;
-  --red:        #e8293a;
-  --red-soft:   rgba(232,41,58,0.12);
-  --gold:       #f4a024;
-  --gold-soft:  rgba(244,160,36,0.12);
-  --green:      #22c55e;
-  --green-soft: rgba(34,197,94,0.12);
-  --white:      #eef3f8;
-  --muted:      #607d99;
-  --border:     rgba(255,255,255,0.06);
-  --card:       #0d1e33;
-  --radius:     14px;
+  --navy:#07111f; --navy-2:#0d1e33; --navy-3:#112540;
+  --red:#e8293a; --red-soft:rgba(232,41,58,0.12);
+  --gold:#f4a024; --gold-soft:rgba(244,160,36,0.12);
+  --green:#22c55e; --green-soft:rgba(34,197,94,0.12);
+  --white:#eef3f8; --muted:#607d99;
+  --border:rgba(255,255,255,0.06); --card:#0d1e33; --radius:14px;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body {
-  background:var(--navy);
-  color:var(--white);
-  font-family:'Plus Jakarta Sans',sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* TICKER */
-.ticker-bar { background:var(--red); padding:7px 0; overflow:hidden; }
-.ticker-track { display:flex; width:max-content; animation:tick 28s linear infinite; }
-.ticker-track span { font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; padding:0 32px; white-space:nowrap; }
-@keyframes tick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-/* HEADER */
-header {
-  background:rgba(13,30,51,0.97);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  position:sticky; top:0; z-index:200;
-}
-.header-inner {
-  max-width:680px; margin:0 auto; padding:13px 20px;
-  display:flex; align-items:center; justify-content:space-between;
-}
-.logo { display:flex; align-items:center; gap:11px; text-decoration:none; }
-.logo-mark {
-  width:40px; height:40px;
-  background:linear-gradient(145deg,var(--red),#b91c2c);
-  border-radius:11px; display:flex; align-items:center; justify-content:center;
-  font-size:19px; box-shadow:0 6px 20px rgba(232,41,58,0.4); flex-shrink:0;
-}
-.logo-copy { display:flex; flex-direction:column; }
-.logo-copy strong { font-family:'Syne',sans-serif; font-weight:800; font-size:14px; color:var(--white); line-height:1; }
-.logo-copy small { font-size:10px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
-.header-right { display:flex; align-items:center; gap:10px; }
-.post-btn {
-  background:var(--red); color:white; border:none;
-  padding:8px 16px; border-radius:8px; font-size:12px; font-weight:600;
-  font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer;
-  text-decoration:none; display:inline-flex; align-items:center; gap:5px;
-  transition:all 0.2s; white-space:nowrap;
-}
-.post-btn:hover { background:#c81f2e; transform:translateY(-1px); }
-.flag { font-size:24px; }
-
-/* HERO */
-.hero { max-width:680px; margin:0 auto; padding:32px 20px 20px; }
-.hero-eyebrow {
-  display:inline-flex; align-items:center; gap:6px;
-  background:var(--red-soft); border:1px solid rgba(232,41,58,0.2);
-  color:var(--red); font-size:11px; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; padding:5px 12px; border-radius:20px; margin-bottom:14px;
-}
-.hero h1 { font-family:'Syne',sans-serif; font-weight:900; font-size:clamp(28px,7vw,38px); line-height:1.1; margin-bottom:10px; }
-.hero h1 em { font-style:normal; color:var(--red); }
-.hero p { color:var(--muted); font-size:14px; line-height:1.6; margin-bottom:22px; }
-
-/* STATS */
-.stats-row { display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
-.stat { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 16px; display:flex; align-items:center; gap:8px; }
-.stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; color:var(--white); line-height:1; }
-.stat-label { color:var(--muted); font-size:11px; }
-
-/* SEARCH */
-.search-wrap { position:relative; margin-bottom:16px; }
-.search-wrap input {
-  width:100%; background:var(--card); border:1px solid var(--border);
-  border-radius:12px; padding:13px 16px 13px 44px;
-  font-size:14px; color:var(--white); font-family:'Plus Jakarta Sans',sans-serif;
-  outline:none; transition:border-color 0.2s;
-}
-.search-wrap input:focus { border-color:var(--red); }
-.search-wrap input::placeholder { color:var(--muted); }
-.search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:16px; pointer-events:none; }
-
-/* FILTERS */
-.filter-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:24px; scrollbar-width:none; }
-.filter-row::-webkit-scrollbar { display:none; }
-.chip {
-  background:var(--card); border:1px solid var(--border); border-radius:20px;
-  padding:7px 16px; font-size:12px; font-weight:500; color:var(--muted);
-  cursor:pointer; white-space:nowrap; transition:all 0.18s;
-  font-family:'Plus Jakarta Sans',sans-serif; flex-shrink:0;
-}
-.chip:hover, .chip.active { background:var(--red); border-color:var(--red); color:white; }
-
-/* SECTION LABEL */
-.section-label {
-  max-width:680px; margin:0 auto 12px; padding:0 20px;
-  display:flex; align-items:center; justify-content:space-between;
-}
-.section-label span { font-size:12px; color:var(--muted); }
-.section-label strong { font-size:12px; color:var(--red); }
-
-/* CARDS */
-.jobs-wrap { max-width:680px; margin:0 auto; padding:0 20px 60px; display:flex; flex-direction:column; gap:14px; }
-.card {
-  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-  overflow:hidden; animation:rise 0.4s ease both;
-  transition:transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-}
-.card:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.4); border-color:rgba(232,41,58,0.25); }
-.card.urgent { border-top:2px solid var(--red); }
-.card.featured { border:1px solid rgba(244,160,36,0.35); }
-@keyframes rise { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-
-.card-body { padding:18px; }
-.card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
-.company { flex:1; }
-.company-name { font-family:'Syne',sans-serif; font-weight:800; font-size:15px; line-height:1.3; margin-bottom:6px; }
-.vessel-pill {
-  display:inline-flex; align-items:center; gap:5px;
-  background:var(--gold-soft); border:1px solid rgba(244,160,36,0.2);
-  color:var(--gold); font-size:11px; font-weight:600; padding:3px 10px; border-radius:6px;
-}
-.badges { display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0; }
-.badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:5px; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; }
-.badge-urgent { background:rgba(232,41,58,0.15); color:var(--red); border:1px solid rgba(232,41,58,0.3); animation:blink 2s ease infinite; }
-.badge-featured { background:var(--gold-soft); color:var(--gold); border:1px solid rgba(244,160,36,0.3); }
-.badge-intl { background:rgba(255,255,255,0.06); color:var(--muted); border:1px solid var(--border); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
-.positions { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
-.pos-block { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
-.pos-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; margin-bottom:8px; }
-.reqs { display:flex; flex-direction:column; gap:5px; }
-.req { display:flex; align-items:flex-start; gap:8px; font-size:12.5px; color:var(--muted); line-height:1.45; }
-.req::before { content:'›'; color:var(--red); font-size:15px; line-height:1.2; flex-shrink:0; }
-
-.card-footer { display:flex; align-items:center; justify-content:space-between; padding-top:13px; border-top:1px solid var(--border); gap:10px; }
-.meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.meta-item { font-size:11px; color:var(--muted); }
-.free-tag { background:var(--green-soft); color:var(--green); border:1px solid rgba(34,197,94,0.2); font-size:10px; font-weight:700; padding:2px 8px; border-radius:5px; }
-.wa-btn {
-  display:inline-flex; align-items:center; gap:6px;
-  background:linear-gradient(135deg,#25d366,#1da851); color:white;
-  text-decoration:none; padding:9px 18px; border-radius:9px;
-  font-size:12px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif;
-  transition:all 0.2s; white-space:nowrap; flex-shrink:0;
-}
-.wa-btn:hover { opacity:0.9; transform:scale(1.03); }
-
-/* SKELETON */
-.skeletons { max-width:680px; margin:0 auto; padding:0 20px 40px; display:flex; flex-direction:column; gap:14px; }
-.skel { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; animation:shimmer 1.6s ease infinite; }
-.skel-line { background:rgba(255,255,255,0.06); border-radius:5px; height:13px; margin-bottom:11px; }
-@keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-.empty { text-align:center; padding:60px 20px; color:var(--muted); }
-.empty .ico { font-size:52px; margin-bottom:12px; }
-.empty p { font-size:14px; line-height:1.6; }
-
-/* FOOTER */
-footer { border-top:1px solid var(--border); padding:28px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:2; }
-footer a { color:var(--red); text-decoration:none; }
-footer strong { color:var(--white); }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+.ticker-bar{background:var(--red);padding:7px 0;overflow:hidden}
+.ticker-track{display:flex;width:max-content;animation:tick 28s linear infinite}
+.ticker-track span{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;padding:0 32px;white-space:nowrap}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+header{background:rgba(13,30,51,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.header-inner{max-width:680px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo-mark{width:40px;height:40px;background:linear-gradient(145deg,var(--red),#b91c2c);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 6px 20px rgba(232,41,58,0.4);flex-shrink:0}
+.logo-copy{display:flex;flex-direction:column}
+.logo-copy strong{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--white);line-height:1}
+.logo-copy small{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.post-btn{background:var(--red);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.2s;white-space:nowrap}
+.post-btn:hover{background:#c81f2e;transform:translateY(-1px)}
+.flag{font-size:24px}
+.hero{max-width:680px;margin:0 auto;padding:32px 20px 20px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--red-soft);border:1px solid rgba(232,41,58,0.2);color:var(--red);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:14px}
+.hero h1{font-family:'Syne',sans-serif;font-weight:900;font-size:clamp(28px,7vw,38px);line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:22px}
+.stats-row{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--white);line-height:1}
+.stat-label{color:var(--muted);font-size:11px}
+.search-wrap{position:relative;margin-bottom:16px}
+.search-wrap input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 16px 13px 44px;font-size:14px;color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color 0.2s}
+.search-wrap input:focus{border-color:var(--red)}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.18s;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0}
+.chip:hover,.chip.active{background:var(--red);border-color:var(--red);color:white}
+.section-label{max-width:680px;margin:0 auto 12px;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+.section-label span{font-size:12px;color:var(--muted)}
+.section-label strong{font-size:12px;color:var(--red)}
+.jobs-wrap{max-width:680px;margin:0 auto;padding:0 20px 60px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:rise 0.4s ease both;transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4);border-color:rgba(232,41,58,0.25)}
+.card.urgent{border-top:2px solid var(--red)}
+.card.featured{border:1px solid rgba(244,160,36,0.35)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.card-body{padding:18px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.company{flex:1}
+.company-name{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;line-height:1.3;margin-bottom:6px}
+.vessel-pill{display:inline-flex;align-items:center;gap:5px;background:var(--gold-soft);border:1px solid rgba(244,160,36,0.2);color:var(--gold);font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px}
+.badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap}
+.badge-urgent{background:rgba(232,41,58,0.15);color:var(--red);border:1px solid rgba(232,41,58,0.3);animation:blink 2s ease infinite}
+.badge-featured{background:var(--gold-soft);color:var(--gold);border:1px solid rgba(244,160,36,0.3)}
+.badge-intl{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.positions{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.pos-block{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.pos-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:8px}
+.reqs{display:flex;flex-direction:column;gap:5px}
+.req{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--muted);line-height:1.45}
+.req::before{content:'›';color:var(--red);font-size:15px;line-height:1.2;flex-shrink:0}
+.desc-box{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.6}
+.desc-box strong{color:var(--white);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:13px;border-top:1px solid var(--border);gap:10px}
+.meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.meta-item{font-size:11px;color:var(--muted)}
+.free-tag{background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,0.2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px}
+.expiry-tag{background:rgba(232,41,58,0.1);color:var(--red);border:1px solid rgba(232,41,58,0.2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px}
+.wa-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#25d366,#1da851);color:white;text-decoration:none;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;white-space:nowrap;flex-shrink:0}
+.wa-btn:hover{opacity:0.9;transform:scale(1.03)}
+.skeletons{max-width:680px;margin:0 auto;padding:0 20px 40px;display:flex;flex-direction:column;gap:14px}
+.skel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;animation:shimmer 1.6s ease infinite}
+.skel-line{background:rgba(255,255,255,0.06);border-radius:5px;height:13px;margin-bottom:11px}
+@keyframes shimmer{0%,100%{opacity:1}50%{opacity:0.4}}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .ico{font-size:52px;margin-bottom:12px}
+.empty p{font-size:14px;line-height:1.6}
+footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;color:var(--muted);font-size:12px;line-height:2}
+footer a{color:var(--red);text-decoration:none}
+footer strong{color:var(--white)}
 </style>
 </head>
 <body>
 
-<!-- TICKER -->
 <div class="ticker-bar">
   <div class="ticker-track">
     <span>⚓ Loker Pelaut Terbaru — Update Setiap Hari</span>
@@ -199,7 +112,6 @@ footer strong { color:var(--white); }
   </div>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="header-inner">
     <a class="logo" href="#">
@@ -216,52 +128,38 @@ footer strong { color:var(--white); }
   </div>
 </header>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">⚡ Live — Update Harian</div>
   <h1>Loker <em>Pelaut</em><br>Terkini Indonesia</h1>
   <p>Dikurasi langsung dari recruiter & crewing agency seluruh dunia. Semua posisi, semua tipe kapal — gratis untuk semua pelaut.</p>
-
   <div class="stats-row">
-    <div class="stat">
-      <div><div class="stat-num" id="statTotal">–</div><div class="stat-label">Loker Aktif</div></div>
-    </div>
-    <div class="stat">
-      <div><div class="stat-num" id="statUrgent">–</div><div class="stat-label">Urgent Hiring</div></div>
-    </div>
-    <div class="stat">
-      <div><div class="stat-num">100%</div><div class="stat-label">Free Apply</div></div>
-    </div>
+    <div class="stat"><div><div class="stat-num" id="statTotal">–</div><div class="stat-label">Loker Aktif</div></div></div>
+    <div class="stat"><div><div class="stat-num" id="statUrgent">–</div><div class="stat-label">Urgent Hiring</div></div></div>
+    <div class="stat"><div><div class="stat-num">100%</div><div class="stat-label">Free Apply</div></div></div>
   </div>
-
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Cari posisi, perusahaan, tipe kapal..." oninput="handleSearch()">
   </div>
-
   <div class="filter-row" id="filterRow">
     <button class="chip active" onclick="setFilter('all',this)">Semua</button>
     <button class="chip" onclick="setFilter('urgent',this)">🔴 Urgent</button>
   </div>
 </div>
 
-<!-- SECTION LABEL -->
 <div class="section-label">
   <span id="resultLabel">Semua loker aktif</span>
   <strong id="resultCount"></strong>
 </div>
 
-<!-- LOADING -->
 <div class="skeletons" id="loadingEl">
   <div class="skel"><div class="skel-line" style="width:55%"></div><div class="skel-line" style="width:80%"></div><div class="skel-line" style="width:40%"></div></div>
   <div class="skel"><div class="skel-line" style="width:70%"></div><div class="skel-line" style="width:50%"></div><div class="skel-line" style="width:65%"></div></div>
   <div class="skel"><div class="skel-line" style="width:60%"></div><div class="skel-line" style="width:90%"></div><div class="skel-line" style="width:45%"></div></div>
 </div>
 
-<!-- JOBS -->
 <div class="jobs-wrap" id="jobsEl" style="display:none"></div>
 
-<!-- FOOTER -->
 <footer>
   <strong>Daily Loker Pelaut</strong> — Powered by <a href="#">Nauticax 🇮🇩</a><br>
   Dikelola oleh pelaut, untuk pelaut Indonesia<br>
@@ -269,148 +167,153 @@ footer strong { color:var(--white); }
 </footer>
 
 <script>
-// ═══════════════════════════════════════
-// KONFIGURASI — SUDAH DIISI, JANGAN UBAH
-// ═══════════════════════════════════════
-const SHEET_ID  = '1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8';
-const SHEET_TAB = 'Form Responses 1';
-const FORM_URL  = 'https://forms.gle/nuJWVeCKtFs9RJum8';
+// ╔══════════════════════════════════════════════╗
+// ║  KONFIGURASI — GANTI OPENAI KEY KAMU        ║
+// ╚══════════════════════════════════════════════╝
+const SHEET_ID   = '1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8';
+const SHEET_TAB  = 'WebsiteJobs';
+const FORM_URL   = 'https://forms.gle/nuJWVeCKtFs9RJum8';
+ // ← GANTI INI
+const EXPIRE_DAYS = 7;
 
-// ═══════════════════════════════════════
-// DEMO DATA — tampil saat Sheet kosong
-// ═══════════════════════════════════════
+// KOLOM SHEET:
+// A(0)=Timestamp, B(1)=Timestamp hidden, C(2)=Status,
+// D(3)=Urgent, E(4)=Tanggal Tayang, F(5)=Free of Charge,
+// G(6)=Kontak, H(7)=Requirements, I(8)=Posisi,
+// J(9)=Trade, K(10)=Tipe Kapal, L(11)=Perusahaan,
+// M(12)=Featured, N(13)=Deskripsi Tambahan
+
 const DEMO = [
   {
-    urgent:true, featured:true,
+    urgent:true,featured:true,
     company:'Smarts Patria Service Synergy Group',
-    vessel:'Oil/Chemical Tanker', trade:'International',
+    vessel:'Oil/Chemical Tanker',trade:'International',
     positions:[
-      {title:'3rd Engineer / 4th Engineer', reqs:['Holding AOT & ACT','Pengalaman foreign going','Ready Join ASAP','Fluent in English','Kontrak ±5–6 Bulan']},
-      {title:'ETO (Electro Technical Officer)', reqs:['Holding COC ETO, AOT & ACT','Salary basis last drawn','Ready Join ASAP','Kontrak 3 ±1 Bulan']}
+      {title:'3rd Engineer / 4th Engineer',reqs:['Holding AOT & ACT','Pengalaman foreign going','Ready Join ASAP','Fluent in English','Kontrak ±5–6 Bulan']},
+      {title:'ETO',reqs:['Holding COC ETO, AOT & ACT','Salary basis last drawn','Ready Join ASAP','Kontrak 3 ±1 Bulan']}
     ],
-    contact:'081297750304', free:true, date:'Hari ini'
+    contact:'081297750304',free:true,
+    desc:'Gaji basis last drawn. Port of joining: Jakarta. Nationality: Indonesian only.',
+    timestamp:new Date().toISOString()
   },
   {
-    urgent:false, featured:false,
+    urgent:false,featured:false,
     company:'Pacific Manning & Crewing Services',
-    vessel:'Bulk Carrier', trade:'International',
-    positions:[
-      {title:'Chief Officer / 2nd Officer', reqs:['COC ANT-I / ANT-II','Min. 1 tahun di bulk carrier','STCW updated','Siap berangkat 2 minggu','Kontrak 6 bulan']}
-    ],
-    contact:'082112345678', free:true, date:'1 hari lalu'
-  },
-  {
-    urgent:true, featured:false,
-    company:'Global Maritime Recruitment Ltd.',
-    vessel:'Container Ship', trade:'International',
-    positions:[
-      {title:'Chief Engineer', reqs:['COC ATT-I','Min. 2 tahun sebagai CE','Familiar MAN B&W / Wärtsilä','Salary negotiable','Kontrak 5 bulan']},
-      {title:'2nd Engineer', reqs:['COC ATT-II','Pengalaman container ship','Ready join ASAP','Kontrak 5–6 bulan']}
-    ],
-    contact:'081398765432', free:true, date:'2 hari lalu'
+    vessel:'Bulk Carrier',trade:'International',
+    positions:[{title:'Chief Officer / 2nd Officer',reqs:['COC ANT-I / ANT-II','Min. 1 tahun di bulk carrier','STCW updated','Kontrak 6 bulan']}],
+    contact:'082112345678',free:true,
+    desc:'Gaji $2.800–$3.500/bulan. Port of joining: Surabaya.',
+    timestamp:new Date(Date.now()-2*864e5).toISOString()
   }
 ];
 
-// ═══════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════
-let allJobs = [];
-let activeFilter = 'all';
-let searchQuery  = '';
+let allJobs=[],activeFilter='all',searchQuery='';
 
-// ═══════════════════════════════════════
-// LOAD DATA DARI GOOGLE SHEET
-// ═══════════════════════════════════════
-async function loadJobs() {
-  try {
-    const url  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
-    const res  = await fetch(url);
-    const txt  = await res.text();
-    const json = JSON.parse(txt.substring(47).slice(0,-2));
-    const rows = json.table.rows;
+function isExpired(ts){
+  if(!ts)return false;
+  return (new Date()-new Date(ts))/(864e5)>EXPIRE_DAYS;
+}
+function daysLeft(ts){
+  if(!ts)return EXPIRE_DAYS;
+  return Math.max(0,Math.ceil(EXPIRE_DAYS-(new Date()-new Date(ts))/864e5));
+}
 
-    // Kolom Sheet (sesuai struktur aktual):
-    // A(0)=Timestamp, B(1)=Timestamp(hidden), C(2)=Status, D(3)=Urgent,
-    // E(4)=Tanggal Tayang, F(5)=Free of Charge, G(6)=Kontak,
-    // H(7)=Requirements, I(8)=Posisi, J(9)=Trade,
-    // K(10)=Tipe Kapal, L(11)=Perusahaan, M(12)=Featured
+function parseTimestamp(v){
+  if(!v)return new Date().toISOString();
+  try{
+    const m=v.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);
+    if(m)return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();
+  }catch(e){}
+  return new Date().toISOString();
+}
 
-    const parsed = rows
-      .filter(r => r.c[2]?.v?.toString().toUpperCase() === 'APPROVED')
-      .map((r,i) => ({
-        id:       i,
-        urgent:   r.c[3]?.v?.toString().toLowerCase() === 'ya',
-        featured: r.c[12]?.v?.toString().toLowerCase() === 'ya',
-        company:  r.c[11]?.v || '',
-        vessel:   r.c[10]?.v || '',
-        trade:    r.c[9]?.v  || 'International',
-        positions:(r.c[8]?.v||'').split(',').map(p=>({
-          title: p.trim(),
-          reqs:  (r.c[7]?.v||'').split('\n').map(s=>s.replace(/^[•\-–]\s*/,'')).filter(Boolean)
-        })),
-        contact:  r.c[6]?.v  || '',
-        free:     r.c[5]?.v?.toString().toLowerCase() !== 'tidak',
-        date:     r.c[4]?.v  || 'Baru'
-      }))
-      .filter(j => j.company);
+async function loadJobs(){
+  try{
+    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
+    const res=await fetch(url);
+    const txt=await res.text();
+    const json=JSON.parse(txt.substring(47).slice(0,-2));
+    const rows=json.table.rows;
 
-    allJobs = parsed.length > 0 ? parsed : DEMO;
-  } catch(e) {
-    console.warn('Gagal load Sheet, pakai demo:', e);
-    allJobs = DEMO;
+    const parsed=rows
+      .filter(r=>r.c[2]?.v?.toString().toUpperCase()==='APPROVED')
+      .map((r,i)=>{
+        const ts=parseTimestamp(r.c[0]?.v);
+        const posRaw=r.c[8]?.v?.toString()||'';
+        const reqRaw=r.c[7]?.v?.toString()||'';
+        const posList=posRaw.split(',').map(p=>p.trim()).filter(Boolean);
+        const reqList=reqRaw.split(/\n|;/).map(s=>s.replace(/^[•\-–]\s*/,'')).filter(Boolean);
+        const positions=posList.length
+          ?posList.map(p=>({title:p,reqs:reqList}))
+          :[{title:'Lihat deskripsi',reqs:reqList}];
+        return{
+          id:i,
+          urgent:r.c[3]?.v?.toString().toLowerCase()==='ya',
+          featured:r.c[12]?.v?.toString().toLowerCase()==='ya',
+          company:r.c[11]?.v?.toString()||'',
+          vessel:r.c[10]?.v?.toString()||'',
+          trade:r.c[9]?.v?.toString()||'International',
+          positions,
+          contact:r.c[6]?.v?.toString()||'',
+          free:r.c[5]?.v?.toString().toLowerCase()!=='tidak',
+          desc:r.c[13]?.v?.toString()||'',
+          timestamp:ts
+        };
+      })
+      .filter(j=>j.company&&!isExpired(j.timestamp));
+
+    allJobs=parsed.length>0?parsed:DEMO;
+  }catch(e){
+    console.warn('Sheet load failed:',e);
+    allJobs=DEMO;
   }
   render();
 }
 
-// ═══════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════
-function getFiltered() {
-  let jobs = [...allJobs];
-  if (activeFilter === 'urgent') jobs = jobs.filter(j => j.urgent);
-  else if (activeFilter !== 'all') jobs = jobs.filter(j => j.vessel.toLowerCase().includes(activeFilter));
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    jobs = jobs.filter(j =>
-      j.company.toLowerCase().includes(q) ||
-      j.vessel.toLowerCase().includes(q) ||
-      j.positions.some(p => p.title.toLowerCase().includes(q))
+function getFiltered(){
+  let jobs=[...allJobs];
+  if(activeFilter==='urgent')jobs=jobs.filter(j=>j.urgent);
+  else if(activeFilter!=='all')jobs=jobs.filter(j=>j.vessel.toLowerCase().includes(activeFilter));
+  if(searchQuery){
+    const q=searchQuery.toLowerCase();
+    jobs=jobs.filter(j=>
+      j.company.toLowerCase().includes(q)||
+      j.vessel.toLowerCase().includes(q)||
+      j.positions.some(p=>p.title.toLowerCase().includes(q))||
+      (j.desc&&j.desc.toLowerCase().includes(q))
     );
   }
   return jobs;
 }
 
-function render() {
-  const jobs = getFiltered();
-  const el   = document.getElementById('jobsEl');
-
-  document.getElementById('statTotal').textContent  = allJobs.length;
-  document.getElementById('statUrgent').textContent = allJobs.filter(j=>j.urgent).length;
-  document.getElementById('resultLabel').textContent =
-    searchQuery ? `Hasil: "${searchQuery}"` :
-    activeFilter === 'urgent' ? 'Urgent hiring' :
-    activeFilter !== 'all' ? activeFilter : 'Semua loker aktif';
-  document.getElementById('resultCount').textContent = `${jobs.length} loker`;
-
-  document.getElementById('loadingEl').style.display = 'none';
-  el.style.display = 'flex';
-
-  if (!jobs.length) {
-    el.innerHTML = `<div class="empty"><div class="ico">🔍</div><p>Tidak ada loker ditemukan.<br>Coba kata kunci atau filter lain.</p></div>`;
+function render(){
+  const jobs=getFiltered();
+  const el=document.getElementById('jobsEl');
+  document.getElementById('statTotal').textContent=allJobs.length;
+  document.getElementById('statUrgent').textContent=allJobs.filter(j=>j.urgent).length;
+  document.getElementById('resultLabel').textContent=
+    searchQuery?`Hasil: "${searchQuery}"`:
+    activeFilter==='urgent'?'Urgent hiring':
+    activeFilter!=='all'?activeFilter:'Semua loker aktif';
+  document.getElementById('resultCount').textContent=`${jobs.length} loker`;
+  document.getElementById('loadingEl').style.display='none';
+  el.style.display='flex';
+  if(!jobs.length){
+    el.innerHTML='<div class="empty"><div class="ico">🔍</div><p>Tidak ada loker ditemukan.<br>Coba kata kunci atau filter lain.</p></div>';
     return;
   }
-
-  el.innerHTML = jobs.map((j,i) => cardHTML(j,i)).join('');
+  el.innerHTML=jobs.map((j,i)=>cardHTML(j,i)).join('');
   buildFilters();
 }
 
-function cardHTML(j, idx) {
-  const clean = j.contact.replace(/\D/g,'');
-  const intl  = clean.startsWith('0') ? '62'+clean.slice(1) : clean;
-  const msg   = encodeURIComponent(`Halo, saya tertarik dengan lowongan ${j.positions[0]?.title||''} di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
-  const waLink = `https://wa.me/${intl}?text=${msg}`;
-
-  return `
+function cardHTML(j,idx){
+  const clean=(j.contact||'').replace(/\D/g,'');
+  const intl=clean.startsWith('0')?'62'+clean.slice(1):clean;
+  const msg=encodeURIComponent(`Halo, saya tertarik dengan lowongan ${j.positions[0]?.title||''} di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
+  const waLink=`https://wa.me/${intl}?text=${msg}`;
+  const left=daysLeft(j.timestamp);
+  const expiry=left<=2?`<span class="expiry-tag">⏳ ${left} hari lagi</span>`:'';
+  return`
   <div class="card ${j.urgent?'urgent':''} ${j.featured?'featured':''}" style="animation-delay:${idx*0.07}s">
     <div class="card-body">
       <div class="card-top">
@@ -419,8 +322,8 @@ function cardHTML(j, idx) {
           <div class="vessel-pill">🚢 ${j.vessel}</div>
         </div>
         <div class="badges">
-          ${j.urgent   ? '<span class="badge badge-urgent">🔴 Urgent</span>' : ''}
-          ${j.featured ? '<span class="badge badge-featured">⭐ Featured</span>' : ''}
+          ${j.urgent?'<span class="badge badge-urgent">🔴 Urgent</span>':''}
+          ${j.featured?'<span class="badge badge-featured">⭐ Featured</span>':''}
           <span class="badge badge-intl">${j.trade}</span>
         </div>
       </div>
@@ -429,61 +332,50 @@ function cardHTML(j, idx) {
           <div class="pos-block">
             <div class="pos-title">${p.title}</div>
             <div class="reqs">${p.reqs.map(r=>`<div class="req">${r}</div>`).join('')}</div>
-          </div>
-        `).join('')}
+          </div>`).join('')}
       </div>
+      ${j.desc?`<div class="desc-box"><strong>📋 Info Tambahan</strong>${j.desc}</div>`:''}
       <div class="card-footer">
         <div class="meta">
-          <span class="meta-item">🕐 ${j.date}</span>
-          ${j.free ? '<span class="free-tag">FREE</span>' : ''}
+          ${expiry}
+          ${j.free?'<span class="free-tag">FREE</span>':''}
         </div>
-        <a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">
+        ${clean?`<a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Hubungi
-        </a>
+        </a>`:''}
       </div>
     </div>
   </div>`;
 }
 
-// ═══════════════════════════════════════
-// FILTERS
-// ═══════════════════════════════════════
-function buildFilters() {
-  const types = [...new Set(allJobs.map(j=>j.vessel))];
-  const row   = document.getElementById('filterRow');
+function buildFilters(){
+  const types=[...new Set(allJobs.map(j=>j.vessel).filter(Boolean))];
+  const row=document.getElementById('filterRow');
   row.querySelectorAll('.dynamic-chip').forEach(e=>e.remove());
-  types.forEach(t => {
-    const btn = document.createElement('button');
-    btn.className = 'chip dynamic-chip';
-    btn.textContent = t;
-    btn.onclick = () => setFilter(t.toLowerCase(), btn);
+  types.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='chip dynamic-chip';
+    btn.textContent=t;
+    btn.onclick=()=>setFilter(t.toLowerCase(),btn);
     row.appendChild(btn);
   });
 }
 
-function setFilter(type, btn) {
-  activeFilter = type;
+function setFilter(type,btn){
+  activeFilter=type;
   document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   render();
 }
 
-function handleSearch() {
-  searchQuery = document.getElementById('searchInput').value.trim();
+function handleSearch(){
+  searchQuery=document.getElementById('searchInput').value.trim();
   render();
 }
 
-// ═══════════════════════════════════════
-// TOMBOL POST LOKER → BUKA GOOGLE FORM
-// ═══════════════════════════════════════
-function openForm() {
-  window.open(FORM_URL, '_blank');
-}
+function openForm(){window.open(FORM_URL,'_blank')}
 
-// ═══════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════
 loadJobs();
 </script>
 </body>
