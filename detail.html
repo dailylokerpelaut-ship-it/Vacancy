@@ -229,13 +229,6 @@ function render(j){
             <ul class="check-list">${j.requirements.map(r=>`<li>${escapeHTML(r)}</li>`).join("")}</ul>
           </div>
         `:""}
-
-        ${j.rawInput?`
-          <div class="section-card">
-            <h2>Catatan Asli</h2>
-            <p style="white-space:pre-wrap;color:#475569;font-size:13px">${escapeHTML(j.rawInput)}</p>
-          </div>
-        `:""}
       </main>
 
       <aside class="sidebar">
