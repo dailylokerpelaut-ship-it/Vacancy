@@ -2,14 +2,14 @@
 <html lang="id">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NR05C7B09B"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NR05C7B09B"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-NR05C7B09B');
-</script>
+    gtag('config', 'G-NR05C7B09B');
+  </script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Daily Loker Pelaut — Lowongan Kerja Pelaut Indonesia</title>
@@ -52,6 +52,7 @@ button,input,select{font-family:inherit}
 .btn-outline{background:#fff;color:var(--blue);border:1px solid #cfe0ff}
 .btn-wa{background:var(--green);color:#fff}
 .btn-email{background:var(--blue-soft);color:var(--blue);border:1px solid #cfe0ff}
+.btn-share{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
 .btn-light{background:#f1f5f9;color:#334155}
 .mobile-menu{display:none}
 
@@ -91,13 +92,14 @@ button,input,select{font-family:inherit}
 .company-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
 .company-name h3{font-size:19px;line-height:1.25;letter-spacing:-.3px}
 .meta-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.updated-time{color:#475569;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700}
 .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
 .badge-blue{background:var(--blue-soft);color:var(--blue)}
 .badge-red{background:var(--red-soft);color:var(--red)}
 .badge-green{background:var(--green-soft);color:var(--green)}
 .badge-amber{background:var(--amber-soft);color:#b45309}
 .card-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.card-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.card-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
 .summary-box{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px}
 .summary-box strong{display:block;font-size:15px;color:#0f172a}
 .summary-box span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
@@ -105,12 +107,13 @@ button,input,select{font-family:inherit}
 .preview-section{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
 .preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f8fbff;padding:12px 14px;font-weight:800;color:#0b3bbf}
 .preview-items{padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap}
-.role-chip{background:#f1f5f9;color:#334155;border:1px solid var(--line);font-size:12px;font-weight:700;border-radius:999px;padding:6px 10px}
+.role-chip{background:#f1f5f9;color:#334155;border:1px solid var(--line);font-size:12px;font-weight:800;border-radius:999px;padding:7px 11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role-chip.more-chip{background:var(--blue-soft);color:var(--blue);border-color:#cfe0ff}
 .common-reqs{margin-top:12px;background:#fbfcfe;border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:#475569;font-size:13px}
 .common-reqs strong{color:#0f172a;display:block;margin-bottom:6px}
-.card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
-.footer-left{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.footer-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.card-footer{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.footer-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%}
+.footer-actions .btn{width:100%}
 .empty{padding:54px 20px;text-align:center;color:var(--muted)}
 .empty strong{display:block;color:var(--text);font-size:20px;margin-bottom:8px}
 .loading{display:grid;gap:16px}
@@ -130,8 +133,6 @@ button,input,select{font-family:inherit}
   .job-top{grid-template-columns:1fr}
   .card-badges{justify-content:flex-start}
   .card-footer{align-items:stretch;flex-direction:column}
-  .footer-actions{justify-content:stretch}
-  .footer-actions .btn{flex:1}
 }
 @media(max-width:520px){
   .container{width:min(100% - 22px,1160px)}
@@ -141,7 +142,7 @@ button,input,select{font-family:inherit}
   .summary-box strong{font-size:14px}
   .job-card{padding:16px}
   .company-logo{width:46px;height:46px;border-radius:14px}
-  .footer-actions{display:grid;grid-template-columns:1fr}
+  .footer-actions{grid-template-columns:1fr}
   .btn{width:100%}
 }
 </style>
@@ -265,6 +266,29 @@ function parseTimestamp(v){
 function isExpired(ts){
   if(!ts) return false;
   return (new Date() - new Date(ts)) / 864e5 > EXPIRE_DAYS;
+}
+
+function relativeTime(ts){
+  const date = new Date(ts);
+  if(!ts || Number.isNaN(date.getTime())) return "Baru update";
+
+  const diffMs = Date.now() - date.getTime();
+  const future = diffMs < 0;
+  const diffSec = Math.abs(Math.floor(diffMs / 1000));
+
+  if(diffSec < 60) return future ? "Baru update" : "Baru saja";
+
+  const diffMin = Math.floor(diffSec / 60);
+  if(diffMin < 60) return future ? "Sebentar lagi" : `${diffMin} menit lalu`;
+
+  const diffHour = Math.floor(diffMin / 60);
+  if(diffHour < 24) return future ? "Hari ini" : `${diffHour} jam lalu`;
+
+  const diffDay = Math.floor(diffHour / 24);
+  if(diffDay === 1) return future ? "Besok" : "Kemarin";
+  if(diffDay < 7) return future ? `${diffDay} hari lagi` : `${diffDay} hari lalu`;
+
+  return date.toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric" });
 }
 function cell(row, index){
   return row.c[index]?.v?.toString() || "";
@@ -399,10 +423,42 @@ function renderJobs(){
   el.innerHTML = jobs.map(jobCardHTML).join("");
 }
 
+function cleanRoleTitle(title){
+  let t = String(title || "Role").replace(/\s+/g, " ").trim();
+
+  // Potong detail kapal/trade yang biasanya ikut terbawa ke judul posisi.
+  t = t
+    .replace(/\s*[–-]\s*(BULK CARRIER|OIL\/?CHEMICAL|OIL PRODUCT|PRODUCT TANKER|CHEMICAL TANKER|TANKER|TUG BOAT|ASD TUG|GENERAL CARGO|CONTAINER|LPG|LNG|OFFSHORE|AHTS|PSV|LOCAL TRADE|INTERNATIONAL).*$/i, "")
+    .replace(/\s+GT\s*(UP)?\s*\d+.*$/i, "")
+    .replace(/\s+HP\s*\d+.*$/i, "")
+    .trim();
+
+  return t || String(title || "Role").trim();
+}
+
+function sectionPreviewHTML(sec){
+  const items = sec.items || [];
+  const shown = items.slice(0, 3);
+  const left = items.length - shown.length;
+  const title = sec.section_title || "General Opening";
+
+  return `
+    <div class="preview-section">
+      <div class="preview-head">
+        <span>${escapeHTML(title)}</span>
+        <span class="badge badge-blue">${items.length} posisi</span>
+      </div>
+      <div class="preview-items">
+        ${shown.map(item=>`<span class="role-chip">${escapeHTML(cleanRoleTitle(item.title))}</span>`).join("")}
+        ${left>0?`<span class="role-chip more-chip">+${left} lainnya →</span>`:""}
+      </div>
+    </div>
+  `;
+}
+
 function jobCardHTML(j, idx){
   const openings = countOpenings(j.sections);
   const salary = salaryRangeText(j.sections);
-  const roles = getAllRoles(j.sections, 9);
 
   const waClean = (j.whatsapp || "").replace(/\D/g,"");
   const waIntl = waClean.startsWith("0") ? "62" + waClean.slice(1) : waClean;
@@ -410,6 +466,7 @@ function jobCardHTML(j, idx){
   const waLink = waIntl ? `https://wa.me/${waIntl}?text=${msg}` : "";
   const emailLink = j.email ? `mailto:${j.email}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
   const detailLink = `detail.html?id=${encodeURIComponent(j.batchId || String(j.id))}`;
+  const shareUrl = new URL(detailLink, window.location.href).href;
 
   return `
   <article class="job-card" style="animation-delay:${idx*.05}s">
@@ -423,9 +480,9 @@ function jobCardHTML(j, idx){
             <span class="badge badge-blue">Verified</span>
           </div>
           <div class="meta-line">
+            <span class="updated-time">🕒 Update ${escapeHTML(relativeTime(j.timestamp))}</span>
             ${j.joinInfo?`<span>📅 ${escapeHTML(j.joinInfo)}</span>`:""}
             <span>📌 ${openings} posisi dibuka</span>
-            <span>🧭 ${j.sections.length} group</span>
           </div>
         </div>
       </div>
@@ -436,8 +493,6 @@ function jobCardHTML(j, idx){
     </div>
 
     <div class="card-summary">
-      <div class="summary-box"><strong>${j.sections.length}</strong><span>Grup Lowongan</span></div>
-      <div class="summary-box"><strong>${openings}</strong><span>Posisi</span></div>
       <div class="summary-box"><strong>${escapeHTML(salary)}</strong><span>Salary Range</span></div>
       <div class="summary-box"><strong>${j.joinInfo?escapeHTML(j.joinInfo):"Update"}</strong><span>Join Info</span></div>
     </div>
@@ -445,39 +500,53 @@ function jobCardHTML(j, idx){
     ${j.summary?`<div class="common-reqs"><strong>Ringkasan</strong>${escapeHTML(j.summary)}</div>`:""}
 
     <div class="group-preview">
-      ${(j.sections||[]).slice(0,3).map(sec=>`
-        <div class="preview-section">
-          <div class="preview-head">
-            <span>${escapeHTML(sec.section_title || "General Opening")}</span>
-            <span class="badge badge-blue">${(sec.items||[]).length} posisi</span>
-          </div>
-          <div class="preview-items">
-            ${(sec.items||[]).slice(0,8).map(item=>`<span class="role-chip">${escapeHTML(item.title||"Role")}${item.salary?` · ${escapeHTML(item.salary)}`:""}</span>`).join("")}
-            ${(sec.items||[]).length>8?`<span class="role-chip">+${(sec.items||[]).length-8} lainnya</span>`:""}
-          </div>
-        </div>
-      `).join("")}
+      ${(j.sections||[]).slice(0,3).map(sectionPreviewHTML).join("")}
     </div>
 
     ${j.requirements.length?`
       <div class="common-reqs">
         <strong>Requirements Umum</strong>
-        ${j.requirements.slice(0,5).map(req=>`<div>✓ ${escapeHTML(req)}</div>`).join("")}
+        ${j.requirements.slice(0,2).map(req=>`<div>✓ ${escapeHTML(req)}</div>`).join("")}
       </div>
     `:""}
 
     <div class="card-footer">
-      <div class="footer-left">
-        ${roles.shown.slice(0,5).map(r=>`<span class="chip">${escapeHTML(r)}</span>`).join("")}
-        ${roles.left>0?`<span class="chip">+${roles.left} posisi</span>`:""}
-      </div>
       <div class="footer-actions">
         <a class="btn btn-outline" href="${detailLink}">Lihat Detail</a>
         ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}">WhatsApp</a>`:""}
         ${emailLink?`<a class="btn btn-email" href="${emailLink}">Email</a>`:""}
+        <button class="btn btn-share" type="button" data-share-title="${escapeHTML(j.company)}" data-share-url="${escapeHTML(shareUrl)}" onclick="shareVacancy(this)">Bagikan</button>
       </div>
     </div>
   </article>`;
+}
+
+async function shareVacancy(btn){
+  const title = btn?.dataset?.shareTitle || "Lowongan Daily Loker Pelaut";
+  const url = btn?.dataset?.shareUrl || window.location.href;
+  const text = `${title}
+
+Lihat detail lowongan di Daily Loker Pelaut:
+${url}`;
+
+  try{
+    if(navigator.share){
+      await navigator.share({ title, text, url });
+    }else if(navigator.clipboard){
+      await navigator.clipboard.writeText(url);
+      const oldText = btn.textContent;
+      btn.textContent = "Link disalin";
+      setTimeout(()=>{ btn.textContent = oldText; }, 1600);
+    }else{
+      window.prompt("Copy link lowongan:", url);
+    }
+
+    if(typeof gtag === "function"){
+      gtag("event", "share_vacancy", { vacancy_company: title });
+    }
+  }catch(err){
+    console.warn("Share cancelled or failed:", err);
+  }
 }
 
 function escapeHTML(value){
@@ -490,6 +559,7 @@ function escapeHTML(value){
 }
 
 loadJobs();
+setInterval(renderJobs, 60000);
 </script>
 </body>
 </html>
