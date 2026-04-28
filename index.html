@@ -84,7 +84,7 @@ button,input,select{font-family:inherit}
 .section-head h2{font-size:21px}
 .section-head p{color:var(--muted);font-size:13px}
 
-.jobs-list{display:grid;gap:16px;margin-bottom:44px}
+.jobs-list{display:grid;gap:16px;margin-bottom:20px}
 .job-card{padding:20px}
 .job-top{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
 .company-line{display:flex;gap:12px;align-items:flex-start}
@@ -114,6 +114,13 @@ button,input,select{font-family:inherit}
 .card-footer{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
 .footer-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%}
 .footer-actions .btn{width:100%}
+
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 44px}
+.page-btn{border:1px solid var(--line);background:#fff;color:#334155;border-radius:12px;min-width:42px;height:42px;padding:0 13px;font-weight:800;font-size:13px;cursor:pointer;transition:.18s ease}
+.page-btn:hover{border-color:#b8ccff;color:var(--blue);background:var(--blue-soft);transform:translateY(-1px)}
+.page-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.page-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.page-info{color:var(--muted);font-size:13px;font-weight:700;padding:0 4px}
 .empty{padding:54px 20px;text-align:center;color:var(--muted)}
 .empty strong{display:block;color:var(--text);font-size:20px;margin-bottom:8px}
 .loading{display:grid;gap:16px}
@@ -196,17 +203,17 @@ button,input,select{font-family:inherit}
 
     <div class="container toolbar">
       <div class="search-row">
-        <input class="input" id="searchInput" placeholder="Cari posisi, perusahaan, jenis kapal, salary..." oninput="renderJobs()">
-        <select class="select" id="filterUrgent" onchange="renderJobs()">
+        <input class="input" id="searchInput" placeholder="Cari posisi, perusahaan, jenis kapal, salary..." oninput="resetPageAndRender()">
+        <select class="select" id="filterUrgent" onchange="resetPageAndRender()">
           <option value="all">Semua Status</option>
           <option value="urgent">Urgent</option>
           <option value="normal">Non-Urgent</option>
         </select>
-        <select class="select" id="filterFree" onchange="renderJobs()">
+        <select class="select" id="filterFree" onchange="resetPageAndRender()">
           <option value="all">Semua Biaya</option>
           <option value="free">Free of Charge</option>
         </select>
-        <button class="btn btn-primary" onclick="renderJobs()">Cari</button>
+        <button class="btn btn-primary" onclick="resetPageAndRender()">Cari</button>
       </div>
       <div class="quick-filters" id="quickFilters">
         <button class="chip active" onclick="setKeyword('',this)">Semua</button>
@@ -233,6 +240,7 @@ button,input,select{font-family:inherit}
     </div>
 
     <div class="jobs-list" id="jobsEl" style="display:none"></div>
+    <div class="pagination" id="paginationEl" style="display:none"></div>
   </section>
 </main>
 
@@ -247,9 +255,11 @@ const SHEET_ID   = "1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8";
 const SHEET_TAB  = "WebsiteJobsGrouped";
 const FORM_URL   = "https://forms.gle/nuJWVeCKtFs9RJum8";
 const EXPIRE_DAYS = 7;
+const JOBS_PER_PAGE = 5;
 
 let allJobs = [];
 let keywordFilter = "";
+let currentPage = 1;
 
 function openForm(){ window.open(FORM_URL, "_blank"); }
 
@@ -370,9 +380,22 @@ async function loadJobs(){
 
 function setKeyword(q, btn){
   keywordFilter = q.toLowerCase();
+  currentPage = 1;
   document.querySelectorAll("#quickFilters .chip").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   renderJobs();
+}
+
+function resetPageAndRender(){
+  currentPage = 1;
+  renderJobs();
+}
+
+function goToPage(page){
+  currentPage = page;
+  renderJobs();
+  const head = document.querySelector(".section-head");
+  if(head) head.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 
 function filterJobs(){
@@ -412,15 +435,53 @@ function renderJobs(){
   renderStats();
   const jobs = filterJobs();
   const el = document.getElementById("jobsEl");
+  const paginationEl = document.getElementById("paginationEl");
   document.getElementById("loadingEl").style.display = "none";
   el.style.display = "grid";
-  document.getElementById("resultText").textContent = `${jobs.length} lowongan ditemukan`;
 
   if(!jobs.length){
+    document.getElementById("resultText").textContent = `0 lowongan ditemukan`;
     el.innerHTML = `<div class="empty"><strong>Belum ada lowongan ditemukan</strong><p>Coba kata kunci lain atau refresh beberapa saat lagi.</p></div>`;
+    paginationEl.style.display = "none";
+    paginationEl.innerHTML = "";
     return;
   }
-  el.innerHTML = jobs.map(jobCardHTML).join("");
+
+  const totalPages = Math.max(1, Math.ceil(jobs.length / JOBS_PER_PAGE));
+  if(currentPage > totalPages) currentPage = totalPages;
+  if(currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
+  const pageJobs = jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
+
+  document.getElementById("resultText").textContent = `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
+  el.innerHTML = pageJobs.map(jobCardHTML).join("");
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages){
+  const el = document.getElementById("paginationEl");
+
+  if(totalPages <= 1){
+    el.style.display = "none";
+    el.innerHTML = "";
+    return;
+  }
+
+  const pages = [];
+  const start = Math.max(1, currentPage - 2);
+  const end = Math.min(totalPages, currentPage + 2);
+
+  for(let p=start; p<=end; p++) pages.push(p);
+
+  el.style.display = "flex";
+  el.innerHTML = `
+    <button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage===1?"disabled":""}>‹</button>
+    ${start > 1 ? `<button class="page-btn" onclick="goToPage(1)">1</button>${start > 2 ? `<span class="page-info">...</span>` : ``}` : ``}
+    ${pages.map(p=>`<button class="page-btn ${p===currentPage?"active":""}" onclick="goToPage(${p})">${p}</button>`).join("")}
+    ${end < totalPages ? `${end < totalPages - 1 ? `<span class="page-info">...</span>` : ``}<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>` : ``}
+    <button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage===totalPages?"disabled":""}>›</button>
+  `;
 }
 
 function cleanRoleTitle(title){
