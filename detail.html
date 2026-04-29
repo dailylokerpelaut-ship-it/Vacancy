@@ -411,5 +411,58 @@ loadDetail().catch(err=>{
   document.getElementById("app").innerHTML=`<div class="container empty"><strong>Gagal memuat detail</strong><p>Cek koneksi atau data sheet.</p></div>`;
 });
 </script>
+  <script>
+  // script utama website kamu
+</script>
+
+<script>
+document.addEventListener("click", function (event) {
+  const link = event.target.closest("a");
+  if (!link) return;
+
+  const href = link.getAttribute("href") || "";
+  const text = (link.innerText || "").trim();
+
+  const pageTitle = document.title || "Unknown Vacancy";
+  const currentUrl = window.location.href;
+
+  if (
+    href.includes("wa.me") ||
+    href.includes("api.whatsapp.com") ||
+    href.includes("whatsapp.com/send")
+  ) {
+    if (typeof gtag === "function") {
+      gtag("event", "apply_whatsapp_click", {
+        event_category: "Apply Button",
+        event_label: text || "WhatsApp Apply",
+        vacancy_page: pageTitle,
+        page_url: currentUrl,
+        link_url: href,
+        transport_type: "beacon"
+      });
+    }
+
+    console.log("Tracked WhatsApp Apply:", href);
+  }
+
+  if (href.startsWith("mailto:")) {
+    if (typeof gtag === "function") {
+      gtag("event", "apply_email_click", {
+        event_category: "Apply Button",
+        event_label: text || "Email Apply",
+        vacancy_page: pageTitle,
+        page_url: currentUrl,
+        link_url: href,
+        transport_type: "beacon"
+      });
+    }
+
+    console.log("Tracked Email Apply:", href);
+  }
+});
+</script>
+
+</body>
+</html>
 </body>
 </html>
