@@ -77,6 +77,8 @@
     }
     .hero h1{font-size:clamp(32px,5vw,54px);line-height:1.04;letter-spacing:-1.6px;margin-bottom:14px}
     .hero p{color:var(--muted);font-size:16px;max-width:640px}
+    .trust-note{display:flex;align-items:flex-start;gap:9px;margin-top:16px;color:#334155;font-size:13px;font-weight:700;background:#f8fbff;border:1px solid var(--line);border-radius:14px;padding:11px 12px}
+    .trust-note span:first-child{color:var(--blue);line-height:1.4}
     .hero-panel{padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;background:linear-gradient(145deg,#fff,#f8fbff)}
     .panel-title{font-size:14px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
     .panel-number{font-size:32px;font-weight:800;color:#0b1b4d;letter-spacing:-1px;margin-top:4px}
@@ -110,6 +112,13 @@
     .company-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
     .company-name h3{font-size:19px;line-height:1.25;letter-spacing:-.3px}
     .meta-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}
+    .reaction-btn{border:1px solid #fed7aa;background:#fff7ed;color:#c2410c;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:.18s ease;line-height:1.35}
+    .reaction-btn:hover{transform:translateY(-1px);background:#ffedd5}
+    .reaction-btn.reacted{background:#f1f5f9;color:#475569;border-color:var(--line);cursor:default}
+    .reaction-btn:disabled{opacity:.9}
+    .reaction-emoji{display:inline-block;transform-origin:center}
+    .reaction-btn:not(.reacted):hover .reaction-emoji{animation:softFire .9s ease-in-out infinite}
+    @keyframes softFire{0%,100%{transform:scale(1)}50%{transform:scale(1.15) rotate(-4deg)}}
     .updated-time{color:#475569;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700}
     .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
     .badge-blue{background:var(--blue-soft);color:var(--blue)}
@@ -211,6 +220,7 @@
           <span class="eyebrow"><span class="live-icon" aria-hidden="true">⚡</span> Live · Update Harian</span>
           <h1>Loker Pelaut Terkini Indonesia</h1>
           <p>Job board bersih untuk pelaut Indonesia. Lowongan dikurasi dari recruiter dan crewing agency, dengan format yang rapi dan mudah dibaca.</p>
+          <div class="trust-note"><span>✓</span><span>Lowongan dikurasi. Informasi dibuat lebih rapi, jelas, dan mudah dicek sebelum pelaut menghubungi recruiter.</span></div>
           <div class="stats-row">
             <div class="stat-card"><strong id="statTotal">–</strong><span>Loker Aktif</span></div>
             <div class="stat-card"><strong id="statCompanies">–</strong><span>Perusahaan</span></div>
@@ -273,6 +283,7 @@
     const SHEET_ID   = "1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8";
     const SHEET_TAB  = "WebsiteJobsGrouped";
     const FORM_URL   = "https://forms.gle/nuJWVeCKtFs9RJum8";
+    const REACTION_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
     const EXPIRE_DAYS = 7;
     const JOBS_PER_PAGE = 5;
 
@@ -502,6 +513,7 @@
 
       document.getElementById("resultText").textContent = `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
       el.innerHTML = pageJobs.map(jobCardHTML).join("");
+      loadReactionCountsFor(pageJobs);
       renderPagination(totalPages);
     }
 
@@ -589,6 +601,14 @@
                 <span class="updated-time">🕒 Update ${escapeHTML(relativeTime(j.timestamp))}</span>
                 ${j.joinInfo?`<span>📅 ${escapeHTML(j.joinInfo)}</span>`:""}
                 <span>📌 ${openings} posisi dibuka</span>
+                <button
+                  class="reaction-btn"
+                  type="button"
+                  data-batch-id="${escapeHTML(j.batchId || String(j.id))}"
+                  onclick="tapReaction(this)">
+                  <span class="reaction-emoji">🔥</span>
+                  <span class="reaction-text">0 tertarik</span>
+                </button>
               </div>
             </div>
           </div>
@@ -621,6 +641,144 @@
           </div>
         </div>
       </article>`;
+    }
+
+    function jsonpRequest(url){
+      return new Promise((resolve, reject)=>{
+        const callbackName = "dlpReactionCallback_" + Math.random().toString(36).slice(2);
+        let script;
+
+        window[callbackName] = function(data){
+          cleanup();
+          resolve(data);
+        };
+
+        script = document.createElement("script");
+        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + encodeURIComponent(callbackName);
+        script.onerror = function(){
+          cleanup();
+          reject(new Error("Reaction request failed"));
+        };
+
+        function cleanup(){
+          delete window[callbackName];
+          if(script && script.parentNode){
+            script.parentNode.removeChild(script);
+          }
+        }
+
+        document.body.appendChild(script);
+      });
+    }
+
+    function reactionApiReady(){
+      return REACTION_API_URL && !REACTION_API_URL.includes("PASTE_WEB_APP_URL");
+    }
+
+    function reactionStorageKey(batchId){
+      return "dlp_reaction_interested_" + batchId;
+    }
+
+    function hasReacted(batchId){
+      try{
+        return localStorage.getItem(reactionStorageKey(batchId)) === "1";
+      }catch(e){
+        return false;
+      }
+    }
+
+    function markReacted(batchId){
+      try{
+        localStorage.setItem(reactionStorageKey(batchId), "1");
+      }catch(e){
+        console.warn("localStorage unavailable:", e);
+      }
+    }
+
+    function setReactionButtonState(btn, count){
+      const batchId = btn.dataset.batchId;
+      const reacted = hasReacted(batchId);
+      const textEl = btn.querySelector(".reaction-text");
+      const safeCount = Number(count || 0);
+
+      btn.dataset.count = String(safeCount);
+      btn.classList.toggle("reacted", reacted);
+      btn.disabled = reacted;
+
+      if(textEl){
+        textEl.textContent = reacted
+          ? `Kamu tertarik · ${safeCount}`
+          : `${safeCount} tertarik`;
+      }
+    }
+
+    function updateReactionUI(batchId, count){
+      document.querySelectorAll(".reaction-btn").forEach(btn=>{
+        if(btn.dataset.batchId === batchId){
+          setReactionButtonState(btn, count);
+        }
+      });
+    }
+
+    async function loadReactionCountsFor(jobs){
+      if(!reactionApiReady()) return;
+
+      const ids = jobs
+        .map(j => j.batchId || String(j.id))
+        .filter(Boolean);
+
+      if(!ids.length) return;
+
+      try{
+        const url = `${REACTION_API_URL}?action=counts&batchIds=${encodeURIComponent(ids.join(","))}`;
+        const res = await jsonpRequest(url);
+
+        if(!res || !res.ok || !res.counts) return;
+
+        Object.entries(res.counts).forEach(([batchId, count])=>{
+          updateReactionUI(batchId, Number(count || 0));
+        });
+      }catch(err){
+        console.warn("Failed to load reaction counts:", err);
+      }
+    }
+
+    async function tapReaction(btn){
+      const batchId = btn.dataset.batchId;
+      if(!batchId || !reactionApiReady()) return;
+
+      if(hasReacted(batchId)){
+        setReactionButtonState(btn, Number(btn.dataset.count || 0));
+        return;
+      }
+
+      btn.disabled = true;
+
+      try{
+        const url = `${REACTION_API_URL}?action=react&batchId=${encodeURIComponent(batchId)}`;
+        const res = await jsonpRequest(url);
+
+        if(res && res.ok){
+          markReacted(batchId);
+          updateReactionUI(batchId, Number(res.count || 0));
+
+          if(typeof gtag === "function"){
+            gtag("event", "vacancy_reaction_click", {
+              event_category: "Reaction",
+              reaction_type: "interested",
+              batch_id: batchId,
+              page_url: window.location.href,
+              transport_type: "beacon"
+            });
+          }
+        }else{
+          btn.disabled = false;
+          console.warn("Reaction failed:", res);
+        }
+      }catch(err){
+        btn.disabled = false;
+        console.warn("Reaction error:", err);
+      }
     }
 
     function getFirstPosition(sections){
