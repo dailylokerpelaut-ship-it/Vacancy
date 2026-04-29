@@ -7,12 +7,10 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-NR05C7B09B');
   </script>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Detail Lowongan — Daily Loker Pelaut</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -62,6 +60,17 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
 .check-list{display:grid;gap:10px;list-style:none;color:#334155;font-size:14px}
 .check-list li{display:flex;gap:9px}
 .check-list li:before{content:"✓";color:var(--green);font-weight:900}
+
+.extra-info-grid{display:grid;gap:12px}
+.info-list{display:grid;gap:9px}
+.info-item{display:flex;align-items:flex-start;gap:10px;background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:#334155;font-size:14px}
+.info-item strong{display:block;color:#0f172a;font-size:13px;margin-bottom:2px}
+.info-item a{color:var(--blue);font-weight:800;word-break:break-word}
+.info-icon{width:28px;height:28px;border-radius:9px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;flex:none;font-size:14px;font-weight:900}
+.info-note{color:var(--muted);font-size:13px;margin-top:4px}
+.address-box{background:#fff8e8;border:1px solid #fde0a3;border-radius:14px;padding:12px 14px;color:#475569;font-size:14px;white-space:pre-wrap}
+.address-box strong{color:#0f172a;display:block;margin-bottom:6px}
+
 .sidebar{display:grid;gap:16px;align-content:start;position:sticky;top:86px}
 .sidebar-card{padding:18px}
 .sidebar-card h3{font-size:17px;margin-bottom:12px}
@@ -163,6 +172,159 @@ async function loadDetail(){
   render(job);
 }
 
+
+function hasValue(v){
+  const s = String(v || "").trim();
+  return !!s && s !== "-" && s !== "—";
+}
+function sectionTableHTML(sec){
+  const items = sec.items || [];
+  const showSalary = items.some(item => hasValue(item.salary));
+  const showContract = items.some(item => hasValue(item.contract));
+  const showNote = items.some(item => hasValue(item.note));
+
+  return `
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th>Posisi</th>
+          ${showSalary ? `<th>Gaji</th>` : ""}
+          ${showContract ? `<th>Kontrak</th>` : ""}
+          ${showNote ? `<th>Keterangan</th>` : ""}
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map(item=>`
+          <tr>
+            <td><strong>${escapeHTML(item.title||"")}</strong></td>
+            ${showSalary ? `<td>${escapeHTML(hasValue(item.salary) ? item.salary : "—")}</td>` : ""}
+            ${showContract ? `<td>${escapeHTML(hasValue(item.contract) ? item.contract : "—")}</td>` : ""}
+            ${showNote ? `<td>${escapeHTML(hasValue(item.note) ? item.note : "—")}</td>` : ""}
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+function normalizePhone(raw){
+  let n = String(raw || "").normalize("NFKC").replace(/[‐‑‒–—―−]/g,"-").replace(/\D/g,"");
+  if(n.startsWith("0")) n = "62" + n.slice(1);
+  if(n.startsWith("8")) n = "62" + n;
+  if(n.startsWith("620")) n = "62" + n.slice(3);
+  return n;
+}
+function displayPhone(n){
+  const clean = normalizePhone(n);
+  if(clean.startsWith("62")) return "+" + clean;
+  return clean || n;
+}
+function extractContacts(rawInput, primaryWhatsApp="", primaryEmail=""){
+  const raw = String(rawInput || "").normalize("NFKC").replace(/[‐‑‒–—―−]/g,"-");
+  const phones = [];
+  const seenPhones = new Set();
+
+  const phoneRegex = /(?:\+?62|0|8)(?:[\s\-().]*\d){8,15}(?:\s*\([^\n()]{2,60}\))?/g;
+  let match;
+  while((match = phoneRegex.exec(raw)) !== null){
+    const matchedText = match[0].trim();
+    const clean = normalizePhone(matchedText);
+    if(!clean || clean.length < 10 || clean.length > 15 || seenPhones.has(clean)) continue;
+
+    const lineStart = raw.lastIndexOf("\n", match.index) + 1;
+    const lineEndPos = raw.indexOf("\n", match.index);
+    const lineEnd = lineEndPos === -1 ? raw.length : lineEndPos;
+    const line = raw.slice(lineStart, lineEnd).trim();
+
+    let name = "";
+    const paren = matchedText.match(/\(([^)]+)\)/);
+    if(paren) name = paren[1].trim();
+
+    if(!name){
+      const before = line.slice(0, Math.max(0, line.indexOf(matchedText))).replace(/[📞☎️\-–—:|/]+/g," ").trim();
+      const after = line.slice(line.indexOf(matchedText) + matchedText.length).replace(/[()📞☎️\-–—:|/]+/g," ").trim();
+      const candidate = before || after;
+      if(candidate && !/(contact|whatsapp|wa|chat|only|phone|telp|segera|kirim|cv)/i.test(candidate)){
+        name = candidate.replace(/\s+/g," ").slice(0,60);
+      }
+    }
+
+    phones.push({ number: clean, display: displayPhone(clean), name });
+    seenPhones.add(clean);
+  }
+
+  const primaryClean = normalizePhone(primaryWhatsApp);
+  if(primaryClean && !seenPhones.has(primaryClean)){
+    phones.unshift({ number: primaryClean, display: displayPhone(primaryClean), name: "Kontak utama" });
+  }
+
+  const emails = [];
+  const seenEmails = new Set();
+  const emailRegex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+  let em;
+  while((em = emailRegex.exec(raw)) !== null){
+    const email = em[0].toLowerCase();
+    if(!seenEmails.has(email)){
+      emails.push(email);
+      seenEmails.add(email);
+    }
+  }
+  if(primaryEmail && !seenEmails.has(primaryEmail.toLowerCase())) emails.unshift(primaryEmail);
+
+  let address = "";
+  const addressMatch = raw.match(/(?:📍|Alamat|Address|Office|Kantor)[:\s-]*([\s\S]{0,320})/i);
+  if(addressMatch){
+    address = addressMatch[0]
+      .split(/(?:FREE OF CHARGE|Kirim CV|Send CV|Apply|Requirements|Kualifikasi)/i)[0]
+      .trim()
+      .replace(/\n{3,}/g,"\n\n");
+  }
+
+  return { phones, emails, address };
+}
+function additionalInfoHTML(j){
+  const info = extractContacts(j.rawInput, j.whatsapp, j.email);
+  const hasMultiplePhones = info.phones.length > 1;
+  const hasMultipleEmails = info.emails.length > 1;
+  const hasAny = info.phones.length || info.emails.length || info.address;
+  if(!hasAny) return "";
+
+  return `
+    <div class="section-card">
+      <h2>Kontak Apply & Informasi Tambahan</h2>
+      <div class="extra-info-grid">
+        ${info.phones.length?`
+          <div class="info-list">
+            ${info.phones.map((p,idx)=>`
+              <div class="info-item">
+                <span class="info-icon">WA</span>
+                <div>
+                  <strong>${escapeHTML(p.name || (idx===0 ? "WhatsApp utama" : "PIC tambahan"))}</strong>
+                  <a target="_blank" rel="noopener" href="https://wa.me/${escapeHTML(p.number)}">${escapeHTML(p.display)}</a>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `:""}
+        ${info.emails.length?`
+          <div class="info-list">
+            ${info.emails.map((email,idx)=>`
+              <div class="info-item">
+                <span class="info-icon">@</span>
+                <div>
+                  <strong>${idx===0 ? "Email utama" : "Email tambahan"}</strong>
+                  <a href="mailto:${escapeHTML(email)}">${escapeHTML(email)}</a>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `:""}
+        ${info.address?`<div class="address-box"><strong>Alamat / Office</strong>${escapeHTML(info.address)}</div>`:""}
+        ${(hasMultiplePhones || hasMultipleEmails)?`<p class="info-note">Beberapa kontak ditemukan dari informasi lowongan asli. Silakan gunakan kontak yang paling relevan saat apply.</p>`:""}
+      </div>
+    </div>
+  `;
+}
+
 function render(j){
   const app=document.getElementById("app");
   if(!j){
@@ -215,19 +377,7 @@ function render(j){
                 <span class="badge badge-blue">${(sec.items||[]).length} Posisi</span>
               </div>
               <div class="group-body">
-                <table class="job-table">
-                  <thead><tr><th>Posisi</th><th>Gaji</th><th>Kontrak</th><th>Keterangan</th></tr></thead>
-                  <tbody>
-                    ${(sec.items||[]).map(item=>`
-                      <tr>
-                        <td><strong>${escapeHTML(item.title||"")}</strong></td>
-                        <td>${escapeHTML(item.salary||"-")}</td>
-                        <td>${escapeHTML(item.contract||"-")}</td>
-                        <td>${escapeHTML(item.note||"-")}</td>
-                      </tr>
-                    `).join("")}
-                  </tbody>
-                </table>
+                ${sectionTableHTML(sec)}
               </div>
             </div>
           `).join("")}
@@ -239,6 +389,8 @@ function render(j){
             <ul class="check-list">${j.requirements.map(r=>`<li>${escapeHTML(r)}</li>`).join("")}</ul>
           </div>
         `:""}
+
+        ${additionalInfoHTML(j)}
       </main>
 
       <aside class="sidebar">
