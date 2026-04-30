@@ -848,9 +848,7 @@
               href="${detailLink}"
               data-company="${escapeHTML(j.company)}"
               data-batch-id="${escapeHTML(batchId)}"
-              data-position="${escapeHTML(primaryPosition)}">
-              Lihat Detail
-            </a>
+              data-position="${escapeHTML(primaryPosition)}">Cek Detail</a>
 
             ${waLink?`
               <a
@@ -861,9 +859,7 @@
                 data-contact-type="whatsapp"
                 data-company="${escapeHTML(j.company)}"
                 data-batch-id="${escapeHTML(batchId)}"
-                data-position="${escapeHTML(primaryPosition)}">
-                WhatsApp
-              </a>
+                data-position="${escapeHTML(primaryPosition)}">Apply via WA</a>
             `:""}
 
             ${emailLink?`
@@ -873,9 +869,7 @@
                 data-contact-type="email"
                 data-company="${escapeHTML(j.company)}"
                 data-batch-id="${escapeHTML(batchId)}"
-                data-position="${escapeHTML(primaryPosition)}">
-                Email
-              </a>
+                data-position="${escapeHTML(primaryPosition)}">Kirim CV Email</a>
             `:""}
 
             <button
@@ -886,9 +880,7 @@
               data-company="${escapeHTML(j.company)}"
               data-batch-id="${escapeHTML(batchId)}"
               data-position="${escapeHTML(primaryPosition)}"
-              onclick="shareVacancy(this)">
-              Bagikan
-            </button>
+              onclick="shareVacancy(this)">Share Loker</button>
           </div>
         </div>
       </article>`;
