@@ -9,10 +9,15 @@
     gtag('js', new Date());
     gtag('config', 'G-NR05C7B09B');
   </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daily Loker Pelaut — Lowongan Kerja Pelaut Indonesia</title>
+  <meta name="description" content="Lowongan kerja pelaut Indonesia terbaru, rapi, mudah dibaca, dan dikurasi dari recruiter serta crewing agency." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#f6f8fb;
@@ -29,34 +34,74 @@
       --red-soft:#fff0f0;
       --amber:#f59e0b;
       --amber-soft:#fff7e8;
+      --orange:#f97316;
+      --orange-soft:#fff7ed;
       --shadow:0 10px 30px rgba(15,23,42,.06);
+      --shadow-strong:0 18px 45px rgba(15,23,42,.10);
       --radius:18px;
     }
+
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+    body{
+      font-family:"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
     a{text-decoration:none;color:inherit}
     button,input,select{font-family:inherit}
     .container{width:min(1160px,calc(100% - 32px));margin-inline:auto}
 
-    .site-header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-    .header-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:40;
+      background:rgba(255,255,255,.9);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--line);
+    }
+    .header-inner{
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
     .brand{display:flex;align-items:center;gap:12px;font-weight:800;color:#0b1b4d;min-width:0}
-    .brand-mark{width:42px;height:42px;border-radius:14px;background:var(--blue-soft);display:grid;place-items:center;color:var(--blue);font-size:24px;flex:none}
-    .brand-text{display:block;min-width:0}
-    .brand-text > span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brand-text small{display:block;color:var(--muted);font-size:11px;font-weight:600;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .nav{display:flex;align-items:center;gap:26px;color:#334155;font-weight:700;font-size:14px}
-    .nav a{transition:.18s ease}
-    .nav a:hover,.nav a.active{color:var(--blue)}
-    .header-actions{display:flex;align-items:center;gap:10px;flex:none}
-    .mobile-menu{display:none}
-    .mobile-nav{display:none;border-top:1px solid var(--line);background:#fff}
-    .mobile-nav-inner{display:grid;gap:6px;padding:10px 0 14px}
-    .mobile-nav a{font-weight:800;color:#334155;padding:10px 4px}
-    .mobile-nav a.active{color:var(--blue)}
+    .brand-mark{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:var(--blue-soft);
+      display:grid;
+      place-items:center;
+      color:var(--blue);
+      font-size:24px;
+      flex:none;
+    }
+    .brand-text{line-height:1.1;white-space:nowrap}
+    .brand-text small{display:block;color:var(--muted);font-size:11px;font-weight:600;margin-top:3px}
 
-    .btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s ease;white-space:nowrap}
+    .nav{display:flex;align-items:center;gap:28px;color:#334155;font-weight:700;font-size:14px}
+    .nav a.active{color:var(--blue)}
+    .nav a:hover{color:var(--blue)}
+    .header-actions{display:flex;align-items:center;gap:10px}
+
+    .btn{
+      border:0;
+      border-radius:12px;
+      padding:11px 16px;
+      font-weight:800;
+      font-size:14px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      transition:.18s ease;
+      white-space:nowrap;
+    }
     .btn:hover{transform:translateY(-1px)}
     .btn-primary{background:var(--blue);color:#fff;box-shadow:0 8px 18px rgba(22,93,255,.18)}
     .btn-outline{background:#fff;color:var(--blue);border:1px solid #cfe0ff}
@@ -64,74 +109,172 @@
     .btn-email{background:var(--blue-soft);color:var(--blue);border:1px solid #cfe0ff}
     .btn-share{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
     .btn-light{background:#f1f5f9;color:#334155}
+    .mobile-menu{display:none}
+
+    .mobile-nav{
+      display:none;
+      border-top:1px solid var(--line);
+      background:#fff;
+      padding:10px 0 14px;
+    }
+    .mobile-nav.open{display:block}
+    .mobile-nav .container{display:grid;gap:8px}
+    .mobile-nav a,.mobile-nav button{
+      width:100%;
+      justify-content:flex-start;
+      padding:12px 14px;
+      border-radius:12px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      color:#334155;
+      font-weight:800;
+      font-size:14px;
+    }
 
     .hero{padding:34px 0 18px}
     .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}
-    .hero-main,.hero-panel,.toolbar,.job-card,.empty,.stat-card{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius)}
-    .hero-main{padding:30px}
-    .eyebrow{display:inline-flex;gap:8px;align-items:center;background:var(--blue-soft);color:var(--blue);font-size:12px;font-weight:800;padding:7px 12px;border-radius:999px;margin-bottom:16px}
-    .live-icon{display:inline-block;transform-origin:center;animation:softPulse 1.8s ease-in-out infinite}
-    @keyframes softPulse{
-      0%,100%{transform:translateY(0) scale(1);opacity:.82}
-      50%{transform:translateY(-1px) scale(1.16);opacity:1}
+    .hero-main,.hero-panel,.toolbar,.job-card,.empty,.stat-card,.ad-highlight{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius)}
+    .hero-main{padding:30px;position:relative;overflow:hidden}
+    .hero-main:after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-80px;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background:rgba(22,93,255,.08);
+      pointer-events:none;
     }
-    .hero h1{font-size:clamp(32px,5vw,54px);line-height:1.04;letter-spacing:-1.6px;margin-bottom:14px}
-    .hero p{color:var(--muted);font-size:16px;max-width:640px}
-    .trust-note{display:flex;align-items:flex-start;gap:9px;margin-top:16px;color:#334155;font-size:13px;font-weight:700;background:#f8fbff;border:1px solid var(--line);border-radius:14px;padding:11px 12px}
-    .trust-note span:first-child{color:var(--blue);line-height:1.4}
-    .hero-panel{padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;background:linear-gradient(145deg,#fff,#f8fbff)}
-    .panel-title{font-size:14px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
-    .panel-number{font-size:32px;font-weight:800;color:#0b1b4d;letter-spacing:-1px;margin-top:4px}
+    .eyebrow{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      background:var(--blue-soft);
+      color:var(--blue);
+      font-size:12px;
+      font-weight:800;
+      padding:7px 12px;
+      border-radius:999px;
+      margin-bottom:16px;
+      position:relative;
+      z-index:1;
+    }
+    .live-icon{display:inline-block;animation:softPulse 1.8s ease-in-out infinite;transform-origin:center}
+    @keyframes softPulse{
+      0%,100%{transform:translateY(0) scale(1);opacity:.86}
+      50%{transform:translateY(-1px) scale(1.13);opacity:1}
+    }
+    .hero h1{font-size:clamp(32px,5vw,54px);line-height:1.04;letter-spacing:-1.6px;margin-bottom:14px;position:relative;z-index:1}
+    .hero p{color:var(--muted);font-size:16px;max-width:640px;position:relative;z-index:1}
+
+    .hero-panel{
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:18px;
+      background:linear-gradient(145deg,#fff,#f8fbff);
+    }
+    .panel-title{font-size:13px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .panel-number{font-size:30px;font-weight:800;color:#0b1b4d;letter-spacing:-.8px;margin-top:7px}
     .panel-note{color:var(--muted);font-size:13px;margin-top:8px}
-    .panel-small{display:inline-flex;margin-top:14px;border-radius:999px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:7px 10px;font-size:12px;font-weight:800}
-    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+    .panel-small{display:block;color:#64748b;font-size:12px;margin-top:9px;line-height:1.4}
+
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;position:relative;z-index:1}
     .stat-card{padding:18px}
-    .stat-card strong{display:block;font-size:25px;letter-spacing:-.5px;color:#0b1b4d}
+    .stat-card strong{display:block;font-size:24px;letter-spacing:-.5px;color:#0b1b4d}
     .stat-card span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
 
-    .toolbar{padding:16px;margin:16px 0 22px}
+    .toolbar{padding:16px;margin:16px 0 18px}
     .search-row{display:grid;grid-template-columns:1fr 120px;gap:10px}
     .input,.select{height:46px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:0 14px;color:#1e293b;font-size:14px;outline:0}
     .input:focus,.select:focus{border-color:#9dbbff;box-shadow:0 0 0 4px rgba(22,93,255,.08)}
     .quick-filters{display:flex;gap:8px;overflow:auto;padding-top:12px;scrollbar-width:none}
     .quick-filters::-webkit-scrollbar{display:none}
-    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;color:#475569;white-space:nowrap;cursor:pointer;transition:.18s ease}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;color:#475569;white-space:nowrap;cursor:pointer}
     .chip.active,.chip:hover{border-color:#b8ccff;color:var(--blue);background:var(--blue-soft)}
 
-    .section-head{display:flex;align-items:end;justify-content:space-between;margin:22px 0 14px;gap:14px}
+    .ad-highlight{
+      margin:0 0 18px;
+      overflow:hidden;
+      position:relative;
+      background:#ffffff;
+      color:var(--text);
+      border-color:#fed7aa;
+      box-shadow:0 8px 22px rgba(15,23,42,.045);
+    }
+    .ad-highlight-inner{
+      min-height:auto;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:center;
+      padding:14px 16px;
+      position:relative;
+      z-index:1;
+      background:linear-gradient(90deg,#fff7ed 0%,#ffffff 45%,#ffffff 100%);
+    }
+    .ad-labels{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+    .ad-chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .ad-chip.orange{background:#ffedd5;color:#c2410c;border:1px solid #fed7aa}
+    .ad-chip.blue{display:none}
+    .ad-highlight h2{font-size:17px;line-height:1.2;letter-spacing:-.25px;margin-bottom:3px;color:#0f172a}
+    .ad-highlight p{color:#64748b;font-size:12.5px;max-width:620px;margin-bottom:0}
+    .ad-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .btn-ad{background:#f97316;color:#fff;box-shadow:0 8px 18px rgba(249,115,22,.16);padding:9px 12px;font-size:12px;border-radius:10px}
+    .ad-url{font-size:11px;color:#64748b;font-weight:800}
+    .book-mock{display:none}
+
+    .section-head{display:flex;align-items:end;justify-content:space-between;margin:22px 0 14px;gap:12px}
     .section-head h2{font-size:21px}
     .section-head p{color:var(--muted);font-size:13px}
     .today-pill{display:inline-flex;align-items:center;gap:8px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:999px;padding:9px 13px;font-size:13px;font-weight:800;white-space:nowrap}
 
     .jobs-list{display:grid;gap:16px;margin-bottom:20px}
-    .job-card{padding:20px;animation:cardIn .28s ease both}
-    @keyframes cardIn{from{opacity:.92;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-    .job-top{display:block}
+    .job-card{padding:20px;animation:fadeUp .28s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .job-top{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
     .company-line{display:flex;gap:12px;align-items:flex-start}
     .company-logo{width:54px;height:54px;border:1px solid var(--line);border-radius:16px;background:#f8fbff;display:grid;place-items:center;font-size:24px;color:var(--blue);flex:none}
     .company-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
     .company-name h3{font-size:19px;line-height:1.25;letter-spacing:-.3px}
     .meta-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}
-    .reaction-btn{border:1px solid #fed7aa;background:#fff7ed;color:#c2410c;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:.18s ease;line-height:1.35}
-    .reaction-btn:hover{transform:translateY(-1px);background:#ffedd5}
-    .reaction-btn.reacted{background:#f1f5f9;color:#475569;border-color:var(--line);cursor:default}
-    .reaction-btn:disabled{opacity:.9}
-    .reaction-emoji{display:inline-block;transform-origin:center}
-    .reaction-btn:not(.reacted):hover .reaction-emoji{animation:softFire .9s ease-in-out infinite}
-    @keyframes softFire{0%,100%{transform:scale(1)}50%{transform:scale(1.15) rotate(-4deg)}}
-    .updated-time{color:#475569;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700}
-    .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+    .updated-time{color:#475569;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;font-weight:800}
+    .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.02em}
     .badge-blue{background:var(--blue-soft);color:var(--blue)}
     .badge-amber{background:var(--amber-soft);color:#b45309}
+
+    .reaction-btn{
+      border:1px solid #fed7aa;
+      background:#fff7ed;
+      color:#c2410c;
+      border-radius:999px;
+      padding:4px 9px;
+      font-size:12px;
+      font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .reaction-btn:hover{transform:translateY(-1px);background:#ffedd5}
+    .reaction-btn.reacted{background:#f1f5f9;color:#475569;border-color:#e2e8f0;cursor:default}
+    .reaction-btn:disabled{opacity:.9}
+    .reaction-emoji{display:inline-block}
+    .reaction-btn:not(.reacted):hover .reaction-emoji{animation:softFire .9s ease-in-out infinite}
+    @keyframes softFire{0%,100%{transform:scale(1)}50%{transform:scale(1.15) rotate(-4deg)}}
+
     .card-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
     .summary-box{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px}
     .summary-box strong{display:block;font-size:15px;color:#0f172a}
     .summary-box span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
     .group-preview{display:grid;gap:10px;margin-top:12px}
     .preview-section{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
-    .preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f8fbff;padding:12px 14px;font-weight:800;color:#0b3bbf}
+    .preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f8fbff;padding:12px 14px;font-weight:900;color:#0b3bbf}
     .preview-items{padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap}
-    .role-chip{background:#f1f5f9;color:#334155;border:1px solid var(--line);font-size:12px;font-weight:800;border-radius:999px;padding:7px 11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .role-chip{background:#f1f5f9;color:#334155;border:1px solid var(--line);font-size:12px;font-weight:900;border-radius:999px;padding:7px 11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .role-chip.more-chip{background:var(--blue-soft);color:var(--blue);border-color:#cfe0ff}
     .common-reqs{margin-top:12px;background:#fbfcfe;border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:#475569;font-size:13px}
     .common-reqs strong{color:#0f172a;display:block;margin-bottom:6px}
@@ -140,11 +283,11 @@
     .footer-actions .btn{width:100%}
 
     .pagination{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 44px}
-    .page-btn{border:1px solid var(--line);background:#fff;color:#334155;border-radius:12px;min-width:42px;height:42px;padding:0 13px;font-weight:800;font-size:13px;cursor:pointer;transition:.18s ease}
+    .page-btn{border:1px solid var(--line);background:#fff;color:#334155;border-radius:12px;min-width:42px;height:42px;padding:0 13px;font-weight:900;font-size:13px;cursor:pointer;transition:.18s ease}
     .page-btn:hover{border-color:#b8ccff;color:var(--blue);background:var(--blue-soft);transform:translateY(-1px)}
     .page-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
     .page-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-    .page-info{color:var(--muted);font-size:13px;font-weight:700;padding:0 4px}
+    .page-info{color:var(--muted);font-size:13px;font-weight:800;padding:0 4px}
     .empty{padding:54px 20px;text-align:center;color:var(--muted)}
     .empty strong{display:block;color:var(--text);font-size:20px;margin-bottom:8px}
     .loading{display:grid;gap:16px}
@@ -152,82 +295,90 @@
     @keyframes shine{to{background-position:-200% 0}}
 
     .site-footer{padding:32px 0;border-top:1px solid var(--line);background:#fff;color:var(--muted);font-size:13px;text-align:center}
+    .site-footer strong{color:#0f172a}
 
     @media(max-width:880px){
       .nav{display:none}
       .mobile-menu{display:inline-flex}
-      .mobile-nav.is-open{display:block}
       .header-inner{height:64px}
+      .brand-text small{display:none}
       .hero-grid{grid-template-columns:1fr}
+      .stats-row{grid-template-columns:repeat(3,1fr)}
+      .ad-highlight-inner{grid-template-columns:1fr;gap:10px}
+      .ad-actions{justify-content:flex-start}
       .search-row{grid-template-columns:1fr}
       .card-summary{grid-template-columns:repeat(2,1fr)}
-      .section-head{align-items:flex-start;flex-direction:column}
-      .card-footer{align-items:stretch;flex-direction:column}
+      .job-top{grid-template-columns:1fr}
+      .section-head{align-items:flex-start;gap:10px;flex-direction:column}
+      .footer-actions{grid-template-columns:repeat(2,1fr)}
     }
     @media(max-width:520px){
       .container{width:min(100% - 22px,1160px)}
       .hero-main{padding:22px}
       .hero h1{font-size:34px}
-      .stats-row{grid-template-columns:repeat(3,1fr);gap:8px}
-      .stat-card{padding:13px 10px}
-      .stat-card strong{font-size:21px}
-      .stat-card span{font-size:11px;line-height:1.25}
-      .card-summary{grid-template-columns:1fr 1fr}
+      .stats-row,.card-summary{grid-template-columns:1fr 1fr}
+      .stats-row .stat-card:last-child{grid-column:1 / -1}
       .summary-box strong{font-size:14px}
       .job-card{padding:16px}
       .company-logo{width:46px;height:46px;border-radius:14px}
       .footer-actions{grid-template-columns:1fr}
       .btn{width:100%}
+      .ad-actions{align-items:stretch;flex-direction:column}
+      .ad-url{text-align:left}
     }
     @media (prefers-reduced-motion: reduce){
-      html{scroll-behavior:auto}
-      .live-icon,.skeleton,.job-card{animation:none!important}
-      .btn:hover,.page-btn:hover{transform:none}
+      *{scroll-behavior:auto!important}
+      .live-icon,.reaction-btn:not(.reacted):hover .reaction-emoji,.skeleton{animation:none!important}
+      .job-card{animation:none!important}
     }
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">
+      <a class="brand" href="index.html" aria-label="Daily Loker Pelaut Home">
         <span class="brand-mark">⚓</span>
         <span class="brand-text">
           <span>DAILY LOKER PELAUT</span>
           <small>Lowongan Kerja Pelaut Indonesia</small>
         </span>
       </a>
-      <nav class="nav" aria-label="Menu utama">
-        <a class="active" href="index.html">Lowongan</a>
-        <a href="https://dailylokerpelaut.com/">Tentang</a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a class="active" href="#jobs">Lowongan</a>
+        <a href="https://dailylokerpelaut.com/" target="_blank" rel="noopener">Tentang</a>
       </nav>
+
       <div class="header-actions">
         <button class="btn btn-primary" onclick="openForm()">+ Post Loker</button>
-        <button class="btn btn-light mobile-menu" type="button" aria-label="Buka menu" aria-expanded="false" onclick="toggleMobileMenu(this)">☰</button>
+        <button class="btn btn-light mobile-menu" type="button" onclick="toggleMobileNav()" aria-label="Open menu">☰</button>
       </div>
     </div>
-    <nav class="mobile-nav" id="mobileNav" aria-label="Menu mobile">
-      <div class="container mobile-nav-inner">
-        <a class="active" href="index.html">Lowongan</a>
-        <a href="https://dailylokerpelaut.com/">Tentang</a>
+    <div class="mobile-nav" id="mobileNav">
+      <div class="container">
+        <a href="#jobs" onclick="toggleMobileNav(false)">Lowongan</a>
+        <a href="https://dailylokerpelaut.com/" target="_blank" rel="noopener">Tentang</a>
+        <button type="button" onclick="openForm()">+ Post Loker</button>
       </div>
-    </nav>
+    </div>
   </header>
 
   <main>
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-main">
-          <span class="eyebrow"><span class="live-icon" aria-hidden="true">⚡</span> Live · Update Harian</span>
+          <span class="eyebrow"><span class="live-icon">⚡</span> Live · Update Harian</span>
           <h1>Loker Pelaut Terkini Indonesia</h1>
           <p>Job board bersih untuk pelaut Indonesia. Lowongan dikurasi dari recruiter dan crewing agency, dengan format yang rapi dan mudah dibaca.</p>
-          <div class="trust-note"><span>✓</span><span>Lowongan dikurasi. Informasi dibuat lebih rapi, jelas, dan mudah dicek sebelum pelaut menghubungi recruiter.</span></div>
+
           <div class="stats-row">
             <div class="stat-card"><strong id="statTotal">–</strong><span>Loker Aktif</span></div>
             <div class="stat-card"><strong id="statCompanies">–</strong><span>Perusahaan</span></div>
             <div class="stat-card"><strong id="statTodayPositions">–</strong><span>Posisi Hari Ini</span></div>
           </div>
         </div>
-        <div class="hero-panel" id="recruiter">
+
+        <div class="hero-panel">
           <div>
             <div class="panel-title">Untuk Recruiter</div>
             <div class="panel-number">Kirim Lowongan Pelaut</div>
@@ -238,7 +389,7 @@
         </div>
       </div>
 
-      <div class="container toolbar" id="jobs">
+      <div class="container toolbar">
         <div class="search-row">
           <input class="input" id="searchInput" placeholder="Cari posisi, perusahaan, jenis kapal, salary..." oninput="resetPageAndRender()">
           <button class="btn btn-primary" onclick="resetPageAndRender()">Cari</button>
@@ -252,9 +403,27 @@
           <button class="chip" onclick="setKeyword('oil chemical',this)">Oil/Chemical</button>
         </div>
       </div>
+
+      <div class="container">
+        <section class="ad-highlight" aria-label="Highlight Iklan Buku Engineer">
+          <div class="ad-highlight-inner">
+            <div>
+              <div class="ad-labels">
+                <span class="ad-chip orange">⭐ Highlight Iklan</span>
+              </div>
+              <h2>Engineer Officer Interview Mastery</h2>
+              <p>Persiapan interview Marine Engineer, dari 4/E sampai Chief Engineer.</p>
+            </div>
+            <div class="ad-actions">
+              <button class="btn btn-ad" type="button" onclick="openEngineerBook()">Lihat Buku →</button>
+              <span class="ad-url">engineer.dailylokerpelaut.com</span>
+            </div>
+          </div>
+        </section>
+      </div>
     </section>
 
-    <section class="container">
+    <section class="container" id="jobs">
       <div class="section-head">
         <div>
           <h2>Lowongan Aktif</h2>
@@ -284,6 +453,7 @@
     const SHEET_TAB  = "WebsiteJobsGrouped";
     const FORM_URL   = "https://forms.gle/nuJWVeCKtFs9RJum8";
     const REACTION_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
+    const ENGINEER_BOOK_URL = "https://engineer.dailylokerpelaut.com/";
     const EXPIRE_DAYS = 7;
     const JOBS_PER_PAGE = 5;
 
@@ -291,13 +461,37 @@
     let keywordFilter = "";
     let currentPage = 1;
 
-    function openForm(){ window.open(FORM_URL, "_blank"); }
+    function openForm(){
+      if(typeof gtag === "function"){
+        gtag("event", "post_loker_click", {
+          event_category: "Recruiter",
+          page_url: window.location.href,
+          link_url: FORM_URL,
+          transport_type: "beacon"
+        });
+      }
+      window.open(FORM_URL, "_blank", "noopener");
+    }
 
-    function toggleMobileMenu(btn){
+    function openEngineerBook(){
+      if(typeof gtag === "function"){
+        gtag("event", "engineer_book_banner_click", {
+          event_category: "Internal Promotion",
+          campaign: "homepage_highlight_iklan",
+          product: "engineer_officer_interview_mastery",
+          page_url: window.location.href,
+          link_url: ENGINEER_BOOK_URL,
+          transport_type: "beacon"
+        });
+      }
+      window.open(ENGINEER_BOOK_URL, "_blank", "noopener");
+    }
+
+    function toggleMobileNav(force){
       const nav = document.getElementById("mobileNav");
       if(!nav) return;
-      const isOpen = nav.classList.toggle("is-open");
-      btn.setAttribute("aria-expanded", String(isOpen));
+      if(typeof force === "boolean") nav.classList.toggle("open", force);
+      else nav.classList.toggle("open");
     }
 
     function parseTimestamp(v){
@@ -434,7 +628,7 @@
       keywordFilter = q.toLowerCase();
       currentPage = 1;
       document.querySelectorAll("#quickFilters .chip").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
+      if(btn) btn.classList.add("active");
       renderJobs();
     }
 
@@ -513,6 +707,7 @@
 
       document.getElementById("resultText").textContent = `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
       el.innerHTML = pageJobs.map(jobCardHTML).join("");
+      hydrateReactionButtons();
       loadReactionCountsFor(pageJobs);
       renderPagination(totalPages);
     }
@@ -544,6 +739,7 @@
 
     function cleanRoleTitle(title){
       let t = String(title || "Role").replace(/\s+/g, " ").trim();
+
       t = t
         .replace(/\s*[–-]\s*(BULK CARRIER|OIL\/?CHEMICAL|OIL PRODUCT|PRODUCT TANKER|CHEMICAL TANKER|TANKER|TUG BOAT|ASD TUG|GENERAL CARGO|CONTAINER|LPG|LNG|OFFSHORE|AHTS|PSV|LOCAL TRADE|INTERNATIONAL).*$/i, "")
         .replace(/\s+GT\s*(UP)?\s*\d+.*$/i, "")
@@ -551,6 +747,15 @@
         .trim();
 
       return t || String(title || "Role").trim();
+    }
+
+    function getPrimaryPosition(sections){
+      for(const sec of sections || []){
+        for(const item of sec.items || []){
+          if(item.title) return cleanRoleTitle(item.title);
+        }
+      }
+      return "";
     }
 
     function sectionPreviewHTML(sec){
@@ -576,15 +781,16 @@
     function jobCardHTML(j, idx){
       const openings = countOpenings(j.sections);
       const salary = salaryRangeText(j.sections);
+      const batchId = j.batchId || String(j.id);
+      const primaryPosition = getPrimaryPosition(j.sections);
 
       const waClean = (j.whatsapp || "").replace(/\D/g,"");
       const waIntl = waClean.startsWith("0") ? "62" + waClean.slice(1) : waClean;
       const msg = encodeURIComponent(`Halo, saya tertarik dengan lowongan di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
       const waLink = waIntl ? `https://wa.me/${waIntl}?text=${msg}` : "";
       const emailLink = j.email ? `mailto:${j.email}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
-      const detailLink = `detail.html?id=${encodeURIComponent(j.batchId || String(j.id))}`;
+      const detailLink = `detail.html?id=${encodeURIComponent(batchId)}`;
       const shareUrl = new URL(detailLink, window.location.href).href;
-      const firstPosition = getFirstPosition(j.sections);
 
       return `
       <article class="job-card" style="animation-delay:${idx*.05}s">
@@ -604,7 +810,10 @@
                 <button
                   class="reaction-btn"
                   type="button"
-                  data-batch-id="${escapeHTML(j.batchId || String(j.id))}"
+                  data-batch-id="${escapeHTML(batchId)}"
+                  data-company="${escapeHTML(j.company)}"
+                  data-position="${escapeHTML(primaryPosition)}"
+                  data-count="0"
                   onclick="tapReaction(this)">
                   <span class="reaction-emoji">🔥</span>
                   <span class="reaction-text">0 tertarik</span>
@@ -634,10 +843,52 @@
 
         <div class="card-footer">
           <div class="footer-actions">
-            <a class="btn btn-outline" href="${detailLink}">Lihat Detail</a>
-            ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || String(j.id))}" data-position="${escapeHTML(firstPosition)}">WhatsApp</a>`:""}
-            ${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || String(j.id))}" data-position="${escapeHTML(firstPosition)}">Email</a>`:""}
-            <button class="btn btn-share" type="button" data-share-title="${escapeHTML(j.company)}" data-share-url="${escapeHTML(shareUrl)}" data-batch-id="${escapeHTML(j.batchId || String(j.id))}" onclick="shareVacancy(this)">Bagikan</button>
+            <a
+              class="btn btn-outline vacancy-detail-link"
+              href="${detailLink}"
+              data-company="${escapeHTML(j.company)}"
+              data-batch-id="${escapeHTML(batchId)}"
+              data-position="${escapeHTML(primaryPosition)}">
+              Lihat Detail
+            </a>
+
+            ${waLink?`
+              <a
+                class="btn btn-wa apply-link"
+                target="_blank"
+                rel="noopener"
+                href="${waLink}"
+                data-contact-type="whatsapp"
+                data-company="${escapeHTML(j.company)}"
+                data-batch-id="${escapeHTML(batchId)}"
+                data-position="${escapeHTML(primaryPosition)}">
+                WhatsApp
+              </a>
+            `:""}
+
+            ${emailLink?`
+              <a
+                class="btn btn-email apply-link"
+                href="${emailLink}"
+                data-contact-type="email"
+                data-company="${escapeHTML(j.company)}"
+                data-batch-id="${escapeHTML(batchId)}"
+                data-position="${escapeHTML(primaryPosition)}">
+                Email
+              </a>
+            `:""}
+
+            <button
+              class="btn btn-share"
+              type="button"
+              data-share-title="${escapeHTML(j.company)}"
+              data-share-url="${escapeHTML(shareUrl)}"
+              data-company="${escapeHTML(j.company)}"
+              data-batch-id="${escapeHTML(batchId)}"
+              data-position="${escapeHTML(primaryPosition)}"
+              onclick="shareVacancy(this)">
+              Bagikan
+            </button>
           </div>
         </div>
       </article>`;
@@ -646,15 +897,14 @@
     function jsonpRequest(url){
       return new Promise((resolve, reject)=>{
         const callbackName = "dlpReactionCallback_" + Math.random().toString(36).slice(2);
-        let script;
 
         window[callbackName] = function(data){
           cleanup();
           resolve(data);
         };
 
-        script = document.createElement("script");
-        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + encodeURIComponent(callbackName);
+        const script = document.createElement("script");
+        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + callbackName;
         script.onerror = function(){
           cleanup();
           reject(new Error("Reaction request failed"));
@@ -662,17 +912,13 @@
 
         function cleanup(){
           delete window[callbackName];
-          if(script && script.parentNode){
+          if(script.parentNode){
             script.parentNode.removeChild(script);
           }
         }
 
         document.body.appendChild(script);
       });
-    }
-
-    function reactionApiReady(){
-      return REACTION_API_URL && !REACTION_API_URL.includes("PASTE_WEB_APP_URL");
     }
 
     function reactionStorageKey(batchId){
@@ -687,41 +933,39 @@
       }
     }
 
-    function markReacted(batchId){
-      try{
-        localStorage.setItem(reactionStorageKey(batchId), "1");
-      }catch(e){
-        console.warn("localStorage unavailable:", e);
-      }
-    }
-
     function setReactionButtonState(btn, count){
       const batchId = btn.dataset.batchId;
       const reacted = hasReacted(batchId);
       const textEl = btn.querySelector(".reaction-text");
-      const safeCount = Number(count || 0);
 
-      btn.dataset.count = String(safeCount);
       btn.classList.toggle("reacted", reacted);
       btn.disabled = reacted;
+      btn.dataset.count = String(count || 0);
 
       if(textEl){
         textEl.textContent = reacted
-          ? `Kamu tertarik · ${safeCount}`
-          : `${safeCount} tertarik`;
+          ? `Kamu tertarik · ${count || 0}`
+          : `${count || 0} tertarik`;
       }
+    }
+
+    function hydrateReactionButtons(){
+      document.querySelectorAll(".reaction-btn").forEach(btn=>{
+        const count = Number(btn.dataset.count || 0);
+        setReactionButtonState(btn, count);
+      });
     }
 
     function updateReactionUI(batchId, count){
       document.querySelectorAll(".reaction-btn").forEach(btn=>{
         if(btn.dataset.batchId === batchId){
-          setReactionButtonState(btn, count);
+          setReactionButtonState(btn, Number(count || 0));
         }
       });
     }
 
     async function loadReactionCountsFor(jobs){
-      if(!reactionApiReady()) return;
+      if(!REACTION_API_URL) return;
 
       const ids = jobs
         .map(j => j.batchId || String(j.id))
@@ -745,10 +989,11 @@
 
     async function tapReaction(btn){
       const batchId = btn.dataset.batchId;
-      if(!batchId || !reactionApiReady()) return;
+      if(!batchId || !REACTION_API_URL) return;
 
       if(hasReacted(batchId)){
-        setReactionButtonState(btn, Number(btn.dataset.count || 0));
+        const current = Number(btn.dataset.count || 0);
+        setReactionButtonState(btn, current);
         return;
       }
 
@@ -759,14 +1004,16 @@
         const res = await jsonpRequest(url);
 
         if(res && res.ok){
-          markReacted(batchId);
+          try{ localStorage.setItem(reactionStorageKey(batchId), "1"); }catch(e){}
           updateReactionUI(batchId, Number(res.count || 0));
 
           if(typeof gtag === "function"){
             gtag("event", "vacancy_reaction_click", {
               event_category: "Reaction",
               reaction_type: "interested",
+              company: btn.dataset.company || "Unknown",
               batch_id: batchId,
+              position: btn.dataset.position || "",
               page_url: window.location.href,
               transport_type: "beacon"
             });
@@ -781,17 +1028,12 @@
       }
     }
 
-    function getFirstPosition(sections){
-      for(const sec of (sections || [])){
-        const first = (sec.items || []).find(item => item.title);
-        if(first) return cleanRoleTitle(first.title);
-      }
-      return "Unknown Position";
-    }
-
     async function shareVacancy(btn){
       const title = btn?.dataset?.shareTitle || "Lowongan Daily Loker Pelaut";
       const url = btn?.dataset?.shareUrl || window.location.href;
+      const company = btn?.dataset?.company || title;
+      const batchId = btn?.dataset?.batchId || "";
+      const position = btn?.dataset?.position || "";
       const text = `${title}\n\nLihat detail lowongan di Daily Loker Pelaut:\n${url}`;
 
       try{
@@ -808,15 +1050,79 @@
 
         if(typeof gtag === "function"){
           gtag("event", "share_vacancy", {
-            vacancy_company: title,
-            batch_id: btn?.dataset?.batchId || "",
-            page_url: window.location.href
+            event_category: "Share",
+            company: company,
+            batch_id: batchId,
+            position: position,
+            page_url: window.location.href,
+            link_url: url,
+            transport_type: "beacon"
           });
         }
       }catch(err){
         console.warn("Share cancelled or failed:", err);
       }
     }
+
+    document.addEventListener("click", function (event) {
+      const link = event.target.closest("a");
+      if (!link) return;
+
+      const href = link.getAttribute("href") || "";
+      const currentUrl = window.location.href;
+
+      const company = link.dataset.company || "Unknown";
+      const batchId = link.dataset.batchId || "";
+      const position = link.dataset.position || "";
+
+      if (link.classList.contains("vacancy-detail-link")) {
+        if (typeof gtag === "function") {
+          gtag("event", "vacancy_detail_click", {
+            event_category: "Vacancy",
+            company: company,
+            batch_id: batchId,
+            position: position,
+            page_url: currentUrl,
+            link_url: href,
+            transport_type: "beacon"
+          });
+        }
+      }
+
+      if (
+        href.includes("wa.me") ||
+        href.includes("api.whatsapp.com") ||
+        href.includes("whatsapp.com/send")
+      ) {
+        if (typeof gtag === "function") {
+          gtag("event", "apply_whatsapp_click", {
+            event_category: "Apply Button",
+            company: company,
+            batch_id: batchId,
+            position: position,
+            contact_type: "whatsapp",
+            page_url: currentUrl,
+            link_url: href,
+            transport_type: "beacon"
+          });
+        }
+      }
+
+      if (href.startsWith("mailto:")) {
+        if (typeof gtag === "function") {
+          gtag("event", "apply_email_click", {
+            event_category: "Apply Button",
+            company: company,
+            batch_id: batchId,
+            position: position,
+            contact_type: "email",
+            page_url: currentUrl,
+            link_url: href,
+            transport_type: "beacon"
+          });
+        }
+      }
+    });
 
     function escapeHTML(value){
       return String(value ?? "")
@@ -826,53 +1132,6 @@
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
     }
-
-    document.addEventListener("click", function (event) {
-      const link = event.target.closest("a");
-      if (!link) return;
-
-      const href = link.getAttribute("href") || "";
-      const text = (link.innerText || "").trim();
-      const pageTitle = document.title || "Unknown Vacancy";
-      const currentUrl = window.location.href;
-      const company = link.dataset.company || "Unknown Company";
-      const batchId = link.dataset.batchId || "";
-      const position = link.dataset.position || "";
-
-      if (href.includes("wa.me") || href.includes("api.whatsapp.com") || href.includes("whatsapp.com/send")) {
-        if (typeof gtag === "function") {
-          gtag("event", "apply_whatsapp_click", {
-            event_category: "Apply Button",
-            event_label: text || "WhatsApp Apply",
-            vacancy_company: company,
-            vacancy_position: position,
-            batch_id: batchId,
-            vacancy_page: pageTitle,
-            page_url: currentUrl,
-            link_url: href,
-            transport_type: "beacon"
-          });
-        }
-        console.log("Tracked WhatsApp Apply:", href);
-      }
-
-      if (href.startsWith("mailto:")) {
-        if (typeof gtag === "function") {
-          gtag("event", "apply_email_click", {
-            event_category: "Apply Button",
-            event_label: text || "Email Apply",
-            vacancy_company: company,
-            vacancy_position: position,
-            batch_id: batchId,
-            vacancy_page: pageTitle,
-            page_url: currentUrl,
-            link_url: href,
-            transport_type: "beacon"
-          });
-        }
-        console.log("Tracked Email Apply:", href);
-      }
-    });
 
     loadJobs();
     setInterval(renderJobs, 60000);
