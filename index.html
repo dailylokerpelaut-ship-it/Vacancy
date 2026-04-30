@@ -458,6 +458,13 @@
     const JOBS_PER_PAGE = 5;
 
     let allJobs = [];
+    let jobsLoaded = false;
+    let jobsLoading = null;
+
+    let reactionCounts = {};
+    let reactionsLoaded = false;
+    let reactionsLoading = null;
+
     let keywordFilter = "";
     let currentPage = 1;
 
@@ -583,45 +590,73 @@
       return `USD ${min.toLocaleString("en-US")} – ${max.toLocaleString("en-US")}`;
     }
 
-    async function loadJobs(){
-      try{
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
-        const res = await fetch(url);
-        const txt = await res.text();
-        const json = JSON.parse(txt.substring(47).slice(0,-2));
-        const rows = json.table.rows || [];
+    async function fetchJobsFromSheet_(){
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
+      const res = await fetch(url, { cache: "no-store" });
+      const txt = await res.text();
+      const json = JSON.parse(txt.substring(47).slice(0,-2));
+      const rows = json.table.rows || [];
 
-        allJobs = rows
-          .filter(r => cell(r,1).toUpperCase() === "APPROVED")
-          .map((r,i)=>{
-            const sections = safeJSON(cell(r,11));
-            const requirements = cell(r,12).split("|").map(s=>s.trim()).filter(Boolean);
-            return {
-              id:i,
-              timestamp: parseTimestamp(cell(r,0)),
-              status: cell(r,1),
-              batchId: cell(r,2),
-              company: cell(r,3),
-              whatsapp: cell(r,4),
-              email: cell(r,5),
-              urgent: cell(r,6).toLowerCase() === "ya",
-              free: cell(r,7).toLowerCase() !== "tidak",
-              joinInfo: cell(r,8),
-              summary: cell(r,9),
-              featured: cell(r,10).toLowerCase() === "ya",
-              sections,
-              requirements,
-              searchText: cell(r,13),
-              rawInput: cell(r,14)
-            };
-          })
-          .filter(j => j.company && !isExpired(j.timestamp))
-          .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-      }catch(err){
-        console.warn("Failed to load sheet:", err);
-        allJobs = [];
-      }
+      return rows
+        .filter(r => cell(r,1).toUpperCase() === "APPROVED")
+        .map((r,i)=>{
+          const sections = safeJSON(cell(r,11));
+          const requirements = cell(r,12).split("|").map(s=>s.trim()).filter(Boolean);
+          return {
+            id:i,
+            timestamp: parseTimestamp(cell(r,0)),
+            status: cell(r,1),
+            batchId: cell(r,2),
+            company: cell(r,3),
+            whatsapp: cell(r,4),
+            email: cell(r,5),
+            urgent: cell(r,6).toLowerCase() === "ya",
+            free: cell(r,7).toLowerCase() !== "tidak",
+            joinInfo: cell(r,8),
+            summary: cell(r,9),
+            featured: cell(r,10).toLowerCase() === "ya",
+            sections,
+            requirements,
+            searchText: cell(r,13),
+            rawInput: cell(r,14)
+          };
+        })
+        .filter(j => j.company && !isExpired(j.timestamp))
+        .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    }
+
+    async function getJobsOnce(){
+      if(jobsLoaded) return allJobs;
+      if(jobsLoading) return jobsLoading;
+
+      jobsLoading = fetchJobsFromSheet_()
+        .then(jobs=>{
+          allJobs = jobs;
+          jobsLoaded = true;
+          return allJobs;
+        })
+        .catch(err=>{
+          console.warn("Failed to load sheet:", err);
+          allJobs = [];
+          jobsLoaded = true;
+          return allJobs;
+        })
+        .finally(()=>{
+          jobsLoading = null;
+        });
+
+      return jobsLoading;
+    }
+
+    async function initPage(){
+      await getJobsOnce();
       renderJobs();
+
+      // Ambil total reaction hanya 1x saat halaman pertama load.
+      // Setelah itu search/filter/pagination memakai cache reactionCounts.
+      getReactionCountsOnce().then(()=>{
+        applyReactionCountsToVisibleButtons();
+      });
     }
 
     function setKeyword(q, btn){
@@ -707,8 +742,7 @@
 
       document.getElementById("resultText").textContent = `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
       el.innerHTML = pageJobs.map(jobCardHTML).join("");
-      hydrateReactionButtons();
-      loadReactionCountsFor(pageJobs);
+      applyReactionCountsToVisibleButtons();
       renderPagination(totalPages);
     }
 
@@ -941,14 +975,16 @@
       }
     }
 
-    function hydrateReactionButtons(){
+    function applyReactionCountsToVisibleButtons(){
       document.querySelectorAll(".reaction-btn").forEach(btn=>{
-        const count = Number(btn.dataset.count || 0);
+        const batchId = btn.dataset.batchId;
+        const count = Number(reactionCounts[batchId] || 0);
         setReactionButtonState(btn, count);
       });
     }
 
     function updateReactionUI(batchId, count){
+      reactionCounts[batchId] = Number(count || 0);
       document.querySelectorAll(".reaction-btn").forEach(btn=>{
         if(btn.dataset.batchId === batchId){
           setReactionButtonState(btn, Number(count || 0));
@@ -956,27 +992,40 @@
       });
     }
 
-    async function loadReactionCountsFor(jobs){
-      if(!REACTION_API_URL) return;
+    async function getReactionCountsOnce(){
+      if(reactionsLoaded) return reactionCounts;
+      if(reactionsLoading) return reactionsLoading;
+      if(!REACTION_API_URL) return reactionCounts;
 
-      const ids = jobs
+      const ids = [...new Set(allJobs
         .map(j => j.batchId || String(j.id))
-        .filter(Boolean);
+        .filter(Boolean))];
 
-      if(!ids.length) return;
-
-      try{
-        const url = `${REACTION_API_URL}?action=counts&batchIds=${encodeURIComponent(ids.join(","))}`;
-        const res = await jsonpRequest(url);
-
-        if(!res || !res.ok || !res.counts) return;
-
-        Object.entries(res.counts).forEach(([batchId, count])=>{
-          updateReactionUI(batchId, Number(count || 0));
-        });
-      }catch(err){
-        console.warn("Failed to load reaction counts:", err);
+      if(!ids.length){
+        reactionsLoaded = true;
+        return reactionCounts;
       }
+
+      reactionsLoading = jsonpRequest(`${REACTION_API_URL}?action=counts&batchIds=${encodeURIComponent(ids.join(","))}`)
+        .then(res=>{
+          if(res && res.ok && res.counts){
+            Object.entries(res.counts).forEach(([batchId, count])=>{
+              reactionCounts[batchId] = Number(count || 0);
+            });
+          }
+          reactionsLoaded = true;
+          return reactionCounts;
+        })
+        .catch(err=>{
+          console.warn("Failed to load reaction counts:", err);
+          reactionsLoaded = true;
+          return reactionCounts;
+        })
+        .finally(()=>{
+          reactionsLoading = null;
+        });
+
+      return reactionsLoading;
     }
 
     async function tapReaction(btn){
@@ -1125,8 +1174,7 @@
         .replaceAll("'","&#039;");
     }
 
-    loadJobs();
-    setInterval(renderJobs, 60000);
+    initPage();
   </script>
 </body>
 </html>
