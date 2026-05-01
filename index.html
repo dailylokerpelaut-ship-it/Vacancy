@@ -278,6 +278,19 @@
     .role-chip.more-chip{background:var(--blue-soft);color:var(--blue);border-color:#cfe0ff}
     .common-reqs{margin-top:12px;background:#fbfcfe;border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:#475569;font-size:13px}
     .common-reqs strong{color:#0f172a;display:block;margin-bottom:6px}
+
+    .scam-mini-warning{
+      margin-top:12px;
+      padding:9px 11px;
+      border:1px solid #fed7aa;
+      background:#fff7ed;
+      color:#9a3412;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:800;
+      line-height:1.45;
+    }
+
     .card-footer{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
     .footer-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%}
     .footer-actions .btn{width:100%}
@@ -454,6 +467,7 @@
     const FORM_URL   = "https://forms.gle/nuJWVeCKtFs9RJum8";
     const REACTION_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
     const ENGINEER_BOOK_URL = "https://engineer.dailylokerpelaut.com/";
+    const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
     const EXPIRE_DAYS = 7;
     const JOBS_PER_PAGE = 5;
 
@@ -875,6 +889,10 @@
           </div>
         `:""}
 
+        <div class="scam-mini-warning">
+          ⚠️ Waspada scam: jangan transfer biaya rekrutmen. Verifikasi kontak resmi sebelum apply.
+        </div>
+
         <div class="card-footer">
           <div class="footer-actions">
             <a
@@ -1157,6 +1175,20 @@
             batch_id: batchId,
             position: position,
             contact_type: "email",
+            page_url: currentUrl,
+            link_url: href,
+            transport_type: "beacon"
+          });
+        }
+      }
+
+      if (link.classList.contains("report-scam-link")) {
+        if (typeof gtag === "function") {
+          gtag("event", "report_scam_click", {
+            event_category: "Safety",
+            company: company,
+            batch_id: batchId,
+            position: position,
             page_url: currentUrl,
             link_url: href,
             transport_type: "beacon"
