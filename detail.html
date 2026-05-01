@@ -76,8 +76,30 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
 .contact-block strong{font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
 .contact-block a{color:var(--blue);font-weight:700;font-size:13px;word-break:break-word}
 .action-stack{display:grid;gap:10px}
-.note-card{background:#fff8e8;border-color:#fde0a3}
-.warning-card{background:#fff2f2;border-color:#ffd2d2}
+.note-card{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}
+.note-card strong{display:block;color:#166534;margin-bottom:5px}
+.note-card p{font-size:13px;color:#14532d;line-height:1.55}
+
+.warning-card{background:#fff7ed;border-color:#fed7aa;color:#431407}
+.warning-card strong{display:block;color:#9a3412;margin-bottom:7px}
+.warning-card p{font-size:13px;color:#431407;line-height:1.6;margin:7px 0}
+.report-scam-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:10px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #fecaca;
+  background:#fff1f2;
+  color:#be123c;
+  font-size:13px;
+  font-weight:900;
+  text-decoration:none;
+  transition:.18s ease;
+}
+.report-scam-link:hover{background:#ffe4e6;transform:translateY(-1px)}
 .empty{padding:60px 20px;text-align:center;color:var(--muted);margin:30px auto}
 .empty strong{font-size:20px;color:var(--text);display:block;margin-bottom:8px}
 @media(max-width:900px){
@@ -109,6 +131,7 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
 const SHEET_ID   = "1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8";
 const SHEET_TAB  = "WebsiteJobsGrouped";
 const EXPIRE_DAYS = 7;
+const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){
@@ -400,8 +423,28 @@ function render(j){
             ${emailLink?`<a class="btn btn-email" href="${emailLink}">Kirim Email</a>`:""}
           </div>
         </div>
-        ${j.free?`<div class="sidebar-card note-card"><strong>FREE OF CHARGE</strong><p>Recruitment process tidak dipungut biaya.</p></div>`:""}
-        <div class="sidebar-card warning-card"><strong>PERHATIAN</strong><p>Waspada penipuan yang mengatasnamakan perusahaan atau recruiter.</p></div>
+        ${j.free?`
+          <div class="sidebar-card note-card">
+            <strong>FREE OF CHARGE</strong>
+            <p>Recruitment process tidak dipungut biaya.</p>
+          </div>
+        `:""}
+
+        <div class="sidebar-card warning-card">
+          <strong>⚠️ PERHATIAN</strong>
+          <p>Daily Loker Pelaut hanya membantu menampilkan informasi lowongan. Proses seleksi tetap dilakukan oleh perusahaan/recruiter terkait.</p>
+          <p>Jangan transfer uang untuk alasan rekrutmen, medical, visa, sertifikat, tiket, joining, atau administrasi sebelum memastikan legalitas dan kontak resmi perusahaan.</p>
+          <p>Waspada pihak yang mengatasnamakan perusahaan/recruiter. Jika ada permintaan biaya atau informasi terasa mencurigakan, segera laporkan ke Daily Loker Pelaut.</p>
+          <a
+            class="report-scam-link"
+            href="${SCAM_REPORT_URL}"
+            target="_blank"
+            rel="noopener"
+            data-company="${escapeHTML(j.company)}"
+            data-batch-id="${escapeHTML(j.batchId || j.id)}">
+            Laporkan Lowongan Mencurigakan
+          </a>
+        </div>
       </aside>
     </section>
   `;
@@ -411,10 +454,6 @@ loadDetail().catch(err=>{
   document.getElementById("app").innerHTML=`<div class="container empty"><strong>Gagal memuat detail</strong><p>Cek koneksi atau data sheet.</p></div>`;
 });
 </script>
-  <script>
-  // script utama website kamu
-</script>
-
 <script>
 document.addEventListener("click", function (event) {
   const link = event.target.closest("a");
@@ -459,10 +498,25 @@ document.addEventListener("click", function (event) {
 
     console.log("Tracked Email Apply:", href);
   }
+
+  if (link.classList.contains("report-scam-link")) {
+    if (typeof gtag === "function") {
+      gtag("event", "report_scam_click", {
+        event_category: "Safety",
+        event_label: text || "Report Scam",
+        vacancy_page: pageTitle,
+        company: link.dataset.company || "Unknown",
+        batch_id: link.dataset.batchId || "",
+        page_url: currentUrl,
+        link_url: href,
+        transport_type: "beacon"
+      });
+    }
+
+    console.log("Tracked Scam Report:", href);
+  }
 });
 </script>
 
-</body>
-</html>
 </body>
 </html>
