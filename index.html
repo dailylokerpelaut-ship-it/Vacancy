@@ -4,6 +4,9 @@
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NR05C7B09B"></script>
   <script>
+    // DLP salary currency fix v2: IDR/USD/SGD/MYR safe salary range
+    // DLP compact salary card v1: index shows IDR 5JT-5,5JT
+
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
@@ -345,7 +348,6 @@
       .job-card{animation:none!important}
     }
   </style>
-  <!-- DLP salary range fix v1: supports IDR/USD/SGD/MYR/EUR/PHP and Negotiable -->
 </head>
 <body>
   <header class="site-header">
@@ -620,23 +622,35 @@
       if(/eur|€/.test(s)) return "EUR";
       if(/php|peso/.test(s)) return "PHP";
 
-      // Inferensi aman untuk format Indonesia: 5.000.000 / 5,000,000 / 5000000.
       if(Number(amount) >= 1000000) return "IDR";
 
       return "";
     }
 
+    function formatCompactDecimal_(value){
+      const fixed = Number(value).toFixed(1);
+      return fixed.endsWith(".0") ? String(Math.round(value)) : fixed.replace(".", ",");
+    }
+
     function formatSalaryAmount(currency, amount){
       if(!Number.isFinite(amount) || amount <= 0) return "";
 
-      if(currency === "IDR") return `IDR ${Math.round(amount).toLocaleString("id-ID")}`;
-      if(currency === "USD") return `USD ${Math.round(amount).toLocaleString("en-US")}`;
-      if(currency === "SGD") return `SGD ${Math.round(amount).toLocaleString("en-US")}`;
-      if(currency === "MYR") return `MYR ${Math.round(amount).toLocaleString("en-US")}`;
-      if(currency === "EUR") return `EUR ${Math.round(amount).toLocaleString("en-US")}`;
-      if(currency === "PHP") return `PHP ${Math.round(amount).toLocaleString("en-US")}`;
+      const rounded = Math.round(amount);
 
-      return `${Math.round(amount).toLocaleString("en-US")} (currency not stated)`;
+      if(currency === "IDR"){
+        if(rounded >= 1000000000) return `IDR ${formatCompactDecimal_(rounded / 1000000000)}M`;
+        if(rounded >= 1000000) return `IDR ${formatCompactDecimal_(rounded / 1000000)}JT`;
+        if(rounded >= 1000) return `IDR ${formatCompactDecimal_(rounded / 1000)}RB`;
+        return `IDR ${rounded.toLocaleString("id-ID")}`;
+      }
+
+      if(currency === "USD") return `USD ${rounded.toLocaleString("en-US")}`;
+      if(currency === "SGD") return `SGD ${rounded.toLocaleString("en-US")}`;
+      if(currency === "MYR") return `MYR ${rounded.toLocaleString("en-US")}`;
+      if(currency === "EUR") return `EUR ${rounded.toLocaleString("en-US")}`;
+      if(currency === "PHP") return `PHP ${rounded.toLocaleString("en-US")}`;
+
+      return `${rounded.toLocaleString("en-US")} (currency not stated)`;
     }
 
     function parseSalaryEntry(raw){
@@ -653,7 +667,6 @@
 
       const lower = original.toLowerCase();
 
-      // Format Indonesia: 5 juta / 5 jt / 5.5 juta.
       const jutaMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(jt|juta)\b/);
       if(jutaMatch){
         const amount = Number(jutaMatch[1].replace(",", ".")) * 1000000;
@@ -718,7 +731,7 @@
         const minText = formatSalaryAmount(currencyLabel, min);
         const maxText = formatSalaryAmount(currencyLabel, max).replace(/^[A-Z]{3}\s/, "");
 
-        return `${minText} – ${maxText}`;
+        return `${minText}-${maxText}`;
       }).filter(Boolean);
 
       return output.length ? output.join(" · ") : "Negotiable";
