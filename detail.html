@@ -6,6 +6,7 @@
   <script>
 // DLP salary currency fix v2: IDR/USD/SGD/MYR safe salary range
 // DLP full salary detail v1: detail keeps full IDR 5.000.000 format
+// DLP benefit detail split v1: Benefit: items shown in Benefit / Fasilitas section
 
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -63,6 +64,11 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
 .check-list{display:grid;gap:10px;list-style:none;color:#334155;font-size:14px}
 .check-list li{display:flex;gap:9px}
 .check-list li:before{content:"✓";color:var(--green);font-weight:900}
+
+.benefit-card{background:#f8fffb;border-color:#bbf7d0}
+.benefit-card h2{color:#166534}
+.benefit-card .check-list li:before{content:"✓";color:#16a34a;font-weight:900}
+
 
 .extra-info-grid{display:grid;gap:12px}
 .info-list{display:grid;gap:9px}
@@ -428,6 +434,56 @@ function extractContacts(rawInput, primaryWhatsApp="", primaryEmail=""){
 
   return { phones, emails, address };
 }
+
+function splitRequirementsAndBenefits(requirements){
+  const reqs = [];
+  const benefits = [];
+
+  (requirements || []).forEach(item => {
+    const text = String(item || "").trim();
+    if(!text) return;
+
+    if(/^benefit\s*:/i.test(text)){
+      const benefitText = text.replace(/^benefit\s*:\s*/i, "").trim();
+      if(benefitText) benefits.push(benefitText);
+      return;
+    }
+
+    if(/^(free medical|free ticket|free transport|bpjs|bonus|allowance|accommodation|akomodasi|insurance|asuransi|meal|joining ticket|return ticket|visa covered|medical covered)/i.test(text)){
+      benefits.push(text);
+      return;
+    }
+
+    reqs.push(text);
+  });
+
+  return { reqs, benefits };
+}
+
+function requirementsBenefitsHTML(requirements){
+  const split = splitRequirementsAndBenefits(requirements);
+
+  return `
+    ${split.reqs.length?`
+      <div class="section-card">
+        <h2>Requirements Umum</h2>
+        <ul class="check-list">
+          ${split.reqs.map(r=>`<li>${escapeHTML(r)}</li>`).join("")}
+        </ul>
+      </div>
+    `:""}
+
+    ${split.benefits.length?`
+      <div class="section-card benefit-card">
+        <h2>Benefit / Fasilitas</h2>
+        <ul class="check-list">
+          ${split.benefits.map(b=>`<li>${escapeHTML(b)}</li>`).join("")}
+        </ul>
+      </div>
+    `:""}
+  `;
+}
+
 function additionalInfoHTML(j){
   const info = extractContacts(j.rawInput, j.whatsapp, j.email);
   const hasMultiplePhones = info.phones.length > 1;
@@ -529,12 +585,7 @@ function render(j){
           `).join("")}
         </div>
 
-        ${j.requirements.length?`
-          <div class="section-card">
-            <h2>Requirements Umum</h2>
-            <ul class="check-list">${j.requirements.map(r=>`<li>${escapeHTML(r)}</li>`).join("")}</ul>
-          </div>
-        `:""}
+        ${requirementsBenefitsHTML(j.requirements)}
 
         ${additionalInfoHTML(j)}
       </main>
