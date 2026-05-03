@@ -4,6 +4,9 @@
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NR05C7B09B"></script>
   <script>
+// DLP salary currency fix v2: IDR/USD/SGD/MYR safe salary range
+// DLP full salary detail v1: detail keeps full IDR 5.000.000 format
+
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
@@ -114,7 +117,6 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
   .stats{grid-template-columns:1fr 1fr}
 }
 </style>
-  <!-- DLP salary range fix v1: supports IDR/USD/SGD/MYR/EUR/PHP and Negotiable -->
 </head>
 <body>
 <header class="site-header">
@@ -157,7 +159,7 @@ function parseSalaryNumberToken(token){
   if(/[.,]/.test(t)){
     const parts = t.split(/[.,]/);
     if(parts[1] && parts[1].length === 3){
-      return Number(parts.join(""));
+  return Number(parts.join(""));
     }
     return Number(t.replace(",", "."));
   }
@@ -175,7 +177,6 @@ function detectSalaryCurrency(raw, amount){
   if(/eur|€/.test(s)) return "EUR";
   if(/php|peso/.test(s)) return "PHP";
 
-  // Inferensi aman untuk format Indonesia: 5.000.000 / 5,000,000 / 5000000.
   if(Number(amount) >= 1000000) return "IDR";
 
   return "";
@@ -208,14 +209,13 @@ function parseSalaryEntry(raw){
 
   const lower = original.toLowerCase();
 
-  // Format Indonesia: 5 juta / 5 jt / 5.5 juta.
   const jutaMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(jt|juta)\b/);
   if(jutaMatch){
     const amount = Number(jutaMatch[1].replace(",", ".")) * 1000000;
     return {
-      currency: "IDR",
-      amount,
-      maxAmount: amount
+  currency: "IDR",
+  amount,
+  maxAmount: amount
     };
   }
 
@@ -244,8 +244,8 @@ function salaryRangeText(sections){
 
   (sections || []).forEach(sec => {
     (sec.items || []).forEach(item => {
-      const salary = parseSalaryEntry(item.salary);
-      if(salary) parsed.push(salary);
+  const salary = parseSalaryEntry(item.salary);
+  if(salary) parsed.push(salary);
     });
   });
 
@@ -278,6 +278,7 @@ function salaryRangeText(sections){
 
   return output.length ? output.join(" · ") : "Negotiable";
 }
+
 function escapeHTML(v){
   return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
