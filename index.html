@@ -345,6 +345,7 @@
       .job-card{animation:none!important}
     }
   </style>
+  <!-- DLP salary range fix v1: supports IDR/USD/SGD/MYR/EUR/PHP and Negotiable -->
 </head>
 <body>
   <header class="site-header">
@@ -588,20 +589,139 @@
       };
     }
 
+    function parseSalaryNumberToken(token){
+      if(!token) return null;
+
+      let t = String(token).trim();
+      const sepCount = (t.match(/[.,]/g) || []).length;
+
+      if(sepCount > 1){
+        return Number(t.replace(/[.,]/g, ""));
+      }
+
+      if(/[.,]/.test(t)){
+        const parts = t.split(/[.,]/);
+        if(parts[1] && parts[1].length === 3){
+          return Number(parts.join(""));
+        }
+        return Number(t.replace(",", "."));
+      }
+
+      return Number(t);
+    }
+
+    function detectSalaryCurrency(raw, amount){
+      const s = String(raw || "").toLowerCase();
+
+      if(/s\$|sgd|singapore dollar/.test(s)) return "SGD";
+      if(/us\$|usd|\$/.test(s)) return "USD";
+      if(/rp|idr|rupiah|juta|jt/.test(s)) return "IDR";
+      if(/\brm\b|myr|ringgit/.test(s)) return "MYR";
+      if(/eur|€/.test(s)) return "EUR";
+      if(/php|peso/.test(s)) return "PHP";
+
+      // Inferensi aman untuk format Indonesia: 5.000.000 / 5,000,000 / 5000000.
+      if(Number(amount) >= 1000000) return "IDR";
+
+      return "";
+    }
+
+    function formatSalaryAmount(currency, amount){
+      if(!Number.isFinite(amount) || amount <= 0) return "";
+
+      if(currency === "IDR") return `IDR ${Math.round(amount).toLocaleString("id-ID")}`;
+      if(currency === "USD") return `USD ${Math.round(amount).toLocaleString("en-US")}`;
+      if(currency === "SGD") return `SGD ${Math.round(amount).toLocaleString("en-US")}`;
+      if(currency === "MYR") return `MYR ${Math.round(amount).toLocaleString("en-US")}`;
+      if(currency === "EUR") return `EUR ${Math.round(amount).toLocaleString("en-US")}`;
+      if(currency === "PHP") return `PHP ${Math.round(amount).toLocaleString("en-US")}`;
+
+      return `${Math.round(amount).toLocaleString("en-US")} (currency not stated)`;
+    }
+
+    function parseSalaryEntry(raw){
+      const original = String(raw || "").trim();
+
+      if(
+        !original ||
+        original === "-" ||
+        original === "—" ||
+        /negotiable|nego|to be discussed|tba|discuss|sesuai pengalaman/i.test(original)
+      ){
+        return null;
+      }
+
+      const lower = original.toLowerCase();
+
+      // Format Indonesia: 5 juta / 5 jt / 5.5 juta.
+      const jutaMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(jt|juta)\b/);
+      if(jutaMatch){
+        const amount = Number(jutaMatch[1].replace(",", ".")) * 1000000;
+        return {
+          currency: "IDR",
+          amount,
+          maxAmount: amount
+        };
+      }
+
+      const numberMatches = original.match(/\d[\d.,]*/g);
+      if(!numberMatches || !numberMatches.length) return null;
+
+      const amounts = numberMatches
+        .map(parseSalaryNumberToken)
+        .filter(n => Number.isFinite(n) && n > 0);
+
+      if(!amounts.length) return null;
+
+      const min = Math.min(...amounts);
+      const max = Math.max(...amounts);
+      const currency = detectSalaryCurrency(original, max);
+
+      return {
+        currency,
+        amount: min,
+        maxAmount: max
+      };
+    }
+
     function salaryRangeText(sections){
-      const salaries = [];
-      (sections||[]).forEach(sec=>{
-        (sec.items||[]).forEach(item=>{
-          const txt = (item.salary || "").replace(/,/g,"");
-          const m = txt.match(/(\d+(?:\.\d+)?)/);
-          if(m) salaries.push(Number(m[1]));
+      const parsed = [];
+
+      (sections || []).forEach(sec => {
+        (sec.items || []).forEach(item => {
+          const salary = parseSalaryEntry(item.salary);
+          if(salary) parsed.push(salary);
         });
       });
-      if(!salaries.length) return "Negotiable";
-      const min = Math.min(...salaries);
-      const max = Math.max(...salaries);
-      if(min === max) return `USD ${min.toLocaleString("en-US")}`;
-      return `USD ${min.toLocaleString("en-US")} – ${max.toLocaleString("en-US")}`;
+
+      if(!parsed.length) return "Negotiable";
+
+      const grouped = {};
+
+      parsed.forEach(s => {
+        const key = s.currency || "UNKNOWN";
+        if(!grouped[key]) grouped[key] = [];
+        if(Number.isFinite(s.amount)) grouped[key].push(s.amount);
+        if(Number.isFinite(s.maxAmount)) grouped[key].push(s.maxAmount);
+      });
+
+      const output = Object.entries(grouped).map(([currency, amounts]) => {
+        const cleanAmounts = amounts.filter(n => Number.isFinite(n) && n > 0);
+        if(!cleanAmounts.length) return "";
+
+        const min = Math.min(...cleanAmounts);
+        const max = Math.max(...cleanAmounts);
+        const currencyLabel = currency === "UNKNOWN" ? "" : currency;
+
+        if(min === max) return formatSalaryAmount(currencyLabel, min);
+
+        const minText = formatSalaryAmount(currencyLabel, min);
+        const maxText = formatSalaryAmount(currencyLabel, max).replace(/^[A-Z]{3}\s/, "");
+
+        return `${minText} – ${maxText}`;
+      }).filter(Boolean);
+
+      return output.length ? output.join(" · ") : "Negotiable";
     }
 
     async function fetchJobsFromSheet_(){
