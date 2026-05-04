@@ -303,6 +303,8 @@
     .updated-time{color:#475569;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:12px;font-weight:800}
     .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.02em}
     .badge-blue{background:var(--blue-soft);color:var(--blue)}
+    .badge-green{background:var(--green-soft);color:var(--green)}
+    .badge-red{background:var(--red-soft);color:var(--red)}
     .badge-amber{background:var(--amber-soft);color:#b45309}
 
     .reaction-btn{
@@ -404,6 +406,14 @@
       .live-icon,.reaction-btn:not(.reacted):hover .reaction-emoji,.skeleton{animation:none!important}
       .job-card{animation:none!important}
     }
+
+    @media print{
+      .site-header{position:static!important;top:auto!important;box-shadow:none!important}
+      body{background:#ffffff!important}
+      .job-card,.hero-main,.hero-panel,.toolbar,.ad-highlight{break-inside:avoid;page-break-inside:avoid}
+      .mobile-nav{display:none!important}
+    }
+
   </style>
 </head>
 <body>
@@ -618,6 +628,67 @@
       return row.c[index]?.v?.toString() || "";
     }
 
+    function cleanDisplayText(value){
+      let text = String(value || "")
+        .replace(/^[\s•\-–—✓✔]+/g, "")
+        .replace(/^\s*(Requirement|Requirements|Persyaratan|Syarat|Benefit|Benefits|Fasilitas)\s*[:：-]\s*/i, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      text = text
+        .replace(/\bInternation\b/gi, "International")
+        .replace(/\bSertificates\b/gi, "Certificates")
+        .replace(/\bSchengen Visa\b/g, "Schengen visa")
+        .replace(/\bcommunication skill in English\b/gi, "English communication skills");
+
+      if(/\b(cook|chef|galley|catering|food|kitchen|cuisine)\b/i.test(text)){
+        text = text.replace(/\bInternational cousin\b/gi, "International cuisine");
+      }
+
+      return text;
+    }
+
+    function isBenefitLine(value){
+      const text = String(value || "").trim();
+      return /^\s*(Benefit|Benefits|Fasilitas)\s*[:：-]/i.test(text);
+    }
+
+    function isUrgencyOnly(value){
+      const text = String(value || "").trim().toLowerCase();
+      if(!text) return false;
+      return /^(top\s*)?(very\s*)?urgent$/.test(text) || /^(urgent|top urgent|very urgent|dibutuhkan cepat|segera)$/i.test(text);
+    }
+
+    function cleanJoinInfo(value){
+      let text = String(value || "").replace(/\s+/g, " ").trim();
+      if(!text || isUrgencyOnly(text)) return "";
+
+      text = text
+        .replace(/\b(top\s*)?urgent\b/gi, "")
+        .replace(/\bvery urgent\b/gi, "")
+        .replace(/\s+/g, " ")
+        .replace(/^[,;:|\-–—\s]+|[,;:|\-–—\s]+$/g, "")
+        .trim();
+
+      return isUrgencyOnly(text) ? "" : text;
+    }
+
+    function normalizeWhatsAppNumber(raw){
+      const matches = String(raw || "").match(/(?:\+?62|0)\s*[\d\s().-]{7,}/g);
+      const first = matches ? matches[0] : String(raw || "");
+      let digits = first.replace(/\D/g, "");
+      if(!digits) return "";
+      if(digits.startsWith("0")) digits = "62" + digits.slice(1);
+      if(digits.startsWith("620")) digits = "62" + digits.slice(3);
+      if(!digits.startsWith("62") && digits.length >= 9) digits = "62" + digits;
+      return digits.length >= 10 ? digits : "";
+    }
+
+    function isValidEmail(value){
+      const email = String(value || "").trim();
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     function safeJSON(str){
       try{ return JSON.parse(str || "[]"); }catch(e){ return []; }
     }
@@ -805,7 +876,15 @@
         .filter(r => cell(r,1).toUpperCase() === "APPROVED")
         .map((r,i)=>{
           const sections = safeJSON(cell(r,11));
-          const requirements = cell(r,12).split("|").map(s=>s.trim()).filter(Boolean);
+          const commonLines = cell(r,12).split("|").map(s=>s.trim()).filter(Boolean);
+          const requirements = commonLines
+            .filter(line => !isBenefitLine(line))
+            .map(cleanDisplayText)
+            .filter(Boolean);
+          const benefits = commonLines
+            .filter(isBenefitLine)
+            .map(cleanDisplayText)
+            .filter(Boolean);
           return {
             id:i,
             timestamp: parseTimestamp(cell(r,0)),
@@ -821,6 +900,7 @@
             featured: cell(r,10).toLowerCase() === "ya",
             sections,
             requirements,
+            benefits,
             searchText: cell(r,13),
             rawInput: cell(r,14)
           };
@@ -1060,11 +1140,12 @@
       const batchId = j.batchId || String(j.id);
       const primaryPosition = getPrimaryPosition(j.sections);
 
-      const waClean = (j.whatsapp || "").replace(/\D/g,"");
-      const waIntl = waClean.startsWith("0") ? "62" + waClean.slice(1) : waClean;
+      const joinInfoClean = cleanJoinInfo(j.joinInfo);
+      const waIntl = normalizeWhatsAppNumber(j.whatsapp);
       const msg = encodeURIComponent(`Halo, saya tertarik dengan lowongan di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
       const waLink = waIntl ? `https://wa.me/${waIntl}?text=${msg}` : "";
-      const emailLink = j.email ? `mailto:${j.email}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
+      const emailClean = String(j.email || "").trim();
+      const emailLink = isValidEmail(emailClean) ? `mailto:${emailClean}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
       const detailLink = `detail.html?id=${encodeURIComponent(batchId)}`;
       const shareUrl = new URL(detailLink, window.location.href).href;
 
@@ -1077,11 +1158,13 @@
               <div class="company-name">
                 <h3>${escapeHTML(j.company)}</h3>
                 ${j.featured?`<span class="badge badge-amber">Featured</span>`:""}
-                <span class="badge badge-blue">Verified</span>
+                ${j.urgent?`<span class="badge badge-red">Urgent</span>`:""}
+                ${j.free?`<span class="badge badge-green">Free of Charge</span>`:""}
+                <span class="badge badge-blue">DLP Reviewed</span>
               </div>
               <div class="meta-line">
                 <span class="updated-time">🕒 Update ${escapeHTML(relativeTime(j.timestamp))}</span>
-                ${j.joinInfo?`<span>📅 ${escapeHTML(j.joinInfo)}</span>`:""}
+                ${joinInfoClean?`<span>📅 ${escapeHTML(joinInfoClean)}</span>`:""}
                 <span>📌 ${openings} posisi dibuka</span>
                 <button
                   class="reaction-btn"
@@ -1101,7 +1184,7 @@
 
         <div class="card-summary">
           <div class="summary-box"><strong>${escapeHTML(salary)}</strong><span>Salary Range</span></div>
-          <div class="summary-box"><strong>${j.joinInfo?escapeHTML(j.joinInfo):"Update"}</strong><span>Join Info</span></div>
+          <div class="summary-box"><strong>${joinInfoClean?escapeHTML(joinInfoClean):"Update"}</strong><span>Join Info</span></div>
         </div>
 
         ${j.summary?`<div class="common-reqs"><strong>Ringkasan</strong>${escapeHTML(j.summary)}</div>`:""}
@@ -1113,7 +1196,7 @@
         ${j.requirements.length?`
           <div class="common-reqs">
             <strong>Requirements Umum</strong>
-            ${j.requirements.slice(0,2).map(req=>`<div>✓ ${escapeHTML(req)}</div>`).join("")}
+            ${j.requirements.slice(0,2).map(req=>`<div>✓ ${escapeHTML(cleanDisplayText(req))}</div>`).join("")}
           </div>
         `:""}
 
