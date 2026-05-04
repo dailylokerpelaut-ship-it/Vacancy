@@ -142,6 +142,16 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
   .hero-card,.section-card,.sidebar-card{padding:16px}
   .stats{grid-template-columns:1fr 1fr}
 }
+
+
+/* DLP detail priority fix v1: cleaner print/screenshot output */
+@media print{
+  .site-header{position:static!important;top:auto!important;box-shadow:none!important;backdrop-filter:none!important;background:#fff!important}
+  body{background:#fff!important}
+  .detail-hero{padding-top:14px!important}
+  .hero-card,.section-card,.sidebar-card{box-shadow:none!important;break-inside:avoid;page-break-inside:avoid}
+  .detail-grid{break-inside:auto;page-break-inside:auto}
+}
 </style>
 </head>
 <body>
@@ -354,7 +364,8 @@ async function loadDetail(){
       urgent: !!job.urgent,
       featured: !!job.featured,
       free_of_charge: !!job.free,
-      join_info: job.joinInfo || ""
+      join_info: getCleanJoinInfo(job.joinInfo) || "",
+      urgency_label: getUrgencyLabel(job.joinInfo, job.urgent) || ""
     });
   }
 }
@@ -364,10 +375,26 @@ function hasValue(v){
   const s = String(v || "").trim();
   return !!s && s !== "-" && s !== "—";
 }
+
+function cleanDisplayText(v){
+  return String(v || "")
+    .replace(/^\s*(requirement|requirements|persyaratan|syarat)\s*:\s*/i, "")
+    .replace(/^\s*(benefit|benefits|fasilitas)\s*:\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function hasMeaningfulContract(v){
+  const s = String(v || "").trim();
+  if(!hasValue(s)) return false;
+  if(/^(negotiable|nego|tba|tbc|n\/a|na|tidak disebutkan|not specified)$/i.test(s)) return false;
+  return true;
+}
+
 function sectionTableHTML(sec){
   const items = sec.items || [];
   const showSalary = items.some(item => hasValue(item.salary));
-  const showContract = items.some(item => hasValue(item.contract));
+  const showContract = items.some(item => hasMeaningfulContract(item.contract));
   const showNote = items.some(item => hasValue(item.note));
 
   return `
@@ -383,10 +410,10 @@ function sectionTableHTML(sec){
       <tbody>
         ${items.map(item=>`
           <tr>
-            <td><strong>${escapeHTML(item.title||"")}</strong></td>
-            ${showSalary ? `<td>${escapeHTML(hasValue(item.salary) ? item.salary : "—")}</td>` : ""}
-            ${showContract ? `<td>${escapeHTML(hasValue(item.contract) ? item.contract : "—")}</td>` : ""}
-            ${showNote ? `<td>${escapeHTML(hasValue(item.note) ? item.note : "—")}</td>` : ""}
+            <td><strong>${escapeHTML(cleanDisplayText(item.title||""))}</strong></td>
+            ${showSalary ? `<td>${escapeHTML(hasValue(item.salary) ? item.salary : "Negotiable")}</td>` : ""}
+            ${showContract ? `<td>${escapeHTML(hasMeaningfulContract(item.contract) ? item.contract : "—")}</td>` : ""}
+            ${showNote ? `<td>${escapeHTML(hasValue(item.note) ? cleanDisplayText(item.note) : "—")}</td>` : ""}
           </tr>
         `).join("")}
       </tbody>
@@ -478,17 +505,18 @@ function splitRequirementsAndBenefits(requirements){
     if(!text) return;
 
     if(/^benefit\s*:/i.test(text)){
-      const benefitText = text.replace(/^benefit\s*:\s*/i, "").trim();
+      const benefitText = cleanDisplayText(text);
       if(benefitText) benefits.push(benefitText);
       return;
     }
 
     if(/^(free medical|free ticket|free transport|bpjs|bonus|allowance|accommodation|akomodasi|insurance|asuransi|meal|joining ticket|return ticket|visa covered|medical covered)/i.test(text)){
-      benefits.push(text);
+      benefits.push(cleanDisplayText(text));
       return;
     }
 
-    reqs.push(text);
+    const reqText = cleanDisplayText(text);
+    if(reqText) reqs.push(reqText);
   });
 
   return { reqs, benefits };
@@ -561,6 +589,28 @@ function additionalInfoHTML(j){
   `;
 }
 
+
+function getCleanJoinInfo(v){
+  const s = String(v || "").trim();
+  if(!s) return "";
+  if(/^(top\s*urgent|very\s*urgent|urgent|dibutuhkan\s*cepat|segera)$/i.test(s)) return "";
+  return s;
+}
+
+function getUrgencyLabel(joinInfo, urgent){
+  const s = String(joinInfo || "").trim();
+  if(/top\s*urgent/i.test(s)) return "Top Urgent";
+  if(/very\s*urgent/i.test(s)) return "Very Urgent";
+  if(/urgent|dibutuhkan\s*cepat|segera/i.test(s) || urgent) return "Urgent";
+  return "";
+}
+
+function getPrimaryPhone(raw){
+  const s = String(raw || "").normalize("NFKC").replace(/[‐‑‒–—―−]/g,"-");
+  const m = s.match(/(?:\+?62|0|8)(?:[\s\-().]*\d){8,15}/);
+  return normalizePhone(m ? m[0] : s.split(/[\/,&;]/)[0]);
+}
+
 function render(j){
   const app=document.getElementById("app");
   if(!j){
@@ -578,8 +628,9 @@ function render(j){
 
   const openings=countOpenings(j.sections);
   const salary=salaryRangeText(j.sections);
-  const waClean=(j.whatsapp||"").replace(/\D/g,"");
-  const waIntl=waClean.startsWith("0")?"62"+waClean.slice(1):waClean;
+  const cleanJoinInfo = getCleanJoinInfo(j.joinInfo);
+  const urgencyLabel = getUrgencyLabel(j.joinInfo, j.urgent);
+  const waIntl=getPrimaryPhone(j.whatsapp);
   const msg=encodeURIComponent(`Halo, saya tertarik dengan lowongan di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
   const waLink=waIntl?`https://wa.me/${waIntl}?text=${msg}`:"";
   const emailLink=j.email?`mailto:${j.email}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}`:"";
@@ -595,8 +646,8 @@ function render(j){
               <p class="subtitle">${escapeHTML(j.summary || "Lowongan kerja pelaut terbaru")}</p>
             </div>
             <div class="badges">
-              ${j.urgent?`<span class="badge badge-red">Urgent</span>`:""}
-              ${j.joinInfo?`<span class="badge badge-blue">${escapeHTML(j.joinInfo)}</span>`:""}
+              ${urgencyLabel?`<span class="badge badge-red">${escapeHTML(urgencyLabel)}</span>`:""}
+              ${cleanJoinInfo?`<span class="badge badge-blue">${escapeHTML(cleanJoinInfo)}</span>`:""}
               ${j.free?`<span class="badge badge-green">Free of Charge</span>`:""}
               ${j.featured?`<span class="badge badge-amber">Featured</span>`:""}
             </div>
@@ -605,7 +656,7 @@ function render(j){
             <div class="stat"><strong>${j.sections.length}</strong><span>Grup Lowongan</span></div>
             <div class="stat"><strong>${openings}</strong><span>Posisi Dibuka</span></div>
             <div class="stat"><strong>${escapeHTML(salary)}</strong><span>Rentang Gaji</span></div>
-            <div class="stat"><strong>${j.joinInfo?escapeHTML(j.joinInfo):"Update"}</strong><span>Join Info</span></div>
+            <div class="stat"><strong>${cleanJoinInfo?escapeHTML(cleanJoinInfo):"TBC"}</strong><span>Join Info</span></div>
           </div>
         </div>
       </div>
@@ -636,7 +687,7 @@ function render(j){
       <aside class="sidebar">
         <div class="sidebar-card">
           <h3>Hubungi Recruiter</h3>
-          ${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}
+          ${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(displayPhone(x.trim()))}</a>`).join("")}</div>`:""}
           ${j.email?`<div class="contact-block"><strong>Email</strong>${j.email.split(/&|,/).map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}
           <div class="action-stack">
             ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Hubungi via WhatsApp</a>`:""}
