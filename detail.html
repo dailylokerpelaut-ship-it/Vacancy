@@ -1,17 +1,37 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <!-- Google tag (gtag.js) -->
+<head>  <!-- DLP GA4 Tracking — Vacancy Detail Page -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NR05C7B09B"></script>
   <script>
-// DLP salary currency fix v2: IDR/USD/SGD/MYR safe salary range
-// DLP full salary detail v1: detail keeps full IDR 5.000.000 format
-// DLP benefit detail split v1: Benefit: items shown in Benefit / Fasilitas section
+    // DLP salary currency fix v2: IDR/USD/SGD/MYR safe salary range
+    // DLP full salary detail v1: detail keeps full IDR 5.000.000 format
+    // DLP benefit detail split v1: Benefit: items shown in Benefit / Fasilitas section
+    // DLP GA4 detail tracking v1: WhatsApp/email/report scam/detail loaded
 
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
+
     gtag('js', new Date());
-    gtag('config', 'G-NR05C7B09B');
+
+    gtag('config', 'G-NR05C7B09B', {
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: window.location.pathname,
+      send_page_view: true
+    });
+
+    function trackDLPEvent(eventName, params){
+      if (typeof gtag !== "function") return;
+
+      gtag("event", eventName, Object.assign({
+        event_category: "Vacancy Detail",
+        page_name: "vacancy_detail",
+        page_title: document.title,
+        page_url: window.location.href,
+        hostname: window.location.hostname,
+        transport_type: "beacon"
+      }, params || {}));
+    }
   </script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -323,6 +343,20 @@ async function loadDetail(){
     .filter(j=>j.company&&!isExpired(j.timestamp));
   const job=jobs.find(j=>(j.batchId&&j.batchId===id)||j.id===id) || jobs[0];
   render(job);
+
+  if(job){
+    trackDLPEvent("dlp_vacancy_detail_loaded", {
+      event_label: "Vacancy detail loaded",
+      company: job.company || "Unknown",
+      batch_id: job.batchId || job.id || "",
+      total_sections: (job.sections || []).length,
+      total_openings: countOpenings(job.sections),
+      urgent: !!job.urgent,
+      featured: !!job.featured,
+      free_of_charge: !!job.free,
+      join_info: job.joinInfo || ""
+    });
+  }
 }
 
 
@@ -531,8 +565,17 @@ function render(j){
   const app=document.getElementById("app");
   if(!j){
     app.innerHTML=`<div class="container empty"><strong>Lowongan tidak ditemukan</strong><p>Data belum approved atau sudah expired.</p></div>`;
+    trackDLPEvent("dlp_vacancy_detail_not_found", {
+      event_label: "Vacancy detail not found"
+    });
     return;
   }
+
+  window.__DLP_CURRENT_VACANCY = {
+    company: j.company || "Unknown",
+    batchId: j.batchId || j.id || ""
+  };
+
   const openings=countOpenings(j.sections);
   const salary=salaryRangeText(j.sections);
   const waClean=(j.whatsapp||"").replace(/\D/g,"");
@@ -596,8 +639,8 @@ function render(j){
           ${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}
           ${j.email?`<div class="contact-block"><strong>Email</strong>${j.email.split(/&|,/).map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}
           <div class="action-stack">
-            ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}">Hubungi via WhatsApp</a>`:""}
-            ${emailLink?`<a class="btn btn-email" href="${emailLink}">Kirim Email</a>`:""}
+            ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Hubungi via WhatsApp</a>`:""}
+            ${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Kirim Email</a>`:""}
           </div>
         </div>
         ${j.free?`
@@ -639,61 +682,59 @@ document.addEventListener("click", function (event) {
   const href = link.getAttribute("href") || "";
   const text = (link.innerText || "").trim();
 
-  const pageTitle = document.title || "Unknown Vacancy";
-  const currentUrl = window.location.href;
+  const vacancy = window.__DLP_CURRENT_VACANCY || {};
+  const company = link.dataset.company || vacancy.company || "Unknown";
+  const batchId = link.dataset.batchId || vacancy.batchId || "";
 
   if (
     href.includes("wa.me") ||
     href.includes("api.whatsapp.com") ||
     href.includes("whatsapp.com/send")
   ) {
-    if (typeof gtag === "function") {
-      gtag("event", "apply_whatsapp_click", {
-        event_category: "Apply Button",
-        event_label: text || "WhatsApp Apply",
-        vacancy_page: pageTitle,
-        page_url: currentUrl,
-        link_url: href,
-        transport_type: "beacon"
-      });
-    }
-
-    console.log("Tracked WhatsApp Apply:", href);
+    trackDLPEvent("apply_whatsapp_click", {
+      event_category: "Apply Button",
+      event_label: text || "WhatsApp Apply",
+      company: company,
+      batch_id: batchId,
+      link_url: href
+    });
   }
 
   if (href.startsWith("mailto:")) {
-    if (typeof gtag === "function") {
-      gtag("event", "apply_email_click", {
-        event_category: "Apply Button",
-        event_label: text || "Email Apply",
-        vacancy_page: pageTitle,
-        page_url: currentUrl,
-        link_url: href,
-        transport_type: "beacon"
-      });
-    }
-
-    console.log("Tracked Email Apply:", href);
+    trackDLPEvent("apply_email_click", {
+      event_category: "Apply Button",
+      event_label: text || "Email Apply",
+      company: company,
+      batch_id: batchId,
+      link_url: href
+    });
   }
 
   if (link.classList.contains("report-scam-link")) {
-    if (typeof gtag === "function") {
-      gtag("event", "report_scam_click", {
-        event_category: "Safety",
-        event_label: text || "Report Scam",
-        vacancy_page: pageTitle,
-        company: link.dataset.company || "Unknown",
-        batch_id: link.dataset.batchId || "",
-        page_url: currentUrl,
-        link_url: href,
-        transport_type: "beacon"
-      });
-    }
+    trackDLPEvent("report_scam_click", {
+      event_category: "Safety",
+      event_label: text || "Report Scam",
+      company: company,
+      batch_id: batchId,
+      link_url: href
+    });
+  }
 
-    console.log("Tracked Scam Report:", href);
+  if (
+    href === "index.html" ||
+    href.endsWith("/index.html") ||
+    href === "/" ||
+    href.includes("vacancy.dailylokerpelaut.com")
+  ) {
+    trackDLPEvent("vacancy_detail_back_click", {
+      event_category: "Navigation",
+      event_label: text || "Back to vacancy homepage",
+      company: company,
+      batch_id: batchId,
+      link_url: href
+    });
   }
 });
 </script>
-
 </body>
 </html>
