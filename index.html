@@ -1,16 +1,73 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- DLP GA4 Tracking — Vacancy Homepage -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NR05C7B09B"></script>
   <script>
     // DLP salary currency fix v2: IDR/USD/SGD/MYR safe salary range
     // DLP compact salary card v1: index shows IDR 5JT-5,5JT
+    // DLP GA4 vacancy tracking v3: homepage, job detail, apply, share, reaction, search/filter, recruiter CTA
 
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
+
     gtag('js', new Date());
-    gtag('config', 'G-NR05C7B09B');
+    gtag('config', 'G-NR05C7B09B', {
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: window.location.pathname,
+      send_page_view: true
+    });
+
+    function trackDLPEvent(eventName, params){
+      if (typeof gtag !== "function") return;
+
+      gtag("event", eventName, Object.assign({
+        event_category: "Vacancy Website",
+        page_name: "vacancy_home",
+        page_title: document.title,
+        page_url: window.location.href,
+        hostname: window.location.hostname,
+        transport_type: "beacon"
+      }, params || {}));
+    }
+
+    trackDLPEvent("dlp_vacancy_home_loaded", {
+      event_label: "Vacancy homepage loaded"
+    });
+
+    (function trackVacancyScrollDepth(){
+      const sent = {};
+
+      function checkScrollDepth(){
+        const doc = document.documentElement;
+        const body = document.body;
+        const scrollTop = window.pageYOffset || doc.scrollTop || body.scrollTop || 0;
+        const scrollHeight = Math.max(
+          body.scrollHeight || 0,
+          doc.scrollHeight || 0,
+          body.offsetHeight || 0,
+          doc.offsetHeight || 0
+        );
+        const clientHeight = window.innerHeight || doc.clientHeight || 0;
+        const available = Math.max(scrollHeight - clientHeight, 1);
+        const percent = Math.round((scrollTop / available) * 100);
+
+        [25, 50, 75, 90].forEach(function(depth){
+          if (!sent[depth] && percent >= depth) {
+            sent[depth] = true;
+            trackDLPEvent("vacancy_home_scroll_" + depth, {
+              event_category: "Scroll Depth",
+              scroll_depth: depth,
+              event_label: "Vacancy homepage scroll " + depth + "%"
+            });
+          }
+        });
+      }
+
+      window.addEventListener("scroll", checkScrollDepth, { passive: true });
+      window.addEventListener("load", checkScrollDepth);
+    })();
   </script>
 
   <meta charset="UTF-8" />
@@ -484,30 +541,30 @@
 
     let keywordFilter = "";
     let currentPage = 1;
+    let searchTrackTimer = null;
+    let lastTrackedSearch = "";
 
     function openForm(){
-      if(typeof gtag === "function"){
-        gtag("event", "post_loker_click", {
-          event_category: "Recruiter",
-          page_url: window.location.href,
-          link_url: FORM_URL,
-          transport_type: "beacon"
-        });
-      }
+      trackDLPEvent("post_loker_click", {
+        event_category: "Recruiter",
+        event_label: "Post loker button click",
+        button_source: "vacancy_home",
+        link_url: FORM_URL
+      });
+
       window.open(FORM_URL, "_blank", "noopener");
     }
 
     function openEngineerBook(){
-      if(typeof gtag === "function"){
-        gtag("event", "engineer_book_banner_click", {
-          event_category: "Internal Promotion",
-          campaign: "homepage_highlight_iklan",
-          product: "engineer_officer_interview_mastery",
-          page_url: window.location.href,
-          link_url: ENGINEER_BOOK_URL,
-          transport_type: "beacon"
-        });
-      }
+      trackDLPEvent("engineer_book_banner_click", {
+        event_category: "Internal Promotion",
+        event_label: "Engineer book banner click",
+        campaign: "homepage_highlight_iklan",
+        product: "engineer_officer_interview_mastery",
+        button_source: "vacancy_home_banner",
+        link_url: ENGINEER_BOOK_URL
+      });
+
       window.open(ENGINEER_BOOK_URL, "_blank", "noopener");
     }
 
@@ -797,6 +854,14 @@
 
     async function initPage(){
       await getJobsOnce();
+
+      trackDLPEvent("dlp_vacancy_jobs_loaded", {
+        event_category: "Vacancy Website",
+        event_label: "Vacancy jobs loaded",
+        total_jobs: allJobs.length,
+        approved_jobs_visible: allJobs.length
+      });
+
       renderJobs();
 
       // Ambil total reaction hanya 1x saat halaman pertama load.
@@ -811,16 +876,46 @@
       currentPage = 1;
       document.querySelectorAll("#quickFilters .chip").forEach(b=>b.classList.remove("active"));
       if(btn) btn.classList.add("active");
+
+      trackDLPEvent("vacancy_filter_click", {
+        event_category: "Search & Filter",
+        filter_keyword: keywordFilter || "semua",
+        event_label: btn ? (btn.textContent || "filter").trim() : (keywordFilter || "semua")
+      });
+
       renderJobs();
     }
 
     function resetPageAndRender(){
       currentPage = 1;
+
+      const searchInput = document.getElementById("searchInput");
+      const searchQuery = (searchInput?.value || "").trim().toLowerCase();
+
+      clearTimeout(searchTrackTimer);
+      searchTrackTimer = setTimeout(function(){
+        if(searchQuery.length >= 2 && searchQuery !== lastTrackedSearch){
+          lastTrackedSearch = searchQuery;
+          trackDLPEvent("vacancy_search_used", {
+            event_category: "Search & Filter",
+            search_term: searchQuery,
+            search_length: searchQuery.length
+          });
+        }
+      }, 900);
+
       renderJobs();
     }
 
     function goToPage(page){
       currentPage = page;
+
+      trackDLPEvent("vacancy_pagination_click", {
+        event_category: "Pagination",
+        page_number: page,
+        event_label: "Open page " + page
+      });
+
       renderJobs();
       const head = document.querySelector(".section-head");
       if(head) head.scrollIntoView({ behavior:"smooth", block:"start" });
@@ -1199,17 +1294,13 @@
           try{ localStorage.setItem(reactionStorageKey(batchId), "1"); }catch(e){}
           updateReactionUI(batchId, Number(res.count || 0));
 
-          if(typeof gtag === "function"){
-            gtag("event", "vacancy_reaction_click", {
-              event_category: "Reaction",
-              reaction_type: "interested",
-              company: btn.dataset.company || "Unknown",
-              batch_id: batchId,
-              position: btn.dataset.position || "",
-              page_url: window.location.href,
-              transport_type: "beacon"
-            });
-          }
+          trackDLPEvent("vacancy_reaction_click", {
+            event_category: "Reaction",
+            reaction_type: "interested",
+            company: btn.dataset.company || "Unknown",
+            batch_id: batchId,
+            position: btn.dataset.position || ""
+          });
         }else{
           btn.disabled = false;
           console.warn("Reaction failed:", res);
@@ -1240,17 +1331,13 @@
           window.prompt("Copy link lowongan:", url);
         }
 
-        if(typeof gtag === "function"){
-          gtag("event", "share_vacancy", {
-            event_category: "Share",
-            company: company,
-            batch_id: batchId,
-            position: position,
-            page_url: window.location.href,
-            link_url: url,
-            transport_type: "beacon"
-          });
-        }
+        trackDLPEvent("share_vacancy", {
+          event_category: "Share",
+          company: company,
+          batch_id: batchId,
+          position: position,
+          link_url: url
+        });
       }catch(err){
         console.warn("Share cancelled or failed:", err);
       }
@@ -1268,17 +1355,14 @@
       const position = link.dataset.position || "";
 
       if (link.classList.contains("vacancy-detail-link")) {
-        if (typeof gtag === "function") {
-          gtag("event", "vacancy_detail_click", {
-            event_category: "Vacancy",
-            company: company,
-            batch_id: batchId,
-            position: position,
-            page_url: currentUrl,
-            link_url: href,
-            transport_type: "beacon"
-          });
-        }
+        trackDLPEvent("vacancy_detail_click", {
+          event_category: "Vacancy",
+          event_label: "Open vacancy detail",
+          company: company,
+          batch_id: batchId,
+          position: position,
+          link_url: href
+        });
       }
 
       if (
@@ -1286,47 +1370,38 @@
         href.includes("api.whatsapp.com") ||
         href.includes("whatsapp.com/send")
       ) {
-        if (typeof gtag === "function") {
-          gtag("event", "apply_whatsapp_click", {
-            event_category: "Apply Button",
-            company: company,
-            batch_id: batchId,
-            position: position,
-            contact_type: "whatsapp",
-            page_url: currentUrl,
-            link_url: href,
-            transport_type: "beacon"
-          });
-        }
+        trackDLPEvent("apply_whatsapp_click", {
+          event_category: "Apply Button",
+          event_label: "Apply via WhatsApp",
+          company: company,
+          batch_id: batchId,
+          position: position,
+          contact_type: "whatsapp",
+          link_url: href
+        });
       }
 
       if (href.startsWith("mailto:")) {
-        if (typeof gtag === "function") {
-          gtag("event", "apply_email_click", {
-            event_category: "Apply Button",
-            company: company,
-            batch_id: batchId,
-            position: position,
-            contact_type: "email",
-            page_url: currentUrl,
-            link_url: href,
-            transport_type: "beacon"
-          });
-        }
+        trackDLPEvent("apply_email_click", {
+          event_category: "Apply Button",
+          event_label: "Apply via Email",
+          company: company,
+          batch_id: batchId,
+          position: position,
+          contact_type: "email",
+          link_url: href
+        });
       }
 
       if (link.classList.contains("report-scam-link")) {
-        if (typeof gtag === "function") {
-          gtag("event", "report_scam_click", {
-            event_category: "Safety",
-            company: company,
-            batch_id: batchId,
-            position: position,
-            page_url: currentUrl,
-            link_url: href,
-            transport_type: "beacon"
-          });
-        }
+        trackDLPEvent("report_scam_click", {
+          event_category: "Safety",
+          event_label: "Report suspicious vacancy",
+          company: company,
+          batch_id: batchId,
+          position: position,
+          link_url: href
+        });
       }
     });
 
