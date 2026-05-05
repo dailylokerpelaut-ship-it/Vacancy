@@ -7,6 +7,7 @@
     // DLP full salary detail v1: detail keeps full IDR 5.000.000 format
     // DLP benefit detail split v1: Benefit: items shown in Benefit / Fasilitas section
     // DLP GA4 detail tracking v1: WhatsApp/email/report scam/detail loaded
+    // DLP view counter detail v1: detail views counted via Apps Script
 
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -105,6 +106,40 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
 .contact-block strong{font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
 .contact-block a{color:var(--blue);font-weight:700;font-size:13px;word-break:break-word}
 .action-stack{display:grid;gap:10px}
+.view-stat-box{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 13px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#f8fafc;
+  color:#334155;
+}
+.view-stat-icon{
+  width:34px;
+  height:34px;
+  border-radius:11px;
+  background:var(--blue-soft);
+  color:var(--blue);
+  display:grid;
+  place-items:center;
+  flex:none;
+  font-size:15px;
+}
+.view-stat-main strong{
+  display:block;
+  color:#0f172a;
+  font-size:14px;
+  line-height:1.2;
+}
+.view-stat-main span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
 .note-card{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}
 .note-card strong{display:block;color:#166534;margin-bottom:5px}
 .note-card p{font-size:13px;color:#14532d;line-height:1.55}
@@ -171,6 +206,7 @@ const SHEET_ID   = "1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8";
 const SHEET_TAB  = "WebsiteJobsGrouped";
 const EXPIRE_DAYS = 7;
 const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
+const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){
@@ -590,6 +626,65 @@ function additionalInfoHTML(j){
 }
 
 
+
+function jsonpRequest(url, params) {
+  return new Promise(resolve => {
+    const callbackName = "dlpViewCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+    const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName }));
+    const script = document.createElement("script");
+
+    window[callbackName] = function(data) {
+      try {
+        resolve(data || { ok:false });
+      } finally {
+        delete window[callbackName];
+        if (script && script.parentNode) script.parentNode.removeChild(script);
+      }
+    };
+
+    script.onerror = function() {
+      delete window[callbackName];
+      if (script && script.parentNode) script.parentNode.removeChild(script);
+      resolve({ ok:false, error:"JSONP request failed" });
+    };
+
+    script.src = url + "?" + query.toString();
+    document.body.appendChild(script);
+  });
+}
+
+function formatViewCount(count) {
+  const n = Number(count || 0);
+  return n.toLocaleString("id-ID");
+}
+
+function countVacancyDetailView(batchId, company) {
+  if (!batchId) return;
+
+  const el = document.getElementById("vacancyViewCount");
+  if (el) el.textContent = "Menghitung...";
+
+  jsonpRequest(VIEW_COUNTER_API_URL, {
+    action: "view",
+    batchId: batchId
+  }).then(data => {
+    if (data && data.ok) {
+      const count = Number(data.count || 0);
+      if (el) el.textContent = "Dilihat " + formatViewCount(count) + " kali";
+
+      trackDLPEvent("vacancy_detail_view_counted", {
+        event_category: "Vacancy Detail",
+        event_label: "Vacancy detail view counted",
+        company: company || "Unknown",
+        batch_id: batchId,
+        view_count: count
+      });
+    } else {
+      if (el) el.textContent = "Dilihat — kali";
+    }
+  });
+}
+
 function getCleanJoinInfo(v){
   const s = String(v || "").trim();
   if(!s) return "";
@@ -693,6 +788,13 @@ function render(j){
             ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Hubungi via WhatsApp</a>`:""}
             ${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Kirim Email</a>`:""}
           </div>
+          <div class="view-stat-box">
+            <div class="view-stat-icon">👁️</div>
+            <div class="view-stat-main">
+              <strong id="vacancyViewCount">Dilihat — kali</strong>
+              <span>Total kunjungan halaman detail</span>
+            </div>
+          </div>
         </div>
         ${j.free?`
           <div class="sidebar-card note-card">
@@ -719,6 +821,8 @@ function render(j){
       </aside>
     </section>
   `;
+
+  countVacancyDetailView(j.batchId || j.id, j.company);
 }
 loadDetail().catch(err=>{
   console.warn(err);
