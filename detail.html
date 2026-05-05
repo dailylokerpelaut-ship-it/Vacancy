@@ -8,6 +8,7 @@
     // DLP benefit detail split v1: Benefit: items shown in Benefit / Fasilitas section
     // DLP GA4 detail tracking v1: WhatsApp/email/report scam/detail loaded
     // DLP view counter detail v1: detail views counted via Apps Script
+    // DLP after-hours WhatsApp reminder v1: soft warning 21.00-07.00 WIB
 
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -139,6 +140,106 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
   color:var(--muted);
   font-size:12px;
   margin-top:3px;
+}
+.apply-time-note{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+  text-align:center;
+}
+.apply-time-note strong{
+  color:#334155;
+  font-weight:800;
+}
+.after-hours-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(15,23,42,.58);
+  backdrop-filter:blur(6px);
+}
+.after-hours-modal-backdrop.open{display:flex}
+.after-hours-modal{
+  width:min(520px,100%);
+  background:#fff;
+  border:1px solid rgba(226,232,240,.95);
+  border-radius:22px;
+  box-shadow:0 24px 70px rgba(15,23,42,.26);
+  padding:26px;
+  text-align:center;
+}
+.after-hours-icon{
+  width:68px;
+  height:68px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--blue-soft);
+  color:var(--blue);
+  font-size:32px;
+}
+.after-hours-modal h3{
+  margin:0 0 10px;
+  color:#0f172a;
+  font-size:22px;
+  letter-spacing:-.35px;
+}
+.after-hours-modal p{
+  color:#334155;
+  font-size:14px;
+  line-height:1.7;
+  margin:0;
+}
+.after-hours-callout{
+  margin:16px 0 18px;
+  padding:11px 13px;
+  border:1px solid #fed7aa;
+  border-radius:13px;
+  background:#fff7ed;
+  color:#9a3412;
+  font-size:13px;
+  font-weight:800;
+}
+.after-hours-actions{
+  display:grid;
+  grid-template-columns:1fr 1.35fr;
+  gap:10px;
+}
+.after-hours-btn{
+  min-height:48px;
+  border-radius:13px;
+  border:1px solid var(--line);
+  cursor:pointer;
+  font-weight:900;
+  font-size:14px;
+}
+.after-hours-btn.secondary{
+  background:#fff;
+  color:#0f172a;
+}
+.after-hours-btn.primary{
+  background:#16a34a;
+  border-color:#16a34a;
+  color:#fff;
+}
+.after-hours-close{
+  margin-top:12px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+@media(max-width:520px){
+  .after-hours-modal{padding:22px 18px;border-radius:20px}
+  .after-hours-actions{grid-template-columns:1fr}
 }
 .note-card{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}
 .note-card strong{display:block;color:#166534;margin-bottom:5px}
@@ -788,10 +889,12 @@ function render(j){
             ${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Hubungi via WhatsApp</a>`:""}
             ${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}">Kirim Email</a>`:""}
           </div>
+          ${(waLink || emailLink)?`<div class="apply-time-note"><strong>Apply sesuai lowongan.</strong> Hindari menghubungi recruiter terlalu malam kecuali urgent/ASAP.<br>Email bisa dikirim kapan saja.</div>`:""}
           <div class="view-stat-box">
             <div class="view-stat-icon">👁️</div>
             <div class="view-stat-main">
               <strong id="vacancyViewCount">Dilihat — kali</strong>
+              <span>Total kunjungan halaman detail</span>
             </div>
           </div>
         </div>
@@ -827,6 +930,135 @@ loadDetail().catch(err=>{
   console.warn(err);
   document.getElementById("app").innerHTML=`<div class="container empty"><strong>Gagal memuat detail</strong><p>Cek koneksi atau data sheet.</p></div>`;
 });
+
+</script>
+
+<div id="afterHoursWhatsAppModal" class="after-hours-modal-backdrop" aria-hidden="true">
+  <div class="after-hours-modal" role="dialog" aria-modal="true" aria-labelledby="afterHoursTitle">
+    <div class="after-hours-icon">🌙</div>
+    <h3 id="afterHoursTitle">Catatan kecil sebelum apply</h3>
+    <p>
+      Saat ini sudah di luar jam kerja umum. Agar lebih profesional, disarankan menghubungi recruiter pada jam kerja,
+      sekitar 08.00–17.00 WIB. Jika lowongan tertulis URGENT / ASAP, atau kamu tetap ingin mengirim pesan sekarang,
+      silakan lanjut dengan sopan dan singkat.
+    </p>
+    <div class="after-hours-callout">⏰ Disarankan WhatsApp pada 08.00–17.00 WIB</div>
+    <div class="after-hours-actions">
+      <button type="button" class="after-hours-btn secondary" id="afterHoursLaterBtn">Apply Besok Pagi</button>
+      <button type="button" class="after-hours-btn primary" id="afterHoursContinueBtn">Tetap Lanjut ke WhatsApp</button>
+    </div>
+    <button type="button" class="after-hours-close" id="afterHoursCloseBtn">Tutup</button>
+  </div>
+</div>
+
+<script>
+let pendingAfterHoursWhatsApp = null;
+
+function getJakartaHour(){
+  try{
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit',
+      hour12: false
+    }).formatToParts(new Date());
+    const hourPart = parts.find(p => p.type === 'hour');
+    return Number(hourPart ? hourPart.value : new Date().getHours());
+  }catch(e){
+    return new Date().getHours();
+  }
+}
+
+function isAfterHoursWIB(){
+  const h = getJakartaHour();
+  return h >= 21 || h < 7;
+}
+
+function isWhatsAppApplyLink(href){
+  const s = String(href || '');
+  return s.includes('wa.me') || s.includes('api.whatsapp.com') || s.includes('whatsapp.com/send');
+}
+
+function showAfterHoursWhatsAppModal(payload){
+  pendingAfterHoursWhatsApp = payload || null;
+  const modal = document.getElementById('afterHoursWhatsAppModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  trackDLPEvent('after_hours_whatsapp_prompt_shown', {
+    event_category: 'Apply Button',
+    event_label: 'After-hours WhatsApp reminder shown',
+    company: payload && payload.company ? payload.company : 'Unknown',
+    batch_id: payload && payload.batchId ? payload.batchId : '',
+    link_url: payload && payload.href ? payload.href : '',
+    jakarta_hour: getJakartaHour()
+  });
+}
+
+function closeAfterHoursWhatsAppModal(reason){
+  const modal = document.getElementById('afterHoursWhatsAppModal');
+  if (modal) {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  document.body.style.overflow = '';
+
+  if (pendingAfterHoursWhatsApp && reason) {
+    trackDLPEvent(reason, {
+      event_category: 'Apply Button',
+      event_label: reason === 'after_hours_whatsapp_later_click' ? 'Apply tomorrow selected' : 'After-hours modal closed',
+      company: pendingAfterHoursWhatsApp.company || 'Unknown',
+      batch_id: pendingAfterHoursWhatsApp.batchId || '',
+      link_url: pendingAfterHoursWhatsApp.href || '',
+      jakarta_hour: getJakartaHour()
+    });
+  }
+
+  pendingAfterHoursWhatsApp = null;
+}
+
+function continueAfterHoursWhatsApp(){
+  if (!pendingAfterHoursWhatsApp || !pendingAfterHoursWhatsApp.href) {
+    closeAfterHoursWhatsAppModal('after_hours_whatsapp_modal_closed');
+    return;
+  }
+
+  const payload = pendingAfterHoursWhatsApp;
+
+  trackDLPEvent('after_hours_whatsapp_continue_click', {
+    event_category: 'Apply Button',
+    event_label: 'Continue to WhatsApp after warning',
+    company: payload.company || 'Unknown',
+    batch_id: payload.batchId || '',
+    link_url: payload.href || '',
+    jakarta_hour: getJakartaHour()
+  });
+
+  trackDLPEvent('apply_whatsapp_click', {
+    event_category: 'Apply Button',
+    event_label: 'WhatsApp Apply after-hours continue',
+    company: payload.company || 'Unknown',
+    batch_id: payload.batchId || '',
+    link_url: payload.href || ''
+  });
+
+  const url = payload.href;
+  closeAfterHoursWhatsAppModal();
+  window.open(url, '_blank', 'noopener');
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const later = document.getElementById('afterHoursLaterBtn');
+  const cont = document.getElementById('afterHoursContinueBtn');
+  const close = document.getElementById('afterHoursCloseBtn');
+  const modal = document.getElementById('afterHoursWhatsAppModal');
+
+  if (later) later.addEventListener('click', function(){ closeAfterHoursWhatsAppModal('after_hours_whatsapp_later_click'); });
+  if (cont) cont.addEventListener('click', continueAfterHoursWhatsApp);
+  if (close) close.addEventListener('click', function(){ closeAfterHoursWhatsAppModal('after_hours_whatsapp_modal_closed'); });
+  if (modal) modal.addEventListener('click', function(e){ if (e.target === modal) closeAfterHoursWhatsAppModal('after_hours_whatsapp_modal_closed'); });
+});
 </script>
 <script>
 document.addEventListener("click", function (event) {
@@ -840,11 +1072,18 @@ document.addEventListener("click", function (event) {
   const company = link.dataset.company || vacancy.company || "Unknown";
   const batchId = link.dataset.batchId || vacancy.batchId || "";
 
-  if (
-    href.includes("wa.me") ||
-    href.includes("api.whatsapp.com") ||
-    href.includes("whatsapp.com/send")
-  ) {
+  if (isWhatsAppApplyLink(href)) {
+    if (isAfterHoursWIB()) {
+      event.preventDefault();
+      showAfterHoursWhatsAppModal({
+        href: href,
+        company: company,
+        batchId: batchId,
+        label: text || "WhatsApp Apply"
+      });
+      return;
+    }
+
     trackDLPEvent("apply_whatsapp_click", {
       event_category: "Apply Button",
       event_label: text || "WhatsApp Apply",
