@@ -9,6 +9,7 @@
     // DLP GA4 detail tracking v1: WhatsApp/email/report scam/detail loaded
     // DLP view counter detail v1: detail views counted via Apps Script
     // DLP after-hours WhatsApp reminder v1: soft warning 21.00-07.00 WIB
+    // DLP mobile sticky apply v1: mobile-first apply bar + compact position chips
 
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -280,8 +281,121 @@ h1{font-size:32px;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
 }
 
 
+/* DLP mobile conversion upgrade v1 */
+.position-chips-mobile{display:none}
+.position-chip-list{display:flex;gap:9px;flex-wrap:wrap}
+.position-chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:#0f172a;
+  font-size:13px;
+  font-weight:800;
+  box-shadow:0 6px 18px rgba(15,23,42,.035);
+}
+.position-chip.more{color:var(--blue);background:var(--blue-soft);border-color:#cfe0ff}
+
+.mobile-meta-row{display:none}
+.mobile-meta-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:#334155;
+  padding:8px 11px;
+  font-size:12px;
+  font-weight:800;
+}
+.mobile-apply-bar{
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:9000;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+  box-shadow:0 -14px 36px rgba(15,23,42,.12);
+}
+.mobile-apply-inner{width:min(720px,100%);margin-inline:auto}
+.mobile-apply-note{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin-bottom:8px;
+  color:#475569;
+  font-size:12px;
+  font-weight:700;
+  line-height:1.3;
+  text-align:center;
+}
+.mobile-apply-actions{display:grid;grid-template-columns:1.12fr .88fr;gap:10px}
+.mobile-apply-actions.one{grid-template-columns:1fr}
+.mobile-apply-btn{
+  min-height:54px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  font-weight:900;
+  font-size:14px;
+  line-height:1.15;
+  text-align:center;
+  border:1px solid transparent;
+  box-shadow:0 10px 22px rgba(15,23,42,.10);
+}
+.mobile-apply-btn small{display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px}
+.mobile-apply-wa{background:var(--green);color:#fff;border-color:#15803d}
+.mobile-apply-email{background:#fff;color:var(--blue);border-color:#b8d0ff;box-shadow:0 8px 18px rgba(22,93,255,.08)}
+.mobile-apply-icon{font-size:20px;line-height:1}
+@media(max-width:720px){
+  body.has-mobile-apply{padding-bottom:108px}
+  .mobile-apply-bar{display:block}
+  .position-chips-mobile{display:block}
+  .mobile-meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .desktop-vacancy-table-card{margin-top:0}
+}
+@media(max-width:520px){
+  .site-header{position:sticky}
+  .header-inner{height:62px}
+  .brand{gap:9px;font-size:14px}
+  .brand-mark{width:36px;height:36px;border-radius:12px;font-size:21px}
+  .detail-hero{padding:16px 0 12px}
+  .breadcrumb{display:none}
+  .hero-card{padding:18px;border-radius:20px}
+  .detail-title{gap:12px}
+  h1{font-size:24px;line-height:1.18;margin-bottom:7px}
+  .subtitle{font-size:14px;line-height:1.55}
+  .badges{gap:7px;margin-top:2px}
+  .badge{font-size:10px;padding:6px 9px}
+  .stats{gap:9px;margin-top:16px}
+  .stat{padding:12px 11px;border-radius:13px}
+  .stat strong{font-size:17px}
+  .stat span{font-size:11px}
+  .detail-grid{gap:14px;margin-top:10px;margin-bottom:24px}
+  .section-card,.sidebar-card{border-radius:18px;padding:17px}
+  .section-card h2{font-size:18px;margin-bottom:12px}
+  .job-table{font-size:12px;min-width:480px}
+  .job-table th,.job-table td{padding:10px 11px}
+  .sidebar .sidebar-card:first-child{display:none}
+  .apply-time-note{display:none}
+}
+
+
 /* DLP detail priority fix v1: cleaner print/screenshot output */
 @media print{
+  .mobile-apply-bar{display:none!important}
   .site-header{position:static!important;top:auto!important;box-shadow:none!important;backdrop-filter:none!important;background:#fff!important}
   body{background:#fff!important}
   .detail-hero{padding-top:14px!important}
@@ -762,8 +876,8 @@ function formatViewCount(count) {
 function countVacancyDetailView(batchId, company) {
   if (!batchId) return;
 
-  const el = document.getElementById("vacancyViewCount");
-  if (el) el.textContent = "Menghitung...";
+  const els = document.querySelectorAll(".vacancyViewCountText");
+  els.forEach(el => el.textContent = "Menghitung...");
 
   jsonpRequest(VIEW_COUNTER_API_URL, {
     action: "view",
@@ -771,7 +885,7 @@ function countVacancyDetailView(batchId, company) {
   }).then(data => {
     if (data && data.ok) {
       const count = Number(data.count || 0);
-      if (el) el.textContent = "Dilihat " + formatViewCount(count) + " kali";
+      els.forEach(el => el.textContent = "Dilihat " + formatViewCount(count) + " kali");
 
       trackDLPEvent("vacancy_detail_view_counted", {
         event_category: "Vacancy Detail",
@@ -781,7 +895,7 @@ function countVacancyDetailView(batchId, company) {
         view_count: count
       });
     } else {
-      if (el) el.textContent = "Dilihat — kali";
+      els.forEach(el => el.textContent = "Dilihat — kali");
     }
   });
 }
@@ -807,9 +921,54 @@ function getPrimaryPhone(raw){
   return normalizePhone(m ? m[0] : s.split(/[\/,&;]/)[0]);
 }
 
+
+function allPositionTitles(sections){
+  const out = [];
+  (sections || []).forEach(sec => {
+    (sec.items || []).forEach(item => {
+      const title = cleanDisplayText(item && item.title ? item.title : "");
+      if(title) out.push(title);
+    });
+  });
+  return out;
+}
+
+function mobilePositionChipsHTML(j){
+  const titles = allPositionTitles(j.sections);
+  if(!titles.length) return "";
+  const shown = titles.slice(0,5);
+  const rest = Math.max(0, titles.length - shown.length);
+  return `
+    <div class="section-card position-chips-mobile">
+      <h2>Posisi Tersedia</h2>
+      <div class="position-chip-list">
+        ${shown.map(t=>`<span class="position-chip">${escapeHTML(t)}</span>`).join("")}
+        ${rest ? `<span class="position-chip more">+${rest} lainnya</span>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function mobileApplyBarHTML(waLink, emailLink, j){
+  if(!waLink && !emailLink) return "";
+  const one = (waLink && !emailLink) || (!waLink && emailLink);
+  return `
+    <div class="mobile-apply-bar" role="region" aria-label="Apply lowongan">
+      <div class="mobile-apply-inner">
+        <div class="mobile-apply-note">ⓘ Apply sesuai lowongan · gunakan WhatsApp dengan bijak</div>
+        <div class="mobile-apply-actions ${one ? "one" : ""}">
+          ${waLink ? `<a class="mobile-apply-btn mobile-apply-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}"><span class="mobile-apply-icon">📲</span><span>Hubungi via WhatsApp<small>Respon cepat via WA</small></span></a>` : ""}
+          ${emailLink ? `<a class="mobile-apply-btn mobile-apply-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId || j.id)}"><span class="mobile-apply-icon">✉️</span><span>Kirim Email<small>Kirim lamaran via email</small></span></a>` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function render(j){
   const app=document.getElementById("app");
   if(!j){
+    document.body.classList.remove("has-mobile-apply");
     app.innerHTML=`<div class="container empty"><strong>Lowongan tidak ditemukan</strong><p>Data belum approved atau sudah expired.</p></div>`;
     trackDLPEvent("dlp_vacancy_detail_not_found", {
       event_label: "Vacancy detail not found"
@@ -830,6 +989,8 @@ function render(j){
   const msg=encodeURIComponent(`Halo, saya tertarik dengan lowongan di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
   const waLink=waIntl?`https://wa.me/${waIntl}?text=${msg}`:"";
   const emailLink=j.email?`mailto:${j.email}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}`:"";
+
+  document.body.classList.toggle("has-mobile-apply", !!(waLink || emailLink));
 
   app.innerHTML=`
     <section class="detail-hero">
@@ -854,13 +1015,18 @@ function render(j){
             <div class="stat"><strong>${escapeHTML(salary)}</strong><span>Rentang Gaji</span></div>
             <div class="stat"><strong>${cleanJoinInfo?escapeHTML(cleanJoinInfo):"TBC"}</strong><span>Join Info</span></div>
           </div>
+          <div class="mobile-meta-row">
+            <span class="mobile-meta-pill">👁️ <span class="vacancyViewCountText">Dilihat — kali</span></span>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="container detail-grid">
       <main class="main-stack">
-        <div class="section-card">
+        ${mobilePositionChipsHTML(j)}
+
+        <div class="section-card desktop-vacancy-table-card">
           <h2>Daftar Lowongan</h2>
           ${(j.sections||[]).map((sec,idx)=>`
             <div class="vacancy-group">
@@ -893,7 +1059,7 @@ function render(j){
           <div class="view-stat-box">
             <div class="view-stat-icon">👁️</div>
             <div class="view-stat-main">
-              <strong id="vacancyViewCount">Dilihat — kali</strong>
+              <strong class="vacancyViewCountText">Dilihat — kali</strong>
               <span>Total kunjungan halaman detail</span>
             </div>
           </div>
@@ -922,6 +1088,8 @@ function render(j){
         </div>
       </aside>
     </section>
+
+    ${mobileApplyBarHTML(waLink, emailLink, j)}
   `;
 
   countVacancyDetailView(j.batchId || j.id, j.company);
