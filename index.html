@@ -246,6 +246,112 @@
     .stat-card strong{display:block;font-size:24px;letter-spacing:-.5px;color:#0b1b4d}
     .stat-card span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
 
+    .dlp-social-proof{
+      margin:18px 0 16px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .dlp-social-proof:before{
+      content:"";
+      position:absolute;
+      width:150px;
+      height:150px;
+      right:-70px;
+      top:-85px;
+      border-radius:50%;
+      background:rgba(22,93,255,.07);
+      pointer-events:none;
+    }
+    .dlp-social-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:14px;
+      position:relative;
+      z-index:1;
+    }
+    .dlp-social-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--green-soft);
+      color:var(--green);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      margin-bottom:7px;
+    }
+    .dlp-social-head h2{
+      font-size:20px;
+      line-height:1.25;
+      letter-spacing:-.35px;
+      color:#0b1b4d;
+    }
+    .dlp-social-head p{
+      color:var(--muted);
+      font-size:13px;
+      max-width:390px;
+      text-align:right;
+    }
+    .dlp-social-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      position:relative;
+      z-index:1;
+    }
+    .dlp-social-card{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      box-shadow:0 8px 20px rgba(15,23,42,.04);
+      min-width:0;
+    }
+    .dlp-social-icon{
+      width:38px;
+      height:38px;
+      border-radius:13px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      background:var(--blue-soft);
+      color:var(--blue);
+      font-size:18px;
+    }
+    .dlp-social-card:nth-child(2) .dlp-social-icon,
+    .dlp-social-card:nth-child(4) .dlp-social-icon{
+      background:var(--green-soft);
+      color:var(--green);
+    }
+    .dlp-social-card strong{
+      display:block;
+      color:#0b1b4d;
+      font-size:22px;
+      line-height:1.05;
+      letter-spacing:-.45px;
+      white-space:nowrap;
+    }
+    .dlp-social-card span:last-child{
+      display:block;
+      color:var(--muted);
+      font-size:11.5px;
+      line-height:1.35;
+      margin-top:4px;
+    }
+
     .toolbar{padding:16px;margin:16px 0 18px}
     .search-row{display:grid;grid-template-columns:1fr 120px;gap:10px}
     .input,.select{height:46px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:0 14px;color:#1e293b;font-size:14px;outline:0}
@@ -372,6 +478,24 @@
     .site-footer{padding:32px 0;border-top:1px solid var(--line);background:#fff;color:var(--muted);font-size:13px;text-align:center}
     .site-footer strong{color:#0f172a}
 
+    @media(max-width:980px){
+      .dlp-social-grid{grid-template-columns:repeat(2,1fr)}
+      .dlp-social-head{align-items:flex-start;flex-direction:column}
+      .dlp-social-head p{text-align:left;max-width:100%}
+    }
+    @media(max-width:520px){
+      .dlp-social-proof{padding:15px;margin:14px 0}
+      .dlp-social-head{gap:8px;margin-bottom:12px}
+      .dlp-social-head h2{font-size:17px}
+      .dlp-social-head p{font-size:12px}
+      .dlp-social-kicker{font-size:10px;padding:5px 9px}
+      .dlp-social-grid{grid-template-columns:1fr;gap:8px}
+      .dlp-social-card{padding:12px;border-radius:14px}
+      .dlp-social-icon{width:36px;height:36px;border-radius:12px;font-size:16px}
+      .dlp-social-card strong{font-size:21px}
+      .dlp-social-card span:last-child{font-size:11.5px}
+    }
+
     @media(max-width:880px){
       .nav{display:none}
       .mobile-menu{display:inline-flex}
@@ -470,6 +594,37 @@
           </div>
           <button class="btn btn-primary" onclick="openForm()">Post Lowongan Sekarang</button>
         </div>
+      </div>
+
+      <div class="container">
+        <section class="dlp-social-proof" aria-label="Social proof Daily Loker Pelaut">
+          <div class="dlp-social-head">
+            <div>
+              <span class="dlp-social-kicker">📈 Sejak launching</span>
+              <h2>Dipercaya dan aktif digunakan pelaut Indonesia</h2>
+            </div>
+            <p>Angka aktivitas awal website vacancy Daily Loker Pelaut.</p>
+          </div>
+
+          <div class="dlp-social-grid">
+            <div class="dlp-social-card">
+              <span class="dlp-social-icon">👁️</span>
+              <div><strong>60ribu+</strong><span>Halaman lowongan telah dibuka sejak launching</span></div>
+            </div>
+            <div class="dlp-social-card">
+              <span class="dlp-social-icon">🟢</span>
+              <div><strong>10ribu+</strong><span>Klik apply via WhatsApp</span></div>
+            </div>
+            <div class="dlp-social-card">
+              <span class="dlp-social-icon">↗️</span>
+              <div><strong>17ribu+</strong><span>Klik ke detail lowongan</span></div>
+            </div>
+            <div class="dlp-social-card">
+              <span class="dlp-social-icon">👥</span>
+              <div><strong>11ribu+</strong><span>Pengguna sejak launching</span></div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <div class="container toolbar">
