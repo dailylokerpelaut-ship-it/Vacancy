@@ -556,6 +556,26 @@
       .btn-ad{width:auto!important;white-space:nowrap;padding:8px 10px;font-size:11px}
     }
 
+
+    /* DLP final clean card patch: no repeated card logo, summary box without title, clean reaction state */
+    .job-card .company-line{gap:0}
+    .job-card .company-logo{display:none!important}
+    .summary-only{
+      color:#475569;
+      line-height:1.58;
+      font-size:13px;
+    }
+    .summary-only strong{display:none}
+    .reaction-btn .reaction-emoji{
+      display:inline-block;
+    }
+    @media(max-width:520px){
+      .summary-only{
+        font-size:12px;
+        line-height:1.5;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -1301,7 +1321,6 @@
       <article class="job-card" style="animation-delay:${idx*.05}s">
         <div class="job-top">
           <div class="company-line">
-            <div class="company-logo">⚓</div>
             <div>
               <div class="company-name">
                 <h3>${escapeHTML(j.company)}</h3>
@@ -1323,7 +1342,7 @@
                   data-count="0"
                   onclick="tapReaction(this)">
                   <span class="reaction-emoji">🔥</span>
-                  <span class="reaction-text">0 tertarik</span>
+                  <span class="reaction-text">Tertarik</span>
                 </button>
               </div>
             </div>
@@ -1335,7 +1354,7 @@
           <div class="summary-box"><strong>${joinInfoClean?escapeHTML(joinInfoClean):"Update"}</strong><span>Join Info</span></div>
         </div>
 
-        ${j.summary?`<div class="common-reqs"><strong>Ringkasan</strong>${escapeHTML(j.summary)}</div>`:""}
+        ${j.summary?`<div class="common-reqs summary-only">${escapeHTML(j.summary)}</div>`:""}
 
         <div class="group-preview">
           ${(j.sections||[]).slice(0,3).map(sectionPreviewHTML).join("")}
@@ -1440,15 +1459,22 @@
       const batchId = btn.dataset.batchId;
       const reacted = hasReacted(batchId);
       const textEl = btn.querySelector(".reaction-text");
+      const safeCount = Number(count || 0);
 
       btn.classList.toggle("reacted", reacted);
       btn.disabled = reacted;
-      btn.dataset.count = String(count || 0);
+      btn.dataset.count = String(safeCount);
 
       if(textEl){
-        textEl.textContent = reacted
-          ? `Kamu tertarik · ${count || 0}`
-          : `${count || 0} tertarik`;
+        if(reacted){
+          textEl.textContent = safeCount > 0
+            ? `Kamu tertarik · ${safeCount}`
+            : "Kamu tertarik";
+        }else{
+          textEl.textContent = safeCount > 0
+            ? `${safeCount} tertarik`
+            : "Tertarik";
+        }
       }
     }
 
