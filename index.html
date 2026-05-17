@@ -557,6 +557,31 @@
     }
 
 
+
+
+    /* DLP vacancy lifecycle v1 — weekly stats, expired soon, recent expired archive */
+    .badge-gray{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+    .job-card-expiring{border-color:#fed7aa;background:linear-gradient(180deg,#fffaf2 0%,#fff 28%)}
+    .job-card-expired{opacity:.92;background:#f8fafc;border-style:dashed}
+    .job-card-expired .company-name h3{color:#475569}
+    .job-card-expired .btn-share{background:#fff;color:#475569;border-color:#e2e8f0}
+    .expired-contact-notice{
+      margin-top:10px;
+      padding:9px 11px;
+      border:1px solid #e2e8f0;
+      background:#f8fafc;
+      color:#475569;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:800;
+      line-height:1.45;
+    }
+    .footer-actions.expired-actions{grid-template-columns:repeat(2,minmax(0,1fr));max-width:520px}
+    @media(max-width:520px){
+      .expired-contact-notice{font-size:10.5px;line-height:1.35;padding:7px 9px}
+      .footer-actions.expired-actions{grid-template-columns:repeat(2,1fr)!important;max-width:none}
+    }
+
     /* DLP final clean card patch: no repeated card logo, summary box without title, clean reaction state */
     .job-card .company-line{gap:0}
     .job-card .company-logo{display:none!important}
@@ -619,7 +644,7 @@
           <div class="stats-row">
             <div class="stat-card"><strong id="statTotal">–</strong><span>Loker Aktif</span></div>
             <div class="stat-card"><strong id="statCompanies">–</strong><span>Perusahaan</span></div>
-            <div class="stat-card"><strong id="statTodayPositions">–</strong><span>Posisi Hari Ini</span></div>
+            <div class="stat-card"><strong id="statTodayPositions">–</strong><span>Posisi Minggu Ini</span></div>
           </div>
         </div>
 
@@ -674,7 +699,7 @@
           <h2>Lowongan Aktif</h2>
           <p id="resultText">Memuat lowongan...</p>
         </div>
-        <div class="today-pill" id="todayUpdate">Hari ini: – posisi baru</div>
+        <div class="today-pill" id="todayUpdate">Minggu ini: – posisi baru</div>
       </div>
 
       <div class="loading" id="loadingEl">
@@ -707,6 +732,9 @@
     const ENGINEER_BOOK_URL = "https://engineer.dailylokerpelaut.com/";
     const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
     const EXPIRE_DAYS = 7;
+    const EXPIRED_VISIBLE_DAYS = 3;
+    const HIDE_AFTER_DAYS = EXPIRE_DAYS + EXPIRED_VISIBLE_DAYS;
+    const EXPIRED_SOON_DAYS_BEFORE = 1;
     const JOBS_PER_PAGE = 5;
 
     let allJobs = [];
@@ -764,9 +792,27 @@
       }
     }
 
+    function jobAgeDays(ts){
+      if(!ts) return 0;
+      const date = new Date(ts);
+      if(Number.isNaN(date.getTime())) return 0;
+      return (Date.now() - date.getTime()) / 864e5;
+    }
+
+    function getJobLifecycle(job){
+      const status = String(job?.status || "").trim().toUpperCase();
+      const age = jobAgeDays(job?.timestamp);
+
+      if(status === "ARCHIVED" || status === "HIDDEN") return "hidden";
+      if(age > HIDE_AFTER_DAYS) return "hidden";
+      if(status === "EXPIRED" || age > EXPIRE_DAYS) return "expired";
+      if(age >= (EXPIRE_DAYS - EXPIRED_SOON_DAYS_BEFORE)) return "expiring";
+
+      return "active";
+    }
+
     function isExpired(ts){
-      if(!ts) return false;
-      return (new Date() - new Date(ts)) / 864e5 > EXPIRE_DAYS;
+      return jobAgeDays(ts) > EXPIRE_DAYS;
     }
 
     function relativeTime(ts){
@@ -878,12 +924,16 @@
       return `${obj.year}-${obj.month}-${obj.day}`;
     }
 
-    function todayVacancyStats(jobs = allJobs){
-      const today = jakartaDateKey(new Date());
-      const todayJobs = jobs.filter(j => jakartaDateKey(j.timestamp) === today);
+    function weeklyVacancyStats(jobs = allJobs){
+      const weeklyJobs = jobs.filter(j => {
+        const lifecycle = getJobLifecycle(j);
+        const age = jobAgeDays(j.timestamp);
+        return lifecycle !== "hidden" && lifecycle !== "expired" && age <= EXPIRE_DAYS;
+      });
+
       return {
-        jobs: todayJobs.length,
-        positions: todayJobs.reduce((sum, j)=>sum + countOpenings(j.sections), 0)
+        jobs: weeklyJobs.length,
+        positions: weeklyJobs.reduce((sum, j)=>sum + countOpenings(j.sections), 0)
       };
     }
 
@@ -1041,7 +1091,7 @@
       const rows = json.table.rows || [];
 
       return rows
-        .filter(r => cell(r,1).toUpperCase() === "APPROVED")
+        .filter(r => ["APPROVED", "EXPIRED"].includes(cell(r,1).toUpperCase()))
         .map((r,i)=>{
           const sections = safeJSON(cell(r,11));
           const commonLines = cell(r,12).split("|").map(s=>s.trim()).filter(Boolean);
@@ -1073,7 +1123,7 @@
             rawInput: cell(r,14)
           };
         })
-        .filter(j => j.company && !isExpired(j.timestamp))
+        .filter(j => j.company && getJobLifecycle(j) !== "hidden")
         .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     }
 
@@ -1190,20 +1240,21 @@
     }
 
     function renderStats(){
-      const companies = new Set(allJobs.map(j=>j.company)).size;
-      const todayStats = todayVacancyStats(allJobs);
+      const activeJobs = allJobs.filter(j => ["active", "expiring"].includes(getJobLifecycle(j)));
+      const companies = new Set(activeJobs.map(j=>j.company)).size;
+      const weeklyStats = weeklyVacancyStats(allJobs);
 
-      document.getElementById("statTotal").textContent = allJobs.length;
+      document.getElementById("statTotal").textContent = activeJobs.length;
       document.getElementById("statCompanies").textContent = companies;
 
       const statToday = document.getElementById("statTodayPositions");
-      if(statToday) statToday.textContent = todayStats.positions;
+      if(statToday) statToday.textContent = weeklyStats.positions;
 
       const todayUpdate = document.getElementById("todayUpdate");
       if(todayUpdate){
-        todayUpdate.textContent = todayStats.positions
-          ? `Hari ini: ${todayStats.positions} posisi baru dari ${todayStats.jobs} lowongan`
-          : "Hari ini: belum ada posisi baru";
+        todayUpdate.textContent = weeklyStats.positions
+          ? `Minggu ini: ${weeklyStats.positions} posisi baru dari ${weeklyStats.jobs} lowongan`
+          : "Minggu ini: belum ada posisi baru";
       }
     }
 
@@ -1230,7 +1281,10 @@
       const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
       const pageJobs = jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
 
-      document.getElementById("resultText").textContent = `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
+      const expiredCount = jobs.filter(j => getJobLifecycle(j) === "expired").length;
+      document.getElementById("resultText").textContent = expiredCount
+        ? `${jobs.length} lowongan ditemukan · ${expiredCount} expired 3 hari terakhir · halaman ${currentPage} dari ${totalPages}`
+        : `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
       el.innerHTML = pageJobs.map(jobCardHTML).join("");
       applyReactionCountsToVisibleButtons();
       renderPagination(totalPages);
@@ -1307,25 +1361,32 @@
       const salary = salaryRangeText(j.sections);
       const batchId = j.batchId || String(j.id);
       const primaryPosition = getPrimaryPosition(j.sections);
+      const lifecycle = getJobLifecycle(j);
+      const isExpiredRecent = lifecycle === "expired";
+      const isExpiringSoon = lifecycle === "expiring";
+      const hideApplyContacts = isExpiredRecent;
 
       const joinInfoClean = cleanJoinInfo(j.joinInfo);
       const waIntl = normalizeWhatsAppNumber(j.whatsapp);
       const msg = encodeURIComponent(`Halo, saya tertarik dengan lowongan di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
-      const waLink = waIntl ? `https://wa.me/${waIntl}?text=${msg}` : "";
+      const waLink = (!hideApplyContacts && waIntl) ? `https://wa.me/${waIntl}?text=${msg}` : "";
       const emailClean = String(j.email || "").trim();
-      const emailLink = isValidEmail(emailClean) ? `mailto:${emailClean}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
+      const emailLink = (!hideApplyContacts && isValidEmail(emailClean)) ? `mailto:${emailClean}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
       const detailLink = `detail.html?id=${encodeURIComponent(batchId)}`;
       const shareUrl = new URL(detailLink, window.location.href).href;
+      const cardClass = `job-card ${isExpiredRecent ? "job-card-expired" : ""} ${isExpiringSoon ? "job-card-expiring" : ""}`.trim();
 
       return `
-      <article class="job-card" style="animation-delay:${idx*.05}s">
+      <article class="${cardClass}" style="animation-delay:${idx*.05}s">
         <div class="job-top">
           <div class="company-line">
             <div>
               <div class="company-name">
                 <h3>${escapeHTML(j.company)}</h3>
+                ${isExpiredRecent?`<span class="badge badge-gray">Expired</span>`:""}
+                ${isExpiringSoon?`<span class="badge badge-amber">Expired Soon</span>`:""}
                 ${j.featured?`<span class="badge badge-amber">Featured</span>`:""}
-                ${j.urgent?`<span class="badge badge-red">Urgent</span>`:""}
+                ${(!isExpiredRecent && j.urgent)?`<span class="badge badge-red">Urgent</span>`:""}
                 ${j.free?`<span class="badge badge-green">Free of Charge</span>`:""}
                 <span class="badge badge-blue">DLP Reviewed</span>
               </div>
@@ -1367,12 +1428,18 @@
           </div>
         `:""}
 
+        ${isExpiredRecent?`
+          <div class="expired-contact-notice">
+            ⛔ Lowongan ini sudah expired. Kontak apply ditutup untuk mencegah lamaran ke vacancy yang sudah lewat masa tayang.
+          </div>
+        `:""}
+
         <div class="scam-mini-warning">
           ⚠️ Waspada scam: jangan transfer biaya rekrutmen. Verifikasi kontak resmi sebelum apply.
         </div>
 
         <div class="card-footer">
-          <div class="footer-actions">
+          <div class="footer-actions ${isExpiredRecent ? "expired-actions" : ""}">
             <a
               class="btn btn-outline vacancy-detail-link"
               href="${detailLink}"
