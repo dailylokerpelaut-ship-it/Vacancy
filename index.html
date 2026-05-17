@@ -562,30 +562,23 @@
     /* DLP vacancy lifecycle v1 — weekly stats, expired soon, recent expired archive */
     .badge-gray{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
     .job-card-expiring{border-color:#fed7aa;background:linear-gradient(180deg,#fffaf2 0%,#fff 28%)}
-    .job-card-expired{position:relative;opacity:.94;background:linear-gradient(180deg,#fff8f8 0%,#f8fafc 100%);border:2px dashed #fca5a5;padding-top:42px}
+    .job-card-expired{opacity:.92;background:#f8fafc;border-style:dashed}
     .job-card-expired .company-name h3{color:#475569}
     .job-card-expired .btn-share{background:#fff;color:#475569;border-color:#e2e8f0}
-    .expired-stamp{
-      position:absolute;
-      top:14px;
-      right:14px;
-      transform:rotate(-12deg);
-      border:3px solid #dc2626;
-      color:#dc2626;
+    .expired-contact-notice{
+      margin-top:10px;
+      padding:9px 11px;
+      border:1px solid #e2e8f0;
+      background:#f8fafc;
+      color:#475569;
       border-radius:12px;
-      padding:8px 16px 7px;
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      background:rgba(255,255,255,.96);
-      box-shadow:0 10px 22px rgba(220,38,38,.16);
-      pointer-events:none;
-      z-index:5;
+      font-size:12px;
+      font-weight:800;
+      line-height:1.45;
     }
     .footer-actions.expired-actions{grid-template-columns:repeat(2,minmax(0,1fr));max-width:520px}
     @media(max-width:520px){
-      .expired-stamp{top:10px;right:10px;padding:6px 11px 5px;font-size:10px;border-width:2px;border-radius:10px;letter-spacing:.14em}
+      .expired-contact-notice{font-size:10.5px;line-height:1.35;padding:7px 9px}
       .footer-actions.expired-actions{grid-template-columns:repeat(2,1fr)!important;max-width:none}
     }
 
@@ -605,6 +598,27 @@
       .summary-only{
         font-size:12px;
         line-height:1.5;
+      }
+    }
+
+
+    /* DLP section header simplification v2 — cleaner mobile header */
+    @media(max-width:520px){
+      .section-head{
+        flex-direction:column;
+        align-items:flex-start;
+        justify-content:flex-start;
+        gap:8px;
+      }
+      .section-head p{
+        font-size:12px;
+        line-height:1.35;
+      }
+      .today-pill{
+        align-self:flex-start;
+        max-width:100%;
+        white-space:normal;
+        line-height:1.35;
       }
     }
 
@@ -706,7 +720,7 @@
           <h2>Lowongan Aktif</h2>
           <p id="resultText">Memuat lowongan...</p>
         </div>
-        <div class="today-pill" id="todayUpdate">Minggu ini: – posisi baru</div>
+        <div class="today-pill" id="todayUpdate">Hari ini: – posisi</div>
       </div>
 
       <div class="loading" id="loadingEl">
@@ -941,6 +955,19 @@
       return {
         jobs: weeklyJobs.length,
         positions: weeklyJobs.reduce((sum, j)=>sum + countOpenings(j.sections), 0)
+      };
+    }
+
+    function todayVacancyStats(jobs = allJobs){
+      const today = jakartaDateKey(new Date());
+      const todayJobs = jobs.filter(j => {
+        const lifecycle = getJobLifecycle(j);
+        return jakartaDateKey(j.timestamp) === today && ["active", "expiring"].includes(lifecycle);
+      });
+
+      return {
+        jobs: todayJobs.length,
+        positions: todayJobs.reduce((sum, j)=>sum + countOpenings(j.sections), 0)
       };
     }
 
@@ -1250,6 +1277,7 @@
       const activeJobs = allJobs.filter(j => ["active", "expiring"].includes(getJobLifecycle(j)));
       const companies = new Set(activeJobs.map(j=>j.company)).size;
       const weeklyStats = weeklyVacancyStats(allJobs);
+      const todayStats = todayVacancyStats(allJobs);
 
       document.getElementById("statTotal").textContent = activeJobs.length;
       document.getElementById("statCompanies").textContent = companies;
@@ -1259,9 +1287,9 @@
 
       const todayUpdate = document.getElementById("todayUpdate");
       if(todayUpdate){
-        todayUpdate.textContent = weeklyStats.positions
-          ? `Minggu ini: ${weeklyStats.positions} posisi baru dari ${weeklyStats.jobs} lowongan`
-          : "Minggu ini: belum ada posisi baru";
+        todayUpdate.textContent = todayStats.positions
+          ? `Hari ini: ${todayStats.positions} posisi`
+          : "Hari ini: belum ada update";
       }
     }
 
@@ -1288,10 +1316,7 @@
       const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
       const pageJobs = jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
 
-      const expiredCount = jobs.filter(j => getJobLifecycle(j) === "expired").length;
-      document.getElementById("resultText").textContent = expiredCount
-        ? `${jobs.length} lowongan ditemukan · ${expiredCount} expired 3 hari terakhir · halaman ${currentPage} dari ${totalPages}`
-        : `${jobs.length} lowongan ditemukan · halaman ${currentPage} dari ${totalPages}`;
+      document.getElementById("resultText").textContent = `Halaman ${currentPage} dari ${totalPages}`;
       el.innerHTML = pageJobs.map(jobCardHTML).join("");
       applyReactionCountsToVisibleButtons();
       renderPagination(totalPages);
@@ -1385,12 +1410,12 @@
 
       return `
       <article class="${cardClass}" style="animation-delay:${idx*.05}s">
-        ${isExpiredRecent?`<div class="expired-stamp">Expired</div>`:""}
         <div class="job-top">
           <div class="company-line">
             <div>
               <div class="company-name">
                 <h3>${escapeHTML(j.company)}</h3>
+                ${isExpiredRecent?`<span class="badge badge-gray">Expired</span>`:""}
                 ${isExpiringSoon?`<span class="badge badge-amber">Expired Soon</span>`:""}
                 ${j.featured?`<span class="badge badge-amber">Featured</span>`:""}
                 ${(!isExpiredRecent && j.urgent)?`<span class="badge badge-red">Urgent</span>`:""}
@@ -1432,6 +1457,12 @@
           <div class="common-reqs">
             <strong>Requirements Umum</strong>
             ${j.requirements.slice(0,2).map(req=>`<div>✓ ${escapeHTML(cleanDisplayText(req))}</div>`).join("")}
+          </div>
+        `:""}
+
+        ${isExpiredRecent?`
+          <div class="expired-contact-notice">
+            ⛔ Lowongan ini sudah expired. Kontak apply ditutup untuk mencegah lamaran ke vacancy yang sudah lewat masa tayang.
           </div>
         `:""}
 
