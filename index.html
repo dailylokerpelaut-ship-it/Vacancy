@@ -562,42 +562,30 @@
     /* DLP vacancy lifecycle v1 — weekly stats, expired soon, recent expired archive */
     .badge-gray{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
     .job-card-expiring{border-color:#fed7aa;background:linear-gradient(180deg,#fffaf2 0%,#fff 28%)}
-    .job-card-expired{position:relative;opacity:.92;background:#f8fafc;border-style:dashed}
+    .job-card-expired{position:relative;opacity:.94;background:linear-gradient(180deg,#fff8f8 0%,#f8fafc 100%);border:2px dashed #fca5a5;padding-top:42px}
     .job-card-expired .company-name h3{color:#475569}
     .job-card-expired .btn-share{background:#fff;color:#475569;border-color:#e2e8f0}
     .expired-stamp{
       position:absolute;
       top:14px;
-      right:12px;
-      transform:rotate(-10deg);
+      right:14px;
+      transform:rotate(-12deg);
       border:3px solid #dc2626;
       color:#dc2626;
       border-radius:12px;
-      padding:6px 12px 5px;
-      font-size:12px;
+      padding:8px 16px 7px;
+      font-size:14px;
       font-weight:900;
-      letter-spacing:.12em;
+      letter-spacing:.16em;
       text-transform:uppercase;
-      background:rgba(255,255,255,.88);
-      box-shadow:0 6px 14px rgba(220,38,38,.08);
+      background:rgba(255,255,255,.96);
+      box-shadow:0 10px 22px rgba(220,38,38,.16);
       pointer-events:none;
-      z-index:2;
-    }
-    .expired-contact-notice{
-      margin-top:10px;
-      padding:10px 12px;
-      border:1px dashed #fca5a5;
-      background:#fff5f5;
-      color:#b91c1c;
-      border-radius:12px;
-      font-size:12px;
-      font-weight:800;
-      line-height:1.45;
+      z-index:5;
     }
     .footer-actions.expired-actions{grid-template-columns:repeat(2,minmax(0,1fr));max-width:520px}
     @media(max-width:520px){
-      .expired-stamp{top:12px;right:10px;padding:5px 10px 4px;font-size:10px;border-width:2px;border-radius:10px}
-      .expired-contact-notice{font-size:10.5px;line-height:1.35;padding:8px 10px}
+      .expired-stamp{top:10px;right:10px;padding:6px 11px 5px;font-size:10px;border-width:2px;border-radius:10px;letter-spacing:.14em}
       .footer-actions.expired-actions{grid-template-columns:repeat(2,1fr)!important;max-width:none}
     }
 
@@ -1403,7 +1391,6 @@
             <div>
               <div class="company-name">
                 <h3>${escapeHTML(j.company)}</h3>
-                ${isExpiredRecent?`<span class="badge badge-gray">Expired</span>`:""}
                 ${isExpiringSoon?`<span class="badge badge-amber">Expired Soon</span>`:""}
                 ${j.featured?`<span class="badge badge-amber">Featured</span>`:""}
                 ${(!isExpiredRecent && j.urgent)?`<span class="badge badge-red">Urgent</span>`:""}
@@ -1445,12 +1432,6 @@
           <div class="common-reqs">
             <strong>Requirements Umum</strong>
             ${j.requirements.slice(0,2).map(req=>`<div>✓ ${escapeHTML(cleanDisplayText(req))}</div>`).join("")}
-          </div>
-        `:""}
-
-        ${isExpiredRecent?`
-          <div class="expired-contact-notice">
-            Lowongan ini sudah berstatus expired. Kontak apply sudah ditutup.
           </div>
         `:""}
 
