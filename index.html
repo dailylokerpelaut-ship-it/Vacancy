@@ -662,6 +662,133 @@
       }
     }
 
+
+    /* DLP Matching - eye-catching minimal inline matcher */
+    #matchingBeta{margin-top:14px;margin-bottom:18px}
+    #matchingBeta .matching-card{
+      position:relative;
+      display:grid;
+      grid-template-columns:minmax(210px,.72fr) minmax(0,1.55fr);
+      gap:16px;
+      align-items:center;
+      background:
+        linear-gradient(135deg,rgba(255,255,255,.98),rgba(248,251,255,.98)),
+        radial-gradient(circle at top left,rgba(37,99,235,.10),transparent 35%);
+      border:1px solid #dbeafe;
+      border-radius:22px;
+      padding:16px;
+      box-shadow:0 14px 34px rgba(15,23,42,.07);
+      overflow:hidden;
+    }
+    #matchingBeta .matching-card:before{
+      content:"";
+      position:absolute;
+      left:0;top:0;bottom:0;
+      width:4px;
+      background:linear-gradient(180deg,#2563eb,#0ea5e9);
+    }
+    #matchingBeta .matching-card:after{
+      content:"";
+      position:absolute;
+      right:-48px;top:-58px;
+      width:140px;height:140px;
+      border-radius:999px;
+      background:rgba(37,99,235,.055);
+      pointer-events:none;
+    }
+    #matchingBeta .matching-head{margin:0;min-width:0;position:relative;z-index:1}
+    #matchingBeta .matching-title-row{display:block;min-width:0}
+    #matchingBeta .matching-icon,#matchingBeta .matching-beta-chip,#matchingBeta .matching-toggle,#matchingBeta .matching-helper{display:none!important}
+    #matchingBeta .matching-title-wrap{min-width:0}
+    #matchingBeta .matching-title-line{display:block;margin:0 0 4px}
+    #matchingBeta .matching-title-wrap h2{margin:0;font-size:1.02rem;color:#0f172a;line-height:1.2;font-weight:950;letter-spacing:-.02em}
+    #matchingBeta .matching-title-wrap p{margin:0;color:#64748b;font-size:.83rem;line-height:1.4;max-width:360px}
+    #matchingBeta .matching-body{display:block;margin:0;border-top:none;padding:0;position:relative;z-index:1}
+    #matchingBeta .matching-controls{
+      display:grid;
+      grid-template-columns:minmax(128px,.9fr) minmax(185px,1.28fr) minmax(128px,.86fr) auto;
+      gap:9px;
+      align-items:end;
+      margin:0;
+    }
+    #matchingBeta .matching-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+    #matchingBeta .matching-field label{
+      font-size:.68rem;
+      font-weight:900;
+      color:#64748b;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    #matchingBeta .matching-select{
+      width:100%;
+      min-height:42px;
+      border:1px solid #dbe3ee;
+      border-radius:13px;
+      background:#fff;
+      color:#0f172a;
+      padding:0 36px 0 12px;
+      font-size:.88rem;
+      outline:none;
+      box-shadow:0 1px 0 rgba(15,23,42,.04);
+      transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+    }
+    #matchingBeta .matching-select:hover{border-color:#bfdbfe}
+    #matchingBeta .matching-select:focus{
+      border-color:#2563eb;
+      box-shadow:0 0 0 4px rgba(37,99,235,.10);
+      transform:translateY(-1px);
+    }
+    #matchingBeta .matching-actions .btn{
+      min-height:42px;
+      border-radius:13px;
+      padding-inline:16px;
+      white-space:nowrap;
+      font-weight:900;
+      box-shadow:0 10px 20px rgba(37,99,235,.16);
+    }
+    #matchingBeta .matching-disclaimer{display:none}
+    #matchingBeta .matching-results{grid-column:1/-1;margin-top:14px;display:grid;gap:10px}
+    #matchingBeta .matching-empty{border:1px dashed #cbd5e1;background:#f8fafc;border-radius:14px;padding:12px;color:#475569;line-height:1.45;font-size:.9rem}
+    #matchingBeta .matching-result-card{border:1px solid #e2e8f0;background:#fff;border-radius:16px;padding:13px;box-shadow:0 8px 20px rgba(15,23,42,.04)}
+    #matchingBeta .matching-result-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    #matchingBeta .matching-company{font-weight:900;color:#0f172a;margin-bottom:4px}
+    #matchingBeta .matching-summary{color:#475569;font-size:.9rem;line-height:1.45}
+    #matchingBeta .matching-score{display:inline-flex;align-items:center;white-space:nowrap;border-radius:999px;padding:5px 9px;font-size:.75rem;font-weight:900;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8}
+    #matchingBeta .matching-score.strong{border-color:#bbf7d0;background:#f0fdf4;color:#15803d}
+    #matchingBeta .matching-score.good{border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8}
+    #matchingBeta .matching-score.consider{border-color:#fed7aa;background:#fff7ed;color:#c2410c}
+    #matchingBeta .matching-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    #matchingBeta .matching-meta span{border:1px solid #e2e8f0;background:#f8fafc;border-radius:999px;padding:4px 8px;font-size:.76rem;color:#475569}
+    #matchingBeta .matching-result-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+    #matchingBeta .matching-reasons{font-size:.8rem;color:#64748b;line-height:1.4}
+    #matchingBeta .matching-detail-link{white-space:nowrap}
+
+    @media(max-width:980px){
+      #matchingBeta .matching-card{
+        grid-template-columns:1fr;
+        gap:12px;
+        padding:15px;
+      }
+      #matchingBeta .matching-title-wrap p{max-width:100%}
+      #matchingBeta .matching-controls{
+        grid-template-columns:minmax(145px,1fr) minmax(185px,1.15fr) minmax(130px,.82fr) auto;
+      }
+    }
+    @media(max-width:760px){
+      #matchingBeta{margin-top:10px;margin-bottom:14px}
+      #matchingBeta .matching-card{border-radius:20px}
+      #matchingBeta .matching-controls{grid-template-columns:1fr 1fr;gap:9px}
+      #matchingBeta .matching-actions{grid-column:1/-1}
+      #matchingBeta .matching-actions .btn{width:100%;justify-content:center}
+      #matchingBeta .matching-result-top,#matchingBeta .matching-result-footer{flex-direction:column;align-items:flex-start}
+      #matchingBeta .matching-detail-link{width:100%;justify-content:center}
+    }
+    @media(max-width:520px){
+      #matchingBeta .matching-card{padding:14px}
+      #matchingBeta .matching-controls{grid-template-columns:1fr}
+      #matchingBeta .matching-title-wrap h2{font-size:1rem}
+    }
+
 </style>
 </head>
 <body>
@@ -752,6 +879,54 @@
           </div>
         </section>
       </div>
+
+      <div class="container matching-beta" id="matchingBeta">
+        <section class="matching-card" id="matchingCard" aria-label="Lowongan Cocok Untuk Kamu">
+          <div class="matching-head">
+            <div class="matching-title-row">
+              <div class="matching-title-wrap">
+                <div class="matching-title-line">
+                  <h2>Lowongan Cocok Untuk Kamu</h2>
+                </div>
+                <p>Pilih rank dan pengalaman kapal agar hasil lowongan lebih relevan.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="matching-body" id="matchingBody">
+            <div class="matching-controls">
+              <div class="matching-field">
+                <label for="matchRankSelect">Rank</label>
+                <select class="matching-select" id="matchRankSelect">
+                  <option value="">Pilih rank</option>
+                </select>
+              </div>
+
+              <div class="matching-field">
+                <label for="matchVesselSelect">Kapal</label>
+                <select class="matching-select" id="matchVesselSelect">
+                  <option value="">Bebas / semua kapal</option>
+                </select>
+              </div>
+
+              <div class="matching-field">
+                <label for="matchAreaSelect">Area</label>
+                <select class="matching-select" id="matchAreaSelect">
+                  <option value="">Bebas</option>
+                  <option value="domestic">Local / Domestic</option>
+                  <option value="international">Overseas / International</option>
+                </select>
+              </div>
+
+              <div class="matching-actions">
+                <button class="btn btn-primary" type="button" onclick="runJobMatching()">Cari Cocok</button>
+              </div>
+            </div>
+
+            <div class="matching-results" id="matchingResults" style="display:none"></div>
+          </div>
+        </section>
+      </div>
     </section>
 
     <section class="container" id="jobs">
@@ -788,6 +963,7 @@
   <script>
     const SHEET_ID   = "1_v2qiyNaflStIn5V1VtHS4L_JWVz9zlKfZTAvQcVRO8";
     const SHEET_TAB  = "WebsiteJobsGrouped";
+    const PUBLIC_MATCHING_SHEET_TAB = "WebsiteJobsPublic";
     const FORM_URL   = "https://forms.gle/nuJWVeCKtFs9RJum8";
     const REACTION_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
     const ENGINEER_BOOK_URL = "https://engineer.dailylokerpelaut.com/";
@@ -801,6 +977,26 @@
     let allJobs = [];
     let jobsLoaded = false;
     let jobsLoading = null;
+
+    let publicMatchingJobs = [];
+    let publicMatchingLoaded = false;
+    let publicMatchingLoading = null;
+
+    const DLP_MATCH_FALLBACK_RANKS = [
+      "Master", "Chief Officer", "Second Officer", "Third Officer", "Fourth Officer",
+      "Bosun", "AB", "OS", "Deck Cadet",
+      "Chief Engineer", "First Engineer", "Second Engineer", "Third Engineer", "Fourth Engineer",
+      "ETO", "ETR", "Electrician", "Gas Engineer", "Fitter", "Welder", "Oiler", "No.1 Oiler", "Wiper", "Motorman", "Engine Cadet",
+      "Chief Cook", "Cook", "Messman", "Steward", "Pumpman", "Crane Operator"
+    ];
+
+    const DLP_MATCH_FALLBACK_VESSELS = [
+      "Tanker", "Oil Tanker", "Product Tanker", "Oil Chemical Tanker", "Chemical Tanker",
+      "LNG Carrier", "LPG Carrier", "Bulk Carrier", "General Cargo", "Container Ship",
+      "Tugboat", "Barge", "Tug and Barge", "SPOB", "AHTS", "PSV", "OSV", "Crew Boat",
+      "Floating Crane", "RoRo", "Passenger Ship", "Ferry", "Cruise Ship", "Fishing Vessel",
+      "Domestic", "International Trade", "Worldwide", "Offshore"
+    ];
 
     let reactionCounts = {};
     let reactionsLoaded = false;
@@ -1157,6 +1353,336 @@
       return output.length ? output.join(" · ") : "Negotiable";
     }
 
+
+    function parseGVizRows_(txt){
+      const json = JSON.parse(txt.substring(47).slice(0,-2));
+      return json.table.rows || [];
+    }
+
+    function splitPublicList_(value){
+      return String(value || "")
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function normalizeMatchText_(value){
+      return String(value || "")
+        .toLowerCase()
+        .replace(/&amp;/g, "&")
+        .replace(/[^a-z0-9/+\s.-]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function isPublicYes_(value){
+      const text = String(value || "").toLowerCase();
+      return /\bya\b|\byes\b|true|free|gratis|tidak dipungut biaya|free of charge/.test(text);
+    }
+
+    function toNumberOrNull_(value){
+      const n = Number(String(value || "").replace(/[^\d.-]/g, ""));
+      return Number.isFinite(n) ? n : null;
+    }
+
+    async function fetchPublicMatchingJobsFromSheet_(){
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(PUBLIC_MATCHING_SHEET_TAB)}`;
+      const res = await fetch(url, { cache: "no-store" });
+      const rows = parseGVizRows_(await res.text());
+
+      return rows.map((r,i)=>({
+        id: i,
+        batchId: cell(r,0),
+        status: cell(r,1),
+        company: cell(r,2),
+        featured: isPublicYes_(cell(r,3)),
+        urgent: isPublicYes_(cell(r,4)),
+        freeOfCharge: cell(r,5),
+        joinInfo: cell(r,6),
+        summary: cell(r,7),
+        ranks: splitPublicList_(cell(r,8)),
+        departments: splitPublicList_(cell(r,9)),
+        rankLevels: splitPublicList_(cell(r,10)),
+        vesselTypes: splitPublicList_(cell(r,11)),
+        vesselCategories: splitPublicList_(cell(r,12)),
+        tradeAreas: splitPublicList_(cell(r,13)),
+        salaryCurrency: cell(r,14),
+        salaryMin: toNumberOrNull_(cell(r,15)),
+        salaryMax: toNumberOrNull_(cell(r,16)),
+        joinUrgency: cell(r,17),
+        experience: cell(r,18),
+        certificates: splitPublicList_(cell(r,19)),
+        matchingKeywords: cell(r,20),
+        publicMatchStatus: cell(r,21),
+        lastUpdated: cell(r,22)
+      }))
+      .filter(j => j.status.toUpperCase() === "APPROVED" && String(j.publicMatchStatus || "").toLowerCase() === "active")
+      .filter(j => j.batchId && j.company);
+    }
+
+    async function getPublicMatchingJobsOnce(){
+      if(publicMatchingLoaded) return publicMatchingJobs;
+      if(publicMatchingLoading) return publicMatchingLoading;
+
+      publicMatchingLoading = fetchPublicMatchingJobsFromSheet_()
+        .then(jobs=>{
+          publicMatchingJobs = jobs;
+          publicMatchingLoaded = true;
+          return publicMatchingJobs;
+        })
+        .catch(err=>{
+          console.warn("Failed to load public matching sheet:", err);
+          publicMatchingJobs = [];
+          publicMatchingLoaded = true;
+          return publicMatchingJobs;
+        })
+        .finally(()=>{
+          publicMatchingLoading = null;
+        });
+
+      return publicMatchingLoading;
+    }
+
+    function uniqueSorted_(items){
+      return [...new Set((items || []).map(v => String(v || "").trim()).filter(Boolean))]
+        .sort((a,b)=>a.localeCompare(b, "id"));
+    }
+
+    function populateMatchingSelects_(jobs){
+      const rankSelect = document.getElementById("matchRankSelect");
+      const vesselSelect = document.getElementById("matchVesselSelect");
+      const areaSelect = document.getElementById("matchAreaSelect");
+      if(!rankSelect || !vesselSelect || !areaSelect) return;
+
+      const ranks = uniqueSorted_((jobs || []).flatMap(j => j.ranks || []).concat(DLP_MATCH_FALLBACK_RANKS));
+      const vessels = uniqueSorted_((jobs || []).flatMap(j => (j.vesselTypes || []).concat(j.vesselCategories || [])).concat(DLP_MATCH_FALLBACK_VESSELS));
+
+      const savedRank = localStorage.getItem("dlp_match_rank") || "";
+      const savedVessel = localStorage.getItem("dlp_match_vessel") || "";
+      const savedArea = localStorage.getItem("dlp_match_area") || "";
+
+      rankSelect.innerHTML = `<option value="">Pilih rank</option>` + ranks.map(rank =>
+        `<option value="${escapeHTML(rank)}">${escapeHTML(rank)}</option>`
+      ).join("");
+
+      vesselSelect.innerHTML = `<option value="">Bebas / semua kapal</option>` + vessels.map(vessel =>
+        `<option value="${escapeHTML(vessel)}">${escapeHTML(vessel)}</option>`
+      ).join("");
+
+      rankSelect.value = savedRank;
+      vesselSelect.value = savedVessel;
+      areaSelect.value = savedArea;
+    }
+
+    function toggleMatchingBeta(){
+      // Matching form is always visible in the minimal inline layout.
+      const body = document.getElementById("matchingBody");
+      if(body) body.style.display = "block";
+    }
+
+    async function initMatchingBeta(){
+      // Populate fallback options immediately, so dropdowns are never empty even if the public sheet is slow.
+      populateMatchingSelects_([]);
+
+      const jobs = await getPublicMatchingJobsOnce();
+      populateMatchingSelects_(jobs);
+
+      const hasSavedPreference =
+        (localStorage.getItem("dlp_match_rank") || "") ||
+        (localStorage.getItem("dlp_match_vessel") || "") ||
+        (localStorage.getItem("dlp_match_area") || "");
+
+      if(hasSavedPreference && jobs.length){
+        renderMatchingResults_(calculateMatchingResults_(jobs), { auto: true });
+      }
+    }
+
+    function areaMatches_(tradeAreas, targetArea){
+      if(!targetArea) return false;
+      const joined = normalizeMatchText_((tradeAreas || []).join(" "));
+
+      if(targetArea === "domestic"){
+        return /\bdomestic\b|\blocal\b|indonesia/.test(joined);
+      }
+
+      if(targetArea === "international"){
+        return /international|worldwide|world wide|foreign|ocean going|asia|middle east|offshore|overseas/.test(joined);
+      }
+
+      return false;
+    }
+
+    function labelForScore_(score){
+      if(score >= 85) return { text:"Sangat Cocok", cls:"strong" };
+      if(score >= 65) return { text:"Cocok", cls:"good" };
+      return { text:"Bisa Dipertimbangkan", cls:"consider" };
+    }
+
+    function calculateMatchingResults_(jobs){
+      const selectedRank = document.getElementById("matchRankSelect")?.value || "";
+      const selectedVessel = document.getElementById("matchVesselSelect")?.value || "";
+      const selectedArea = document.getElementById("matchAreaSelect")?.value || "";
+
+      const rankNorm = normalizeMatchText_(selectedRank);
+      const vesselNorm = normalizeMatchText_(selectedVessel);
+
+      return (jobs || []).map(job => {
+        let score = 0;
+        const reasons = [];
+
+        const rankList = (job.ranks || []).map(normalizeMatchText_);
+        const vesselTypes = (job.vesselTypes || []).map(normalizeMatchText_);
+        const vesselCategories = (job.vesselCategories || []).map(normalizeMatchText_);
+
+        if(rankNorm && rankList.includes(rankNorm)){
+          score += 50;
+          reasons.push("Rank sesuai");
+        }
+
+        if(vesselNorm && vesselTypes.includes(vesselNorm)){
+          score += 25;
+          reasons.push("Jenis kapal sesuai");
+        }else if(vesselNorm && vesselCategories.includes(vesselNorm)){
+          score += 15;
+          reasons.push("Kategori kapal relevan");
+        }
+
+        if(selectedArea && areaMatches_(job.tradeAreas, selectedArea)){
+          score += 10;
+          reasons.push("Area sesuai");
+        }
+
+        if(isPublicYes_(job.freeOfCharge)){
+          score += 10;
+          reasons.push("Free of charge tercantum");
+        }
+
+        if(job.featured){
+          score += 5;
+        }
+
+        if(job.urgent){
+          score += 5;
+          reasons.push("Urgent");
+        }
+
+        return { job, score, reasons };
+      })
+      .filter(item => item.score >= 45)
+      .sort((a,b) => b.score - a.score)
+      .slice(0,10);
+    }
+
+    function runJobMatching(){
+      const rank = document.getElementById("matchRankSelect")?.value || "";
+      const vessel = document.getElementById("matchVesselSelect")?.value || "";
+      const area = document.getElementById("matchAreaSelect")?.value || "";
+
+      localStorage.setItem("dlp_match_rank", rank);
+      localStorage.setItem("dlp_match_vessel", vessel);
+      localStorage.setItem("dlp_match_area", area);
+
+      trackDLPEvent("job_matching_started", {
+        event_category: "Job Matching",
+        selected_rank: rank || "not_selected",
+        selected_vessel: vessel || "not_selected",
+        selected_area: area || "bebas"
+      });
+
+      getPublicMatchingJobsOnce().then(jobs => {
+        const results = calculateMatchingResults_(jobs);
+        renderMatchingResults_(results);
+      });
+    }
+
+    function renderMatchingResults_(results, options = {}){
+      const el = document.getElementById("matchingResults");
+      const helper = document.getElementById("matchingHelper");
+      if(!el) return;
+
+      el.style.display = "grid";
+
+      const rank = document.getElementById("matchRankSelect")?.value || "";
+      const vessel = document.getElementById("matchVesselSelect")?.value || "";
+      const area = document.getElementById("matchAreaSelect")?.value || "";
+
+      if(!rank && !vessel && !area){
+        el.innerHTML = `<div class="matching-empty">Pilih minimal rank atau pengalaman kapal dulu agar hasilnya lebih relevan.</div>`;
+        if(helper) helper.textContent = "Pilih rank, pengalaman kapal, atau target area untuk mulai mencari lowongan yang paling cocok.";
+        return;
+      }
+
+      if(!results.length){
+        el.innerHTML = `<div class="matching-empty"><strong>Belum ada hasil yang cukup cocok.</strong><br>Coba pilih vessel “Bebas / semua kapal”, atau cek daftar lowongan aktif di bawah.</div>`;
+        if(helper) helper.textContent = "Belum ada match kuat dari data public saat ini.";
+      }else{
+        if(helper) helper.textContent = `Ditemukan ${results.length} lowongan paling relevan. Tetap baca detail sebelum apply.`;
+        el.innerHTML = results.map(matchingResultHTML_).join("");
+      }
+
+      if(!options.auto){
+        trackDLPEvent("job_matching_result_viewed", {
+          event_category: "Job Matching",
+          result_count: results.length,
+          selected_rank: rank || "not_selected",
+          selected_vessel: vessel || "not_selected",
+          selected_area: area || "bebas"
+        });
+      }
+    }
+
+    function matchingResultHTML_(item){
+      const j = item.job;
+      const label = labelForScore_(item.score);
+      const detailLink = `detail.html?id=${encodeURIComponent(j.batchId)}`;
+      const vesselText = (j.vesselTypes || []).slice(0,3).join(", ") || (j.vesselCategories || []).slice(0,2).join(", ") || "Vessel belum tercantum";
+      const rankText = (j.ranks || []).slice(0,4).join(", ") || "Rank belum tercantum";
+      const joinText = cleanJoinInfo(j.joinInfo) || j.joinUrgency || "Cek detail";
+      const reasons = item.reasons.length ? item.reasons.slice(0,4).join(" · ") : "Relevan berdasarkan data lowongan";
+
+      return `
+        <article class="matching-result-card">
+          <div class="matching-result-top">
+            <div>
+              <div class="matching-company">${escapeHTML(j.company)}</div>
+              <div class="matching-summary">${escapeHTML(j.summary || "Lowongan aktif dari Daily Loker Pelaut.")}</div>
+            </div>
+            <span class="match-pill ${label.cls}">${label.text} · ${item.score}%</span>
+          </div>
+
+          <div class="matching-meta">
+            <span class="match-pill">👤 ${escapeHTML(rankText)}</span>
+            <span class="match-pill">🚢 ${escapeHTML(vesselText)}</span>
+            <span class="match-pill">📅 ${escapeHTML(joinText)}</span>
+          </div>
+
+          <div class="matching-result-footer">
+            <div class="matching-reasons">Alasan: ${escapeHTML(reasons)}</div>
+            <a
+              class="btn btn-outline vacancy-detail-link matching-detail-link"
+              href="${detailLink}"
+              data-company="${escapeHTML(j.company)}"
+              data-batch-id="${escapeHTML(j.batchId)}"
+              data-position="${escapeHTML(rankText)}"
+              onclick="trackMatchingJobClick(this)">Cek Detail</a>
+          </div>
+        </article>`;
+    }
+
+    function trackMatchingJobClick(link){
+      trackDLPEvent("matched_job_clicked", {
+        event_category: "Job Matching",
+        company: link.dataset.company || "Unknown",
+        batch_id: link.dataset.batchId || "",
+        position: link.dataset.position || "",
+        selected_rank: document.getElementById("matchRankSelect")?.value || "not_selected",
+        selected_vessel: document.getElementById("matchVesselSelect")?.value || "not_selected",
+        selected_area: document.getElementById("matchAreaSelect")?.value || "bebas",
+        link_url: link.href
+      });
+    }
+
+
     async function fetchJobsFromSheet_(){
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
       const res = await fetch(url, { cache: "no-store" });
@@ -1235,6 +1761,7 @@
       });
 
       renderJobs();
+      initMatchingBeta();
 
       // Ambil total reaction hanya 1x saat halaman pertama load.
       // Setelah itu search/filter/pagination memakai cache reactionCounts.
