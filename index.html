@@ -758,7 +758,15 @@
     #matchingBeta .matching-disclaimer{display:none}
     #matchingBeta .matching-results{grid-column:1/-1;margin-top:14px;display:grid;gap:10px}
     #matchingBeta .matching-empty{border:1px dashed #cbd5e1;background:#f8fafc;border-radius:14px;padding:12px;color:#475569;line-height:1.45;font-size:.9rem}
-    #matchingBeta .matching-result-card{border:1px solid #e2e8f0;background:#fff;border-radius:16px;padding:13px;box-shadow:0 8px 20px rgba(15,23,42,.04)}
+    #matchingBeta .matching-result-card{border:1px solid #e2e8f0;background:#fff;border-radius:16px;padding:13px;box-shadow:0 8px 20px rgba(15,23,42,.04);position:relative;overflow:hidden}
+    #matchingBeta .matching-result-card.matching-result-expired{border-color:#fecaca;background:linear-gradient(180deg,#fff 0%,#fffafa 100%);box-shadow:0 10px 22px rgba(239,68,68,.07)}
+    #matchingBeta .matching-result-card.matching-result-expired:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#ef4444}
+    #matchingBeta .matching-expired-stamp{position:absolute;top:12px;right:12px;z-index:2;display:inline-flex;align-items:center;gap:5px;border:1px solid #fecaca;background:#fff1f2;color:#b91c1c;border-radius:999px;padding:5px 9px;font-size:.68rem;font-weight:950;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 8px 18px rgba(239,68,68,.10)}
+    #matchingBeta .matching-expired-stamp:before{content:"•";font-size:13px;line-height:0;color:#ef4444}
+    #matchingBeta .matching-result-card.matching-result-expired .matching-company{padding-right:86px}
+    #matchingBeta .matching-result-card.matching-result-expired .matching-score{opacity:.72}
+    #matchingBeta .matching-result-card.matching-result-expired .matching-detail-link{border-color:#fecaca;color:#b91c1c;background:#fff}
+    #matchingBeta .matching-result-card.matching-result-expired .matching-detail-link:hover{background:#fff1f2}
     #matchingBeta .matching-result-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     #matchingBeta .matching-company{font-weight:900;color:#0f172a;margin-bottom:4px}
     #matchingBeta .matching-summary{color:#475569;font-size:.9rem;line-height:1.45}
@@ -1575,8 +1583,10 @@
           reasons.push("Urgent");
         }
 
-        return { job, score, reasons };
+        const lifecycle = getMatchingJobLifecycle_(job);
+        return { job, score, reasons, lifecycle, isExpired: lifecycle === "expired", isHidden: lifecycle === "hidden" };
       })
+      .filter(item => !item.isHidden)
       .filter(item => item.score >= 45)
       .sort((a,b) => b.score - a.score)
       .slice(0,10);
@@ -1640,6 +1650,27 @@
       }
     }
 
+    function getSourceJobByBatchId_(batchId){
+      const key = String(batchId || "");
+      if(!key) return null;
+      return (allJobs || []).find(job => String(job.batchId || job.id || "") === key) || null;
+    }
+
+    function getMatchingJobLifecycle_(publicJob){
+      const sourceJob = getSourceJobByBatchId_(publicJob?.batchId);
+      if(sourceJob) return getJobLifecycle(sourceJob);
+
+      const publicStatus = String(publicJob?.status || "").trim().toUpperCase();
+      if(publicStatus === "EXPIRED") return "expired";
+      if(publicStatus === "ARCHIVED" || publicStatus === "HIDDEN") return "hidden";
+
+      return "active";
+    }
+
+    function isMatchingJobExpired_(publicJob){
+      return getMatchingJobLifecycle_(publicJob) === "expired";
+    }
+
     function matchingResultHTML_(item){
       const j = item.job;
       const label = labelForScore_(item.score);
@@ -1648,9 +1679,11 @@
       const rankText = (j.ranks || []).slice(0,4).join(", ") || "Rank belum tercantum";
       const joinText = cleanJoinInfo(j.joinInfo) || j.joinUrgency || "Cek detail";
       const reasons = item.reasons.length ? item.reasons.slice(0,4).join(" · ") : "Relevan berdasarkan data lowongan";
+      const isExpiredMatch = item.isExpired || isMatchingJobExpired_(j);
 
       return `
-        <article class="matching-result-card">
+        <article class="matching-result-card ${isExpiredMatch ? "matching-result-expired" : ""}">
+          ${isExpiredMatch ? `<div class="matching-expired-stamp" aria-label="Lowongan expired">Expired</div>` : ""}
           <div class="matching-result-top">
             <div>
               <div class="matching-company">${escapeHTML(j.company)}</div>
