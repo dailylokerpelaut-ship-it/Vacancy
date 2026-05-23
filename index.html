@@ -706,13 +706,30 @@
       pointer-events:none;
     }
     #matchingBeta .matching-head{margin:0;min-width:0;position:relative;z-index:1}
-    #matchingBeta .matching-title-row{display:block;min-width:0}
-    #matchingBeta .matching-icon,#matchingBeta .matching-beta-chip,#matchingBeta .matching-toggle,#matchingBeta .matching-helper{display:none!important}
+    #matchingBeta .matching-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+    #matchingBeta .matching-icon,#matchingBeta .matching-beta-chip,#matchingBeta .matching-helper{display:none!important}
     #matchingBeta .matching-title-wrap{min-width:0}
     #matchingBeta .matching-title-line{display:block;margin:0 0 4px}
     #matchingBeta .matching-title-wrap h2{margin:0;font-size:1.02rem;color:#0f172a;line-height:1.2;font-weight:950;letter-spacing:-.02em}
     #matchingBeta .matching-title-wrap p{margin:0;color:#64748b;font-size:.83rem;line-height:1.4;max-width:360px}
-    #matchingBeta .matching-body{display:block;margin:0;border-top:none;padding:0;position:relative;z-index:1}
+    #matchingBeta .matching-toggle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid #dbeafe;
+      background:#fff;
+      color:#1d4ed8;
+      border-radius:999px;
+      padding:9px 13px;
+      font-size:.82rem;
+      font-weight:900;
+      white-space:nowrap;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(37,99,235,.08);
+      transition:background .18s ease,border-color .18s ease,transform .18s ease;
+    }
+    #matchingBeta .matching-toggle:hover{background:#eff6ff;border-color:#bfdbfe;transform:translateY(-1px)}
+    #matchingBeta .matching-body{display:none;margin-top:14px;border-top:1px solid #eaf1fb;padding-top:14px;position:relative;z-index:1}
     #matchingBeta .matching-controls{
       display:grid;
       grid-template-columns:minmax(128px,.9fr) minmax(185px,1.28fr) minmax(128px,.86fr) auto;
@@ -787,6 +804,7 @@
         padding:15px;
       }
       #matchingBeta .matching-title-wrap p{max-width:100%}
+      #matchingBeta .matching-title-row{align-items:flex-start}
       #matchingBeta .matching-controls{
         grid-template-columns:minmax(145px,1fr) minmax(185px,1.15fr) minmax(130px,.82fr) auto;
       }
@@ -802,6 +820,8 @@
     }
     @media(max-width:520px){
       #matchingBeta .matching-card{padding:14px}
+      #matchingBeta .matching-title-row{flex-direction:column;align-items:flex-start}
+      #matchingBeta .matching-toggle{width:100%}
       #matchingBeta .matching-controls{grid-template-columns:1fr}
       #matchingBeta .matching-title-wrap h2{font-size:1rem}
     }
@@ -907,6 +927,7 @@
                 </div>
                 <p>Pilih rank dan pengalaman kapal agar hasil lowongan lebih relevan.</p>
               </div>
+              <button class="matching-toggle" id="matchingToggle" type="button" onclick="toggleMatchingBeta()" aria-expanded="false" aria-controls="matchingBody">Tampilkan</button>
             </div>
           </div>
 
@@ -1492,9 +1513,17 @@
     }
 
     function toggleMatchingBeta(){
-      // Matching form is always visible in the minimal inline layout.
       const body = document.getElementById("matchingBody");
-      if(body) body.style.display = "block";
+      const toggle = document.getElementById("matchingToggle");
+      if(!body) return;
+
+      const isOpen = body.style.display === "block";
+      body.style.display = isOpen ? "none" : "block";
+
+      if(toggle){
+        toggle.textContent = isOpen ? "Tampilkan" : "Sembunyikan";
+        toggle.setAttribute("aria-expanded", String(!isOpen));
+      }
     }
 
     async function initMatchingBeta(){
@@ -1504,13 +1533,13 @@
       const jobs = await getPublicMatchingJobsOnce();
       populateMatchingSelects_(jobs);
 
-      const hasSavedPreference =
-        (localStorage.getItem("dlp_match_rank") || "") ||
-        (localStorage.getItem("dlp_match_vessel") || "") ||
-        (localStorage.getItem("dlp_match_area") || "");
-
-      if(hasSavedPreference && jobs.length){
-        renderMatchingResults_(calculateMatchingResults_(jobs), { auto: true });
+      // Keep matching collapsed by default so users can still browse all vacancies comfortably.
+      const body = document.getElementById("matchingBody");
+      const toggle = document.getElementById("matchingToggle");
+      if(body) body.style.display = "none";
+      if(toggle){
+        toggle.textContent = "Tampilkan";
+        toggle.setAttribute("aria-expanded", "false");
       }
     }
 
@@ -1593,6 +1622,14 @@
     }
 
     function runJobMatching(){
+      const body = document.getElementById("matchingBody");
+      const toggle = document.getElementById("matchingToggle");
+      if(body) body.style.display = "block";
+      if(toggle){
+        toggle.textContent = "Sembunyikan";
+        toggle.setAttribute("aria-expanded", "true");
+      }
+
       const rank = document.getElementById("matchRankSelect")?.value || "";
       const vessel = document.getElementById("matchVesselSelect")?.value || "";
       const area = document.getElementById("matchAreaSelect")?.value || "";
