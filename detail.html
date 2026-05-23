@@ -63,10 +63,44 @@ a{text-decoration:none;color:inherit}.container{width:calc(100% - 32px);max-widt
 .extra-info-grid{display:grid;gap:12px}.info-list{display:grid;gap:9px}.info-item{display:flex;align-items:flex-start;gap:10px;background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:#334155;font-size:14px}.info-item strong{display:block;color:#0f172a;font-size:13px;margin-bottom:2px}.info-item a{color:var(--blue);font-weight:800;word-break:break-word}.info-icon{width:28px;height:28px;border-radius:9px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;flex:none;font-size:14px;font-weight:900}.info-note{color:var(--muted);font-size:13px;margin-top:4px}
 .sidebar{display:grid;gap:16px;align-content:start;position:sticky;top:86px}.sidebar-card{padding:18px}.sidebar-card h3{font-size:17px;margin-bottom:12px}.contact-block{display:grid;gap:8px;margin-bottom:16px}.contact-block strong{font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}.contact-block a{color:var(--blue);font-weight:700;font-size:13px;word-break:break-word}.action-stack{display:grid;gap:10px}.view-stat-box{margin-top:12px;display:flex;align-items:center;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:#f8fafc;color:#334155}.view-stat-icon{width:34px;height:34px;border-radius:11px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;flex:none;font-size:15px}.view-stat-main strong{display:block;color:#0f172a;font-size:14px;line-height:1.2}.view-stat-main span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.apply-time-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45;text-align:center}.apply-time-note strong{color:#334155;font-weight:800}
 .after-hours-modal-backdrop{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.58);backdrop-filter:blur(6px)}.after-hours-modal-backdrop.open{display:flex}.after-hours-modal{width:min(520px,100%);background:#fff;border:1px solid rgba(226,232,240,.95);border-radius:22px;box-shadow:0 24px 70px rgba(15,23,42,.26);padding:26px;text-align:center}.after-hours-icon{width:68px;height:68px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font-size:32px}.after-hours-modal h3{margin:0 0 10px;color:#0f172a;font-size:22px;letter-spacing:-.35px}.after-hours-modal p{color:#334155;font-size:14px;line-height:1.7;margin:0}.after-hours-callout{margin:16px 0 18px;padding:11px 13px;border:1px solid #fed7aa;border-radius:13px;background:#fff7ed;color:#9a3412;font-size:13px;font-weight:800}.after-hours-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:10px}.after-hours-btn{min-height:48px;border-radius:13px;border:1px solid var(--line);cursor:pointer;font-weight:900;font-size:14px}.after-hours-btn.secondary{background:#fff;color:#0f172a}.after-hours-btn.primary{background:#16a34a;border-color:#16a34a;color:#fff}.after-hours-close{margin-top:12px;border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer}
-.note-card{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}.note-card strong{display:block;color:#166534;margin-bottom:5px}.note-card p{font-size:13px;color:#14532d;line-height:1.55}.warning-card{background:#fff7ed;border-color:#fed7aa;color:#431407}.warning-card strong{display:block;color:#9a3412;margin-bottom:7px}.warning-card p{font-size:13px;color:#431407;line-height:1.6;margin:7px 0}.report-scam-link{display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid #fecaca;background:#fff1f2;color:#be123c;font-size:13px;font-weight:900;text-decoration:none;transition:.18s ease}.report-scam-link:hover{background:#ffe4e6;transform:translateY(-1px)}.empty{padding:60px 20px;text-align:center;color:var(--muted);margin:30px auto}.empty strong{font-size:20px;color:var(--text);display:block;margin-bottom:8px}
+.note-card{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}.note-card strong{display:block;color:#166534;margin-bottom:5px}.note-card p{font-size:13px;color:#14532d;line-height:1.55}.warning-card{background:#fff7ed;border-color:#fed7aa;color:#431407}.warning-card strong{display:block;color:#9a3412;margin-bottom:7px}.warning-card p{font-size:13px;color:#431407;line-height:1.6;margin:7px 0}.report-scam-link{display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid #fecaca;background:#fff1f2;color:#be123c;font-size:13px;font-weight:900;text-decoration:none;transition:.18s ease}.report-scam-link:hover{background:#ffe4e6;transform:translateY(-1px)}
+.quick-actions-card{padding:16px}
+.quick-actions-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.quick-actions-top strong{font-size:13px;color:#334155;text-transform:uppercase;letter-spacing:.06em}
+.detail-icon-actions{display:flex;align-items:center;gap:10px}
+.icon-action-btn{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s ease;color:#334155;box-shadow:0 8px 18px rgba(15,23,42,.04)}
+.icon-action-btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,.08)}
+.icon-action-btn svg{width:19px;height:19px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.icon-action-btn.share{background:var(--blue-soft);border-color:#cfe0ff;color:var(--blue)}
+.icon-action-btn.check{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}
+.icon-action-btn.report{background:#fff1f2;border-color:#fecaca;color:#be123c}
+.report-scam-link.icon-action-btn{width:44px;margin:0;padding:0;text-decoration:none}
+.dlp-toast{position:fixed;left:50%;bottom:22px;z-index:10020;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:#0f172a;color:#fff;border-radius:999px;padding:11px 15px;font-size:13px;font-weight:800;box-shadow:0 18px 45px rgba(15,23,42,.24);transition:.2s ease;max-width:calc(100vw - 28px);text-align:center}
+.dlp-toast.show{opacity:1;transform:translate(-50%,0)}
+.contact-feedback-backdrop{position:fixed;inset:0;z-index:10010;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.58);backdrop-filter:blur(6px)}
+.contact-feedback-backdrop.open{display:flex}
+.contact-feedback-modal{width:min(520px,100%);background:#fff;border:1px solid rgba(226,232,240,.95);border-radius:22px;box-shadow:0 24px 70px rgba(15,23,42,.26);padding:22px}
+.contact-feedback-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.contact-feedback-head h3{font-size:20px;letter-spacing:-.3px;margin:0;color:#0f172a}
+.contact-feedback-head p{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.55}
+.contact-feedback-close{border:0;background:#f8fafc;color:#334155;width:36px;height:36px;border-radius:12px;font-weight:900;cursor:pointer}
+.feedback-options{display:grid;gap:9px;margin:14px 0}
+.feedback-option{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:left;padding:12px 13px;cursor:pointer;color:#334155;font-size:13px;font-weight:800;transition:.16s ease}
+.feedback-option:hover{border-color:#b8d0ff;background:#f8fbff}
+.feedback-option.active{border-color:#165dff;background:#eaf1ff;color:#165dff}
+.feedback-note{width:100%;min-height:78px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:11px 12px;font:inherit;font-size:13px;color:#0f172a;outline:0}
+.feedback-note:focus{border-color:#9bbcff;box-shadow:0 0 0 3px rgba(22,93,255,.10)}
+.contact-feedback-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:10px;margin-top:12px}
+.contact-feedback-actions .btn{min-height:46px}
+.feedback-mini-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
+
+.empty{padding:60px 20px;text-align:center;color:var(--muted);margin:30px auto}.empty strong{font-size:20px;color:var(--text);display:block;margin-bottom:8px}
 .position-chips-mobile{display:none}.position-chip-list{display:flex;gap:9px;flex-wrap:wrap}.position-chip{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#0f172a;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(15,23,42,.035)}.position-chip.more{color:var(--blue);background:var(--blue-soft);border-color:#cfe0ff}.mobile-meta-row{display:none}.mobile-meta-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#334155;padding:8px 11px;font-size:12px;font-weight:800}.mobile-apply-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9000;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);box-shadow:0 -14px 36px rgba(15,23,42,.12)}.mobile-apply-inner{width:min(720px,100%);margin-inline:auto}.mobile-apply-note{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px;color:#475569;font-size:12px;font-weight:700;line-height:1.3;text-align:center}.mobile-apply-actions{display:grid;grid-template-columns:1.12fr .88fr;gap:10px}.mobile-apply-actions.one{grid-template-columns:1fr}.mobile-apply-btn{min-height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:9px;font-weight:900;font-size:14px;line-height:1.15;text-align:center;border:1px solid transparent;box-shadow:0 10px 22px rgba(15,23,42,.10)}.mobile-apply-btn small{display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px}.mobile-apply-wa{background:var(--green);color:#fff;border-color:#15803d}.mobile-apply-email{background:#fff;color:var(--blue);border-color:#b8d0ff;box-shadow:0 8px 18px rgba(22,93,255,.08)}.mobile-apply-icon{width:22px;height:22px;display:grid;place-items:center;flex:none;color:currentColor}.mobile-apply-icon svg{width:100%;height:100%;display:block}
 @media(max-width:900px){.detail-grid{grid-template-columns:1fr}.sidebar{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:720px){body.has-mobile-apply{padding-bottom:108px}.mobile-apply-bar{display:block}.position-chips-mobile{display:block}.mobile-meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.desktop-vacancy-table-card{margin-top:0}}
+
+@media(max-width:520px){.quick-actions-card{padding:15px}.quick-actions-top{margin-bottom:10px}.detail-icon-actions{gap:9px}.icon-action-btn{width:42px;height:42px;border-radius:13px}.contact-feedback-modal{padding:19px;border-radius:20px}.contact-feedback-actions{grid-template-columns:1fr}}
+
 @media(max-width:520px){.container{width:calc(100% - 22px);max-width:1160px}.site-header{position:sticky}.header-inner{height:62px}.brand{gap:9px;font-size:14px}.brand-mark{width:36px;height:36px;border-radius:12px;font-size:21px}.detail-hero{padding:16px 0 12px}.breadcrumb{display:none}.hero-card{padding:18px;border-radius:20px}.detail-title{gap:12px}h1{font-size:24px;line-height:1.18;margin-bottom:7px}.subtitle{font-size:14px;line-height:1.55}.badges{gap:7px;margin-top:2px}.badge{font-size:10px;padding:6px 9px}.stats{grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.stat{padding:12px 11px;border-radius:13px}.stat strong{font-size:17px}.stat span{font-size:11px}.detail-grid{gap:14px;margin-top:10px;margin-bottom:24px}.section-card,.sidebar-card{border-radius:18px;padding:17px}.section-card h2{font-size:18px;margin-bottom:12px}.job-table{font-size:12px;min-width:100%;width:100%}.job-table th,.job-table td{padding:10px 11px;white-space:normal}.sidebar .sidebar-card:first-child:not(.archive-card){display:none}.apply-time-note{display:none}.warning-card p{font-size:13px;line-height:1.55;margin:6px 0}.warning-card strong{font-size:15px}.report-scam-link{font-size:12px;padding:11px 12px}.mobile-apply-note{font-size:11px;margin-bottom:6px}.mobile-apply-btn{min-height:52px;font-size:13px;padding:0 10px}.mobile-apply-btn small{font-size:10px;margin-top:1px}.after-hours-modal{padding:22px 18px;border-radius:20px}.after-hours-actions{grid-template-columns:1fr}}
 @media print{.mobile-apply-bar{display:none!important}.site-header{position:static!important;top:auto!important;box-shadow:none!important;backdrop-filter:none!important;background:#fff!important}body{background:#fff!important}.detail-hero{padding-top:14px!important}.hero-card,.section-card,.sidebar-card{box-shadow:none!important;break-inside:avoid;page-break-inside:avoid}.detail-grid{break-inside:auto;page-break-inside:auto}}
 </style>
@@ -91,6 +125,7 @@ const EXPIRED_VISIBLE_EXTRA_DAYS = 3;
 const EXPIRED_SOON_DAYS_BEFORE = 1;
 const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
 const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
+const CONTACT_FEEDBACK_API_URL = "PASTE_CONTACT_FEEDBACK_WEB_APP_URL_HERE";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){try{const m=String(v).match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);if(m)return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();return new Date(v).toISOString();}catch(e){return new Date().toISOString()}}
@@ -150,11 +185,61 @@ function mobilePositionChipsHTML(j){const titles=allPositionTitles(j.sections);i
 function mobileApplyBarHTML(waLink,emailLink,j){if(!waLink&&!emailLink)return"";const one=(waLink&&!emailLink)||(!waLink&&emailLink);return`<div class="mobile-apply-bar" role="region" aria-label="Apply lowongan"><div class="mobile-apply-inner"><div class="mobile-apply-note">ⓘ Apply sesuai lowongan · WA dengan bijak</div><div class="mobile-apply-actions ${one?"one":""}">${waLink?`<a class="mobile-apply-btn mobile-apply-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}"><span class="mobile-apply-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="currentColor" focusable="false"><path d="M19.11 17.34c-.27-.14-1.59-.78-1.84-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.15-.42-2.19-1.35-.81-.72-1.36-1.61-1.52-1.88-.16-.27-.02-.42.12-.56.13-.13.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.48-.84-2.02-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27s.98 2.64 1.12 2.82c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.56.57.65.2 1.24.17 1.71.1.52-.08 1.59-.65 1.82-1.29.22-.63.22-1.17.16-1.29-.07-.11-.25-.18-.52-.32z"/><path d="M16.03 3.2c-7 0-12.67 5.67-12.67 12.67 0 2.23.58 4.32 1.59 6.14L3.2 28.8l6.97-1.82a12.62 12.62 0 0 0 5.86 1.49h.01c7 0 12.67-5.67 12.67-12.67S23.03 3.2 16.03 3.2zm0 23.06h-.01a10.46 10.46 0 0 1-5.34-1.46l-.38-.23-4.14 1.08 1.1-4.03-.25-.41a10.45 10.45 0 0 1-1.6-5.58c0-5.78 4.71-10.49 10.5-10.49 2.8 0 5.43 1.09 7.41 3.07a10.4 10.4 0 0 1 3.08 7.42c0 5.79-4.71 10.5-10.5 10.5z"/></svg></span><span>Hubungi via WhatsApp<small>Chat via WA</small></span></a>`:""}${emailLink?`<a class="mobile-apply-btn mobile-apply-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}"><span class="mobile-apply-icon" aria-hidden="true">✉️</span><span>Kirim Email<small>Lamaran via email</small></span></a>`:""}</div></div></div>`}
 function lifecycleBadgeHTML(life){if(life.status==="expired")return`<span class="badge badge-red">Expired</span>`;if(life.status==="expired_soon")return`<span class="badge badge-orange">Expired Soon</span>`;return""}
 
+
+function iconSVG(name){
+  const icons={
+    share:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 10.7 15.4 6.3"></path><path d="M8.6 13.3 15.4 17.7"></path></svg>',
+    shield:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-4"></path></svg>',
+    flag:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 22V4"></path><path d="M5 4h11l-1 4 1 4H5"></path></svg>'
+  };
+  return icons[name]||"";
+}
+function contactFeedbackEnabled(){return /^https?:\/\//i.test(String(CONTACT_FEEDBACK_API_URL||""))}
+function detailQuickActionsHTML(j,isExpiredArchive){
+  const company=escapeHTML(j.company||"");
+  const batchId=escapeHTML(j.batchId||j.id||"");
+  const shareBtn=`<button type="button" class="icon-action-btn share" data-detail-share title="Bagikan lowongan" aria-label="Bagikan lowongan" data-company="${company}" data-batch-id="${batchId}">${iconSVG("share")}</button>`;
+  const checkBtn=(!isExpiredArchive&&j.whatsapp&&contactFeedbackEnabled())?`<button type="button" class="icon-action-btn check" data-contact-feedback-open title="Bantu cek kontak recruiter" aria-label="Bantu cek kontak recruiter" data-company="${company}" data-batch-id="${batchId}">${iconSVG("shield")}</button>`:"";
+  const reportBtn=`<a class="icon-action-btn report report-scam-link" href="${SCAM_REPORT_URL}" target="_blank" rel="noopener" title="Laporkan lowongan mencurigakan" aria-label="Laporkan lowongan mencurigakan" data-company="${company}" data-batch-id="${batchId}">${iconSVG("flag")}</a>`;
+  return `<div class="sidebar-card quick-actions-card"><div class="quick-actions-top"><strong>Aksi Cepat</strong><div class="detail-icon-actions">${shareBtn}${checkBtn}${reportBtn}</div></div></div>`;
+}
+function showDLPToast(message){
+  let toast=document.getElementById("dlpToast");
+  if(!toast){toast=document.createElement("div");toast.id="dlpToast";toast.className="dlp-toast";document.body.appendChild(toast)}
+  toast.textContent=message;
+  toast.classList.add("show");
+  clearTimeout(window.__DLP_TOAST_TIMER);
+  window.__DLP_TOAST_TIMER=setTimeout(()=>toast.classList.remove("show"),2300);
+}
+async function shareVacancyDetail(btn){
+  const vacancy=window.__DLP_CURRENT_VACANCY||{};
+  const company=btn&&btn.dataset&&btn.dataset.company?btn.dataset.company:(vacancy.company||"Lowongan Pelaut");
+  const batchId=btn&&btn.dataset&&btn.dataset.batchId?btn.dataset.batchId:(vacancy.batchId||"");
+  const url=window.location.href;
+  const title=`${company} - Daily Loker Pelaut`;
+  const text=`Cek lowongan ${company} di Daily Loker Pelaut`;
+  try{
+    if(navigator.share){
+      await navigator.share({title,text,url});
+      showDLPToast("Lowongan siap dibagikan");
+    }else if(navigator.clipboard&&navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(url);
+      showDLPToast("Link lowongan disalin");
+    }else{
+      window.prompt("Salin link lowongan:",url);
+    }
+    trackDLPEvent("share_vacancy_detail",{event_category:"Engagement",event_label:"Share vacancy detail",company,batch_id:batchId,link_url:url});
+  }catch(e){
+    if(e&&e.name==="AbortError")return;
+    showDLPToast("Gagal membagikan link");
+  }
+}
+
 function render(j){
   const app=document.getElementById("app");
   if(!j){document.body.classList.remove("has-mobile-apply");app.innerHTML=`<div class="container empty"><strong>Lowongan tidak ditemukan</strong><p>Data belum approved, sudah lewat masa arsip, atau link detail tidak valid.</p></div>`;trackDLPEvent("dlp_vacancy_detail_not_found",{event_label:"Vacancy detail not found"});return}
 
-  window.__DLP_CURRENT_VACANCY={company:j.company||"Unknown",batchId:j.batchId||j.id||""};
+  window.__DLP_CURRENT_VACANCY={company:j.company||"Unknown",batchId:j.batchId||j.id||"",contactWhatsApp:j.whatsapp||"",pageUrl:window.location.href};
   const life=getVacancyLifecycle(j.timestamp);
   const isExpiredArchive=life.status==="expired";
   const openings=countOpenings(j.sections);
@@ -188,7 +273,7 @@ function render(j){
           </div>`:`
           <div class="sidebar-card"><h3>Hubungi Recruiter</h3>${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(displayPhone(x.trim()))}</a>`).join("")}</div>`:""}${j.email?`<div class="contact-block"><strong>Email</strong>${j.email.split(/&|,/).map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}<div class="action-stack">${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Hubungi via WhatsApp</a>`:""}${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Kirim Email</a>`:""}</div>${(waLink||emailLink)?`<div class="apply-time-note"><strong>Apply sesuai lowongan.</strong> Hindari menghubungi recruiter terlalu malam kecuali urgent/ASAP.<br>Email bisa dikirim kapan saja.</div>`:""}<div class="view-stat-box"><div class="view-stat-icon">👁️</div><div class="view-stat-main"><strong class="vacancyViewCountText">Dilihat — kali</strong><span>Total kunjungan halaman detail</span></div></div></div>`}
         ${j.free&&!isExpiredArchive?`<div class="sidebar-card note-card"><strong>FREE OF CHARGE</strong><p>Recruitment process tidak dipungut biaya.</p></div>`:""}
-        <div class="sidebar-card warning-card"><strong>⚠️ PERHATIAN</strong><p>Daily Loker Pelaut membantu menampilkan lowongan. Proses seleksi tetap dilakukan oleh perusahaan / recruiter terkait.</p><p>Jangan transfer uang untuk alasan rekrutmen, medical, visa, tiket, joining, atau administrasi.</p><p>Jika ada hal mencurigakan, segera laporkan ke Daily Loker Pelaut.</p><a class="report-scam-link" href="${SCAM_REPORT_URL}" target="_blank" rel="noopener" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Laporkan Lowongan Mencurigakan</a></div>
+        ${detailQuickActionsHTML(j,isExpiredArchive)}
       </aside>
     </section>
     ${mobileApplyBarHTML(waLink,emailLink,j)}
@@ -199,6 +284,29 @@ loadDetail().catch(err=>{console.warn(err);document.getElementById("app").innerH
 </script>
 
 <div id="afterHoursWhatsAppModal" class="after-hours-modal-backdrop" aria-hidden="true"><div class="after-hours-modal" role="dialog" aria-modal="true" aria-labelledby="afterHoursTitle"><div class="after-hours-icon">🌙</div><h3 id="afterHoursTitle">Catatan kecil sebelum apply</h3><p>Saat ini sudah di luar jam kerja umum. Agar lebih profesional, disarankan menghubungi recruiter pada jam kerja, sekitar 08.00–17.00 WIB. Jika lowongan tertulis URGENT / ASAP, atau kamu tetap ingin mengirim pesan sekarang, silakan lanjut dengan sopan dan singkat.</p><div class="after-hours-callout">⏰ Disarankan WhatsApp pada 08.00–17.00 WIB</div><div class="after-hours-actions"><button type="button" class="after-hours-btn secondary" id="afterHoursLaterBtn">Apply Besok Pagi</button><button type="button" class="after-hours-btn primary" id="afterHoursContinueBtn">Tetap Lanjut ke WhatsApp</button></div><button type="button" class="after-hours-close" id="afterHoursCloseBtn">Tutup</button></div></div>
+<div id="contactFeedbackModal" class="contact-feedback-backdrop" aria-hidden="true">
+  <div class="contact-feedback-modal" role="dialog" aria-modal="true" aria-labelledby="contactFeedbackTitle">
+    <div class="contact-feedback-head">
+      <div>
+        <h3 id="contactFeedbackTitle">Bantu Cek Kontak Recruiter</h3>
+        <p>Bantu pelaut lain lebih waspada. Feedback ini masuk ke admin Daily Loker Pelaut dan tidak ditampilkan ke publik.</p>
+      </div>
+      <button type="button" class="contact-feedback-close" id="contactFeedbackCloseBtn" aria-label="Tutup">×</button>
+    </div>
+    <div class="feedback-options" id="contactFeedbackOptions">
+      <button type="button" class="feedback-option" data-feedback-type="known_recruiter">Terlihat wajar / saya mengenal sebagai recruiter</button>
+      <button type="button" class="feedback-option" data-feedback-type="unknown_new_number">Nomor baru atau belum saya kenal</button>
+      <button type="button" class="feedback-option" data-feedback-type="getcontact_suspicious">Ada tag mencurigakan di GetContact</button>
+      <button type="button" class="feedback-option" data-feedback-type="fee_or_suspicious_process">Pernah diminta biaya / proses mencurigakan</button>
+    </div>
+    <textarea id="contactFeedbackNote" class="feedback-note" placeholder="Catatan tambahan (opsional)"></textarea>
+    <div class="contact-feedback-actions">
+      <button type="button" class="btn btn-outline" id="contactFeedbackCancelBtn">Batal</button>
+      <button type="button" class="btn btn-primary" id="contactFeedbackSubmitBtn">Kirim Feedback</button>
+    </div>
+    <p class="feedback-mini-note">Laporan negatif tidak otomatis menurunkan lowongan. Admin akan review manual jika ada banyak sinyal mencurigakan.</p>
+  </div>
+</div>
 <script>
 let pendingAfterHoursWhatsApp=null;
 function getJakartaHour(){try{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hour12:false}).formatToParts(new Date());const hourPart=parts.find(p=>p.type==='hour');return Number(hourPart?hourPart.value:new Date().getHours())}catch(e){return new Date().getHours()}}
@@ -209,6 +317,80 @@ function closeAfterHoursWhatsAppModal(reason){const modal=document.getElementByI
 function continueAfterHoursWhatsApp(){if(!pendingAfterHoursWhatsApp||!pendingAfterHoursWhatsApp.href){closeAfterHoursWhatsAppModal('after_hours_whatsapp_modal_closed');return}const payload=pendingAfterHoursWhatsApp;trackDLPEvent('after_hours_whatsapp_continue_click',{event_category:'Apply Button',event_label:'Continue to WhatsApp after warning',company:payload.company||'Unknown',batch_id:payload.batchId||'',link_url:payload.href||'',jakarta_hour:getJakartaHour()});trackDLPEvent('apply_whatsapp_click',{event_category:'Apply Button',event_label:'WhatsApp Apply after-hours continue',company:payload.company||'Unknown',batch_id:payload.batchId||'',link_url:payload.href||''});const url=payload.href;closeAfterHoursWhatsAppModal();window.open(url,'_blank','noopener')}
 document.addEventListener('DOMContentLoaded',function(){const later=document.getElementById('afterHoursLaterBtn');const cont=document.getElementById('afterHoursContinueBtn');const close=document.getElementById('afterHoursCloseBtn');const modal=document.getElementById('afterHoursWhatsAppModal');if(later)later.addEventListener('click',function(){closeAfterHoursWhatsAppModal('after_hours_whatsapp_later_click')});if(cont)cont.addEventListener('click',continueAfterHoursWhatsApp);if(close)close.addEventListener('click',function(){closeAfterHoursWhatsAppModal('after_hours_whatsapp_modal_closed')});if(modal)modal.addEventListener('click',function(e){if(e.target===modal)closeAfterHoursWhatsAppModal('after_hours_whatsapp_modal_closed')})});
 </script>
+
+<script>
+let selectedContactFeedbackType="";
+function openContactFeedbackModal(){
+  if(!contactFeedbackEnabled()){showDLPToast("Feedback kontak belum tersambung");return}
+  selectedContactFeedbackType="";
+  document.querySelectorAll(".feedback-option").forEach(btn=>btn.classList.remove("active"));
+  const note=document.getElementById("contactFeedbackNote");if(note)note.value="";
+  const modal=document.getElementById("contactFeedbackModal");
+  if(modal){modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
+  const vacancy=window.__DLP_CURRENT_VACANCY||{};
+  trackDLPEvent("contact_feedback_open",{event_category:"Community Safety",event_label:"Open contact feedback",company:vacancy.company||"Unknown",batch_id:vacancy.batchId||""});
+}
+function closeContactFeedbackModal(){
+  const modal=document.getElementById("contactFeedbackModal");
+  if(modal){modal.classList.remove("open");modal.setAttribute("aria-hidden","true")}
+  document.body.style.overflow="";
+}
+function submitContactFeedback(){
+  const vacancy=window.__DLP_CURRENT_VACANCY||{};
+  if(!selectedContactFeedbackType){showDLPToast("Pilih salah satu opsi dulu");return}
+  if(!contactFeedbackEnabled()){showDLPToast("Feedback kontak belum tersambung");return}
+  const key="dlp_contact_feedback_"+(vacancy.batchId||window.location.pathname);
+  if(localStorage.getItem(key)){showDLPToast("Kamu sudah memberi feedback untuk lowongan ini");closeContactFeedbackModal();return}
+  const noteEl=document.getElementById("contactFeedbackNote");
+  const payload={
+    action:"contact_feedback",
+    timestamp:new Date().toISOString(),
+    batchId:vacancy.batchId||"",
+    company:vacancy.company||"Unknown",
+    contactWhatsApp:vacancy.contactWhatsApp||"",
+    feedbackType:selectedContactFeedbackType,
+    note:noteEl?noteEl.value.trim():"",
+    pageUrl:window.location.href,
+    userAgent:navigator.userAgent||""
+  };
+  const btn=document.getElementById("contactFeedbackSubmitBtn");
+  if(btn){btn.disabled=true;btn.textContent="Mengirim..."}
+  jsonpRequest(CONTACT_FEEDBACK_API_URL,payload).then(data=>{
+    localStorage.setItem(key,selectedContactFeedbackType);
+    showDLPToast("Terima kasih, feedback terkirim");
+    closeContactFeedbackModal();
+    trackDLPEvent("contact_feedback_submit",{event_category:"Community Safety",event_label:selectedContactFeedbackType,company:payload.company,batch_id:payload.batchId});
+  }).catch(()=>{
+    showDLPToast("Gagal mengirim feedback");
+  }).finally(()=>{
+    if(btn){btn.disabled=false;btn.textContent="Kirim Feedback"}
+  });
+}
+document.addEventListener("DOMContentLoaded",function(){
+  const modal=document.getElementById("contactFeedbackModal");
+  const close=document.getElementById("contactFeedbackCloseBtn");
+  const cancel=document.getElementById("contactFeedbackCancelBtn");
+  const submit=document.getElementById("contactFeedbackSubmitBtn");
+  if(close)close.addEventListener("click",closeContactFeedbackModal);
+  if(cancel)cancel.addEventListener("click",closeContactFeedbackModal);
+  if(submit)submit.addEventListener("click",submitContactFeedback);
+  if(modal)modal.addEventListener("click",function(e){if(e.target===modal)closeContactFeedbackModal()});
+  document.querySelectorAll(".feedback-option").forEach(btn=>{
+    btn.addEventListener("click",function(){
+      selectedContactFeedbackType=this.dataset.feedbackType||"";
+      document.querySelectorAll(".feedback-option").forEach(x=>x.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+});
+document.addEventListener("click",function(event){
+  const shareBtn=event.target.closest("[data-detail-share]");
+  if(shareBtn){event.preventDefault();shareVacancyDetail(shareBtn);return}
+  const feedbackBtn=event.target.closest("[data-contact-feedback-open]");
+  if(feedbackBtn){event.preventDefault();openContactFeedbackModal();return}
+});
+</script>
+
 <script>
 document.addEventListener("click",function(event){const link=event.target.closest("a");if(!link)return;const href=link.getAttribute("href")||"";const text=(link.innerText||"").trim();const vacancy=window.__DLP_CURRENT_VACANCY||{};const company=link.dataset.company||vacancy.company||"Unknown";const batchId=link.dataset.batchId||vacancy.batchId||"";if(isWhatsAppApplyLink(href)){if(isAfterHoursWIB()){event.preventDefault();showAfterHoursWhatsAppModal({href,company,batchId,label:text||"WhatsApp Apply"});return}trackDLPEvent("apply_whatsapp_click",{event_category:"Apply Button",event_label:text||"WhatsApp Apply",company,batch_id:batchId,link_url:href})}if(href.startsWith("mailto:")){trackDLPEvent("apply_email_click",{event_category:"Apply Button",event_label:text||"Email Apply",company,batch_id:batchId,link_url:href})}if(link.classList.contains("report-scam-link")){trackDLPEvent("report_scam_click",{event_category:"Safety",event_label:text||"Report Scam",company,batch_id:batchId,link_url:href})}if(href==="index.html"||href.endsWith("/index.html")||href==="/"||href.includes("vacancy.dailylokerpelaut.com")){trackDLPEvent("vacancy_detail_back_click",{event_category:"Navigation",event_label:text||"Back to vacancy homepage",company,batch_id:batchId,link_url:href})}});
 </script>
