@@ -125,7 +125,7 @@ const EXPIRED_VISIBLE_EXTRA_DAYS = 3;
 const EXPIRED_SOON_DAYS_BEFORE = 1;
 const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
 const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
-const CONTACT_FEEDBACK_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
+const CONTACT_FEEDBACK_API_URL = "PASTE_CONTACT_FEEDBACK_WEB_APP_URL_HERE";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){try{const m=String(v).match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);if(m)return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();return new Date(v).toISOString();}catch(e){return new Date().toISOString()}}
@@ -253,7 +253,7 @@ function render(j){
   document.body.classList.toggle("has-mobile-apply",!!(waLink||emailLink));
 
   app.innerHTML=`
-    <section class="detail-hero"><div class="container"><div class="breadcrumb">Beranda › Lowongan › ${escapeHTML(j.company)}</div><div class="hero-card"><div class="detail-title"><div><h1>${escapeHTML(j.company)}</h1><p class="subtitle">${escapeHTML(j.summary||"Lowongan kerja pelaut terbaru")}</p></div><div class="badges">${lifecycleBadgeHTML(life)}${urgencyLabel&&!isExpiredArchive?`<span class="badge badge-red">${escapeHTML(urgencyLabel)}</span>`:""}${cleanJoinInfo?`<span class="badge badge-blue">${escapeHTML(cleanJoinInfo)}</span>`:""}${j.free?`<span class="badge badge-green">Free of Charge</span>`:""}${j.featured?`<span class="badge badge-amber">Featured</span>`:""}</div></div><div class="stats"><div class="stat"><strong>${j.sections.length}</strong><span>Grup Lowongan</span></div><div class="stat"><strong>${openings}</strong><span>Posisi Dibuka</span></div><div class="stat"><strong>${escapeHTML(salary)}</strong><span>Rentang Gaji</span></div><div class="stat"><strong>${cleanJoinInfo?escapeHTML(cleanJoinInfo):"TBC"}</strong><span>Join Info</span></div></div>${isExpiredArchive?`<div class="mobile-meta-row"><span class="mobile-meta-pill">🔒 Kontak apply ditutup</span><span class="mobile-meta-pill">👁️ <span class="vacancyViewCountText">Dilihat — kali</span></span></div>`:`<div class="mobile-meta-row"><span class="mobile-meta-pill">👁️ <span class="vacancyViewCountText">Dilihat — kali</span></span></div>`}</div></div></section>
+    <section class="detail-hero"><div class="container"><div class="breadcrumb">Beranda › Lowongan › ${escapeHTML(j.company)}</div><div class="hero-card"><div class="detail-title"><div><h1>${escapeHTML(j.company)}</h1><p class="subtitle">${escapeHTML(j.summary||"Lowongan kerja pelaut terbaru")}</p></div><div class="badges">${lifecycleBadgeHTML(life)}${urgencyLabel&&!isExpiredArchive?`<span class="badge badge-red">${escapeHTML(urgencyLabel)}</span>`:""}${cleanJoinInfo?`<span class="badge badge-blue">${escapeHTML(cleanJoinInfo)}</span>`:""}${j.free?`<span class="badge badge-green">Free of Charge</span>`:""}${j.featured?`<span class="badge badge-amber">Featured</span>`:""}</div></div><div class="stats"><div class="stat"><strong>${j.sections.length}</strong><span>Grup Lowongan</span></div><div class="stat"><strong>${openings}</strong><span>Posisi Dibuka</span></div><div class="stat"><strong>${escapeHTML(salary)}</strong><span>Rentang Gaji</span></div><div class="stat"><strong>${cleanJoinInfo?escapeHTML(cleanJoinInfo):"TBC"}</strong><span>Join Info</span></div></div>${isExpiredArchive?`<div class="mobile-meta-row"><span class="mobile-meta-pill">🔒 Kontak apply ditutup</span></div>`:""}</div></div></section>
     <section class="container detail-grid">
       <main class="main-stack">
         ${isExpiredArchive?`<div class="section-card archive-card"><strong>Lowongan ini sudah expired</strong><p>Detail lowongan tetap ditampilkan sebagai arsip, tetapi kontak apply disembunyikan agar pelaut tidak mengirim lamaran ke lowongan yang sudah lewat masa tayang.</p></div>`:""}
@@ -269,16 +269,16 @@ function render(j){
             <p>WhatsApp dan email recruiter tidak ditampilkan karena lowongan ini sudah expired.</p>
             <p>Silakan kembali ke halaman vacancy untuk melihat lowongan yang masih aktif.</p>
             <a class="btn btn-outline" href="index.html">Lihat Lowongan Aktif</a>
-            <div class="view-stat-box"><div class="view-stat-icon">👁️</div><div class="view-stat-main"><strong class="vacancyViewCountText">Dilihat — kali</strong><span>Total kunjungan halaman detail</span></div></div>
+            
           </div>`:`
-          <div class="sidebar-card"><h3>Hubungi Recruiter</h3>${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(displayPhone(x.trim()))}</a>`).join("")}</div>`:""}${j.email?`<div class="contact-block"><strong>Email</strong>${j.email.split(/&|,/).map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}<div class="action-stack">${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Hubungi via WhatsApp</a>`:""}${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Kirim Email</a>`:""}</div>${(waLink||emailLink)?`<div class="apply-time-note"><strong>Apply sesuai lowongan.</strong> Hindari menghubungi recruiter terlalu malam kecuali urgent/ASAP.<br>Email bisa dikirim kapan saja.</div>`:""}<div class="view-stat-box"><div class="view-stat-icon">👁️</div><div class="view-stat-main"><strong class="vacancyViewCountText">Dilihat — kali</strong><span>Total kunjungan halaman detail</span></div></div></div>`}
+          <div class="sidebar-card"><h3>Hubungi Recruiter</h3>${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(displayPhone(x.trim()))}</a>`).join("")}</div>`:""}${j.email?`<div class="contact-block"><strong>Email</strong>${j.email.split(/&|,/).map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}<div class="action-stack">${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Hubungi via WhatsApp</a>`:""}${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Kirim Email</a>`:""}</div>${(waLink||emailLink)?`<div class="apply-time-note"><strong>Apply sesuai lowongan.</strong> Hindari menghubungi recruiter terlalu malam kecuali urgent/ASAP.<br>Email bisa dikirim kapan saja.</div>`:""}</div>`}
         ${j.free&&!isExpiredArchive?`<div class="sidebar-card note-card"><strong>FREE OF CHARGE</strong><p>Recruitment process tidak dipungut biaya.</p></div>`:""}
         ${detailQuickActionsHTML(j,isExpiredArchive)}
       </aside>
     </section>
     ${mobileApplyBarHTML(waLink,emailLink,j)}
   `;
-  countVacancyDetailView(j.batchId||j.id,j.company);
+  // View counter hidden for now to avoid showing zero-count data.
 }
 loadDetail().catch(err=>{console.warn(err);document.getElementById("app").innerHTML=`<div class="container empty"><strong>Gagal memuat detail</strong><p>Cek koneksi atau data sheet.</p></div>`});
 </script>
