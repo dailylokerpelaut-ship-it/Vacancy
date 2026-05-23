@@ -125,7 +125,7 @@ const EXPIRED_VISIBLE_EXTRA_DAYS = 3;
 const EXPIRED_SOON_DAYS_BEFORE = 1;
 const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
 const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
-const CONTACT_FEEDBACK_API_URL = "PASTE_CONTACT_FEEDBACK_WEB_APP_URL_HERE";
+const CONTACT_FEEDBACK_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){try{const m=String(v).match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);if(m)return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();return new Date(v).toISOString();}catch(e){return new Date().toISOString()}}
