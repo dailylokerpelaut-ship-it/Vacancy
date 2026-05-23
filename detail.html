@@ -124,8 +124,8 @@ const EXPIRE_DAYS = 7;
 const EXPIRED_VISIBLE_EXTRA_DAYS = 3;
 const EXPIRED_SOON_DAYS_BEFORE = 1;
 const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
-const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
-const CONTACT_FEEDBACK_API_URL = "PASTE_CONTACT_FEEDBACK_WEB_APP_URL_HERE";
+const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx35uNoUxR_yeyRUuBw1mtUFE6PD3m7k3aCfO6Q4SP4BrQ4NktpJlLTYy4Tv5A637YF/exec";
+const CONTACT_FEEDBACK_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){try{const m=String(v).match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);if(m)return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();return new Date(v).toISOString();}catch(e){return new Date().toISOString()}}
@@ -161,6 +161,7 @@ async function loadDetail(){
   if(job){
     const life=getVacancyLifecycle(job.timestamp);
     trackDLPEvent("dlp_vacancy_detail_loaded",{event_label:"Vacancy detail loaded",company:job.company||"Unknown",batch_id:job.batchId||job.id||"",total_sections:(job.sections||[]).length,total_openings:countOpenings(job.sections),urgent:!!job.urgent,featured:!!job.featured,free_of_charge:!!job.free,join_info:getCleanJoinInfo(job.joinInfo)||"",urgency_label:getUrgencyLabel(job.joinInfo,job.urgent)||"",vacancy_lifecycle:life.status,age_days:Math.floor(life.age)});
+    countVacancyDetailView(job.batchId||job.id||"", job.company||"Unknown");
   }
 }
 
@@ -176,7 +177,8 @@ function requirementsBenefitsHTML(requirements){const split=splitRequirementsAnd
 function additionalInfoHTML(j,isExpired){if(isExpired)return"";const info=extractContacts(j.rawInput,j.whatsapp,j.email);const hasMultiplePhones=info.phones.length>1;const hasMultipleEmails=info.emails.length>1;const hasAny=info.phones.length||info.emails.length||info.address;if(!hasAny)return"";return`<div class="section-card"><h2>Kontak Apply & Informasi Tambahan</h2><div class="extra-info-grid">${info.phones.length?`<div class="info-list">${info.phones.map((p,idx)=>`<div class="info-item"><span class="info-icon">WA</span><div><strong>${escapeHTML(p.name||(idx===0?"WhatsApp utama":"PIC tambahan"))}</strong><a target="_blank" rel="noopener" href="https://wa.me/${escapeHTML(p.number)}">${escapeHTML(p.display)}</a></div></div>`).join("")}</div>`:""}${info.emails.length?`<div class="info-list">${info.emails.map((email,idx)=>`<div class="info-item"><span class="info-icon">@</span><div><strong>${idx===0?"Email utama":"Email tambahan"}</strong><a href="mailto:${escapeHTML(email)}">${escapeHTML(email)}</a></div></div>`).join("")}</div>`:""}${(hasMultiplePhones||hasMultipleEmails)?`<p class="info-note">Beberapa kontak ditemukan dari informasi lowongan asli. Silakan gunakan kontak yang paling relevan saat apply.</p>`:""}</div></div>`}
 function jsonpRequest(url,params){return new Promise(resolve=>{const callbackName="dlpViewCallback_"+Date.now()+"_"+Math.floor(Math.random()*100000);const query=new URLSearchParams(Object.assign({},params,{callback:callbackName}));const script=document.createElement("script");window[callbackName]=function(data){try{resolve(data||{ok:false})}finally{delete window[callbackName];if(script&&script.parentNode)script.parentNode.removeChild(script)}};script.onerror=function(){delete window[callbackName];if(script&&script.parentNode)script.parentNode.removeChild(script);resolve({ok:false,error:"JSONP request failed"})};script.src=url+"?"+query.toString();document.body.appendChild(script)})}
 function formatViewCount(count){return Number(count||0).toLocaleString("id-ID")}
-function countVacancyDetailView(batchId,company){if(!batchId)return;const els=document.querySelectorAll(".vacancyViewCountText");els.forEach(el=>el.textContent="Menghitung...");jsonpRequest(VIEW_COUNTER_API_URL,{action:"view",batchId}).then(data=>{if(data&&data.ok){const count=Number(data.count||0);els.forEach(el=>el.textContent="Dilihat "+formatViewCount(count)+" kali");trackDLPEvent("vacancy_detail_view_counted",{event_category:"Vacancy Detail",event_label:"Vacancy detail view counted",company:company||"Unknown",batch_id:batchId,view_count:count})}else{els.forEach(el=>el.textContent="Dilihat — kali")}})}
+function viewCounterEnabled(){return /^https?:\/\//i.test(String(VIEW_COUNTER_API_URL||""))}
+function countVacancyDetailView(batchId,company){if(!batchId||!viewCounterEnabled())return;jsonpRequest(VIEW_COUNTER_API_URL,{action:"view",batchId}).then(data=>{if(data&&data.ok){const count=Number(data.count||0);trackDLPEvent("vacancy_detail_view_counted",{event_category:"Vacancy Detail",event_label:"Vacancy detail view counted",company:company||"Unknown",batch_id:batchId,view_count:count})}})}
 function getCleanJoinInfo(v){const s=String(v||"").trim();if(!s)return"";if(/^(top\s*urgent|very\s*urgent|urgent|dibutuhkan\s*cepat|segera)$/i.test(s))return"";return s}
 function getUrgencyLabel(joinInfo,urgent){const s=String(joinInfo||"").trim();if(/top\s*urgent/i.test(s))return"Top Urgent";if(/very\s*urgent/i.test(s))return"Very Urgent";if(/urgent|dibutuhkan\s*cepat|segera/i.test(s)||urgent)return"Urgent";return""}
 function getPrimaryPhone(raw){const s=String(raw||"").normalize("NFKC").replace(/[‐‑‒–—―−]/g,"-");const m=s.match(/(?:\+?62|0|8)(?:[\s\-().]*\d){8,15}/);return normalizePhone(m?m[0]:s.split(/[\/,&;]/)[0])}
