@@ -1696,8 +1696,20 @@
     }
 
     function getMatchingJobLifecycle_(publicJob){
-      const sourceJob = getSourceJobByBatchId_(publicJob?.batchId);
+      const batchId = String(publicJob?.batchId || "").trim();
+      if(!batchId) return "hidden";
+
+      const sourceJob = getSourceJobByBatchId_(batchId);
       if(sourceJob) return getJobLifecycle(sourceJob);
+
+      /*
+        Safety guard:
+        WebsiteJobsPublic can become stale if the matching export is not refreshed
+        after WebsiteJobsGrouped rows expire. The detail page uses WebsiteJobsGrouped
+        as source of truth, so public matching results that no longer exist in the
+        visible grouped jobs must be hidden to avoid broken detail links.
+      */
+      if(jobsLoaded) return "hidden";
 
       const publicStatus = String(publicJob?.status || "").trim().toUpperCase();
       if(publicStatus === "EXPIRED") return "expired";
