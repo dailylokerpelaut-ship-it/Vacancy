@@ -281,6 +281,92 @@
     .btn-ad{background:#f97316;color:#fff;box-shadow:0 8px 18px rgba(249,115,22,.16);padding:8px 10px;font-size:11.5px;border-radius:9px}
     .ad-url{font-size:10.5px;color:#64748b;font-weight:800}
     .book-mock{display:none}
+    .pelaut-promo{
+      border-color:#c7d2fe;
+      background:linear-gradient(135deg,#eff6ff 0%,#ffffff 55%,#fff7ed 100%);
+      box-shadow:0 10px 30px rgba(37,99,235,.08);
+      overflow:hidden;
+      position:relative;
+      isolation:isolate;
+    }
+    .pelaut-promo::before{
+      content:"";
+      position:absolute;
+      inset:auto -38px -38px auto;
+      width:150px;
+      height:150px;
+      border-radius:999px;
+      background:radial-gradient(circle,#fdba74 0%,rgba(253,186,116,.18) 42%,rgba(253,186,116,0) 72%);
+      z-index:0;
+      pointer-events:none;
+    }
+    .pelaut-promo::after{
+      content:"";
+      position:absolute;
+      inset:0 auto auto 0;
+      width:100%;
+      height:4px;
+      background:linear-gradient(90deg,#2563eb 0%,#60a5fa 46%,#fb923c 100%);
+      z-index:1;
+    }
+    .pelaut-promo .ad-highlight-inner{
+      background:transparent;
+      padding:13px 14px;
+      padding-right:48px;
+      gap:12px;
+      align-items:center;
+    }
+    .promo-main{display:flex;align-items:center;gap:14px;min-width:0}
+    .promo-icon{
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 58%,#60a5fa 100%);
+      border:1px solid rgba(255,255,255,.55);
+      display:grid;
+      place-items:center;
+      font-size:26px;
+      flex:none;
+      color:#fff;
+      box-shadow:0 12px 24px rgba(37,99,235,.22);
+    }
+    .promo-copy{min-width:0}
+    .promo-copy h2{margin-bottom:4px;font-size:17px;line-height:1.2;color:#0f172a}
+    .promo-copy p{font-size:12px;line-height:1.55;color:#475569;max-width:720px}
+    .promo-proof{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+    .promo-proof-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      padding:5px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:1px solid #dbeafe;
+      font-size:10.5px;
+      font-weight:800;
+      color:#1e3a8a;
+      white-space:nowrap;
+    }
+    .pelaut-promo .ad-labels{margin-bottom:6px}
+    .pelaut-promo .ad-chip.orange{
+      background:#fff7ed;
+      color:#c2410c;
+      border:1px solid #fdba74;
+      box-shadow:0 4px 12px rgba(251,146,60,.12);
+    }
+    .pelaut-promo .ad-actions{gap:12px;align-items:flex-end}
+    .pelaut-promo .btn-ad{
+      background:linear-gradient(135deg,#f97316 0%,#ea580c 100%);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(249,115,22,.22);
+      padding:10px 14px;
+      font-size:12px;
+      border-radius:11px;
+      font-weight:900;
+    }
+    .pelaut-promo .ad-url{font-size:11px;color:#475569;font-weight:800}
+    .promo-dismiss{position:absolute;top:10px;right:10px;width:32px;height:32px;border:none;background:#ffffff;color:#64748b;border-radius:999px;display:grid;place-items:center;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.08);z-index:2}
+    .promo-dismiss:hover{background:#f8fafc;color:#334155}
     .section-head{display:flex;align-items:end;justify-content:space-between;margin:16px 0 10px;gap:12px}
     .section-head h2{font-size:19px}
     .section-head p{color:var(--muted);font-size:12px}
@@ -554,6 +640,18 @@
       .ad-actions{justify-content:flex-start;align-items:flex-start;flex-wrap:wrap}
       .ad-url{display:block;font-size:10.5px}
       .btn-ad{width:auto!important;white-space:nowrap;padding:8px 10px;font-size:11px}
+      .pelaut-promo{box-shadow:0 8px 22px rgba(37,99,235,.08)}
+      .pelaut-promo .ad-highlight-inner{padding:12px;padding-right:42px;grid-template-columns:1fr;align-items:flex-start;gap:9px}
+      .pelaut-promo .promo-main{align-items:flex-start;gap:10px}
+      .pelaut-promo .promo-icon{width:42px;height:42px;border-radius:13px;font-size:20px}
+      .pelaut-promo .promo-copy h2{font-size:15px;line-height:1.25}
+      .pelaut-promo .promo-copy p{font-size:11px;line-height:1.45}
+      .pelaut-promo .promo-proof{margin-top:8px;gap:6px}
+      .pelaut-promo .promo-proof-chip{font-size:9.5px;padding:4px 8px}
+      .pelaut-promo .ad-actions{width:100%;justify-content:flex-start;align-items:flex-start;gap:8px}
+      .pelaut-promo .btn-ad{padding:9px 12px;font-size:11.5px}
+      .pelaut-promo .ad-url{font-size:10.5px}
+      .pelaut-promo .promo-dismiss{top:9px;right:9px;width:30px;height:30px;font-size:20px}
     }
 
 
@@ -902,18 +1000,22 @@
       </div>
 
       <div class="container">
-        <section class="ad-highlight" aria-label="New Launching Buku Engineer">
+        <section class="ad-highlight pelaut-promo" id="pelautPromo" aria-label="Highlight Buku Interview Mastery untuk Pelaut">
           <div class="ad-highlight-inner">
-            <div>
-              <div class="ad-labels">
-                <span class="ad-chip orange">🚀 New Launching</span>
+            <button class="promo-dismiss" type="button" aria-label="Tutup highlight buku" onclick="dismissPelautPromo()">×</button>
+            <div class="promo-main">
+              <div class="promo-icon" aria-hidden="true">📘</div>
+              <div class="promo-copy">
+                <div class="ad-labels">
+                  <span class="ad-chip orange">🔥 Highlight Pilihan</span>
+                </div>
+                <h2>Siap Interview Kapal?</h2>
+                <p>Buku praktis untuk bantu pelaut menjawab interview dengan lebih rapi dan percaya diri.</p>
               </div>
-              <h2>Engineer Officer Interview Mastery</h2>
-              <p>Persiapan interview Marine Engineer, dari 4/E sampai Chief Engineer. Jawaban bilingual, teknikal, dan praktis per rank.</p>
             </div>
             <div class="ad-actions">
-              <button class="btn btn-ad" type="button" onclick="openEngineerBook()">Lihat Buku →</button>
-              <span class="ad-url">engineer.dailylokerpelaut.com</span>
+              <button class="btn btn-ad" type="button" onclick="openPelautBook()">Lihat Buku →</button>
+              <span class="ad-url">pelaut.dailylokerpelaut.com</span>
             </div>
           </div>
         </section>
@@ -1006,7 +1108,7 @@
     const PUBLIC_MATCHING_SHEET_TAB = "WebsiteJobsPublic";
     const FORM_URL   = "https://forms.gle/nuJWVeCKtFs9RJum8";
     const REACTION_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
-    const ENGINEER_BOOK_URL = "https://engineer.dailylokerpelaut.com/";
+    const PELAUT_BOOK_URL = "https://pelaut.dailylokerpelaut.com/";
     const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
     const EXPIRE_DAYS = 7;
     const EXPIRED_VISIBLE_DAYS = 3;
@@ -1058,17 +1160,38 @@
       window.open(FORM_URL, "_blank", "noopener");
     }
 
-    function openEngineerBook(){
-      trackDLPEvent("engineer_book_banner_click", {
+    function openPelautBook(){
+      trackDLPEvent("pelaut_book_banner_click", {
         event_category: "Internal Promotion",
-        event_label: "Engineer book banner click",
-        campaign: "homepage_highlight_iklan",
-        product: "engineer_officer_interview_mastery",
+        event_label: "Pelaut book banner click",
+        campaign: "homepage_highlight_pelaut_book",
+        product: "interview_mastery_untuk_pelaut",
         button_source: "vacancy_home_banner",
-        link_url: ENGINEER_BOOK_URL
+        link_url: PELAUT_BOOK_URL
       });
 
-      window.open(ENGINEER_BOOK_URL, "_blank", "noopener");
+      window.open(PELAUT_BOOK_URL, "_blank", "noopener");
+    }
+
+    function dismissPelautPromo(){
+      const promo = document.getElementById("pelautPromo");
+      if(promo) promo.style.display = "none";
+      try{ localStorage.setItem("dlpPelautPromoDismissed", "1"); }catch(err){}
+
+      trackDLPEvent("pelaut_book_banner_dismiss", {
+        event_category: "Internal Promotion",
+        event_label: "Pelaut book banner dismissed",
+        campaign: "homepage_highlight_pelaut_book"
+      });
+    }
+
+    function initPelautPromo(){
+      let dismissed = false;
+      try{ dismissed = localStorage.getItem("dlpPelautPromoDismissed") === "1"; }catch(err){}
+      if(dismissed){
+        const promo = document.getElementById("pelautPromo");
+        if(promo) promo.style.display = "none";
+      }
     }
 
     function toggleMobileNav(force){
@@ -1853,6 +1976,7 @@
         approved_jobs_visible: allJobs.length
       });
 
+      initPelautPromo();
       renderJobs();
       initMatchingBeta();
 
