@@ -312,7 +312,6 @@
     .pelaut-promo .ad-highlight-inner{
       background:transparent;
       padding:13px 14px;
-      padding-right:48px;
       gap:12px;
       align-items:center;
     }
@@ -365,8 +364,6 @@
       font-weight:900;
     }
     .pelaut-promo .ad-url{font-size:11px;color:#475569;font-weight:800}
-    .promo-dismiss{position:absolute;top:10px;right:10px;width:32px;height:32px;border:none;background:#ffffff;color:#64748b;border-radius:999px;display:grid;place-items:center;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.08);z-index:2}
-    .promo-dismiss:hover{background:#f8fafc;color:#334155}
     .section-head{display:flex;align-items:end;justify-content:space-between;margin:16px 0 10px;gap:12px}
     .section-head h2{font-size:19px}
     .section-head p{color:var(--muted);font-size:12px}
@@ -641,7 +638,7 @@
       .ad-url{display:block;font-size:10.5px}
       .btn-ad{width:auto!important;white-space:nowrap;padding:8px 10px;font-size:11px}
       .pelaut-promo{box-shadow:0 8px 22px rgba(37,99,235,.08)}
-      .pelaut-promo .ad-highlight-inner{padding:12px;padding-right:42px;grid-template-columns:1fr;align-items:flex-start;gap:9px}
+      .pelaut-promo .ad-highlight-inner{padding:12px;grid-template-columns:1fr;align-items:flex-start;gap:9px}
       .pelaut-promo .promo-main{align-items:flex-start;gap:10px}
       .pelaut-promo .promo-icon{width:42px;height:42px;border-radius:13px;font-size:20px}
       .pelaut-promo .promo-copy h2{font-size:15px;line-height:1.25}
@@ -651,7 +648,6 @@
       .pelaut-promo .ad-actions{width:100%;justify-content:flex-start;align-items:flex-start;gap:8px}
       .pelaut-promo .btn-ad{padding:9px 12px;font-size:11.5px}
       .pelaut-promo .ad-url{font-size:10.5px}
-      .pelaut-promo .promo-dismiss{top:9px;right:9px;width:30px;height:30px;font-size:20px}
     }
 
 
@@ -1002,7 +998,6 @@
       <div class="container">
         <section class="ad-highlight pelaut-promo" id="pelautPromo" aria-label="Highlight Buku Interview Mastery untuk Pelaut">
           <div class="ad-highlight-inner">
-            <button class="promo-dismiss" type="button" aria-label="Tutup highlight buku" onclick="dismissPelautPromo()">×</button>
             <div class="promo-main">
               <div class="promo-icon" aria-hidden="true">📘</div>
               <div class="promo-copy">
@@ -1173,26 +1168,6 @@
       window.open(PELAUT_BOOK_URL, "_blank", "noopener");
     }
 
-    function dismissPelautPromo(){
-      const promo = document.getElementById("pelautPromo");
-      if(promo) promo.style.display = "none";
-      try{ localStorage.setItem("dlpPelautPromoDismissed", "1"); }catch(err){}
-
-      trackDLPEvent("pelaut_book_banner_dismiss", {
-        event_category: "Internal Promotion",
-        event_label: "Pelaut book banner dismissed",
-        campaign: "homepage_highlight_pelaut_book"
-      });
-    }
-
-    function initPelautPromo(){
-      let dismissed = false;
-      try{ dismissed = localStorage.getItem("dlpPelautPromoDismissed") === "1"; }catch(err){}
-      if(dismissed){
-        const promo = document.getElementById("pelautPromo");
-        if(promo) promo.style.display = "none";
-      }
-    }
 
     function toggleMobileNav(force){
       const nav = document.getElementById("mobileNav");
@@ -1976,7 +1951,6 @@
         approved_jobs_visible: allJobs.length
       });
 
-      initPelautPromo();
       renderJobs();
       initMatchingBeta();
 
