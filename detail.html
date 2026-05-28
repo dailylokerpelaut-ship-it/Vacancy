@@ -94,6 +94,16 @@ a{text-decoration:none;color:inherit}.container{width:calc(100% - 32px);max-widt
 .contact-feedback-actions .btn{min-height:46px}
 .feedback-mini-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
 
+.engineer-book-promo{position:relative;overflow:hidden;background:linear-gradient(135deg,#eff6ff 0%,#ffffff 58%,#fff7ed 100%);border-color:#c7d2fe;box-shadow:0 12px 30px rgba(37,99,235,.08)}
+.engineer-book-promo:before{content:"";position:absolute;right:-42px;bottom:-46px;width:150px;height:150px;border-radius:999px;background:radial-gradient(circle,#fdba74 0%,rgba(253,186,116,.18) 42%,rgba(253,186,116,0) 72%);pointer-events:none}
+.engineer-book-promo:after{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:linear-gradient(90deg,#2563eb 0%,#60a5fa 48%,#fb923c 100%)}
+.engineer-book-inner{position:relative;z-index:1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px}
+.engineer-book-icon{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 58%,#60a5fa 100%);color:#fff;display:grid;place-items:center;font-size:25px;box-shadow:0 12px 24px rgba(37,99,235,.22);flex:none}
+.engineer-book-label{display:inline-flex;align-items:center;gap:6px;background:#fff7ed;color:#c2410c;border:1px solid #fdba74;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.engineer-book-copy h2{font-size:18px;margin:0 0 4px;line-height:1.2;color:#0f172a;letter-spacing:-.25px}
+.engineer-book-copy p{font-size:13px;color:#475569;line-height:1.55;margin:0;max-width:680px}
+.engineer-book-action{background:linear-gradient(135deg,#f97316 0%,#ea580c 100%);color:#fff;border:0;box-shadow:0 10px 22px rgba(249,115,22,.22)}
+@media(max-width:720px){.engineer-book-inner{grid-template-columns:auto minmax(0,1fr);align-items:flex-start;gap:11px}.engineer-book-action{grid-column:1/-1;width:100%;margin-top:2px}.engineer-book-icon{width:44px;height:44px;border-radius:13px;font-size:21px}.engineer-book-copy h2{font-size:15.5px;line-height:1.28}.engineer-book-copy p{font-size:11.5px;line-height:1.5}.engineer-book-label{font-size:9.5px;padding:3px 7px;margin-bottom:5px}}
 .empty{padding:60px 20px;text-align:center;color:var(--muted);margin:30px auto}.empty strong{font-size:20px;color:var(--text);display:block;margin-bottom:8px}
 .position-chips-mobile{display:none}.position-chip-list{display:flex;gap:9px;flex-wrap:wrap}.position-chip{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#0f172a;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(15,23,42,.035)}.position-chip.more{color:var(--blue);background:var(--blue-soft);border-color:#cfe0ff}.mobile-meta-row{display:none}.mobile-meta-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#334155;padding:8px 11px;font-size:12px;font-weight:800}.mobile-apply-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9000;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);box-shadow:0 -14px 36px rgba(15,23,42,.12)}.mobile-apply-inner{width:min(720px,100%);margin-inline:auto}.mobile-apply-note{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px;color:#475569;font-size:12px;font-weight:700;line-height:1.3;text-align:center}.mobile-apply-actions{display:grid;grid-template-columns:1.12fr .88fr;gap:10px}.mobile-apply-actions.one{grid-template-columns:1fr}.mobile-apply-btn{min-height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:9px;font-weight:900;font-size:14px;line-height:1.15;text-align:center;border:1px solid transparent;box-shadow:0 10px 22px rgba(15,23,42,.10)}.mobile-apply-btn small{display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px}.mobile-apply-wa{background:var(--green);color:#fff;border-color:#15803d}.mobile-apply-email{background:#fff;color:var(--blue);border-color:#b8d0ff;box-shadow:0 8px 18px rgba(22,93,255,.08)}.mobile-apply-icon{width:22px;height:22px;display:grid;place-items:center;flex:none;color:currentColor}.mobile-apply-icon svg{width:100%;height:100%;display:block}
 @media(max-width:900px){.detail-grid{grid-template-columns:1fr}.sidebar{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
@@ -126,6 +136,7 @@ const EXPIRED_SOON_DAYS_BEFORE = 1;
 const SCAM_REPORT_URL = "https://forms.gle/f7dDubMXKZGPNaQW9";
 const VIEW_COUNTER_API_URL = "https://script.google.com/macros/s/AKfycbx35uNoUxR_yeyRUuBw1mtUFE6PD3m7k3aCfO6Q4SP4BrQ4NktpJlLTYy4Tv5A637YF/exec";
 const CONTACT_FEEDBACK_API_URL = "https://script.google.com/macros/s/AKfycbx-Pt-rnDIP3Hvu399ztne3Y9RDKe-FPmZF3BofZQZvP0VS_Ib2zhGCrKwxUl2fwMoJ/exec";
+const ENGINEER_BOOK_URL = "https://engineer.dailylokerpelaut.com/";
 
 function cell(row, index){ return row.c[index]?.v?.toString() || ""; }
 function parseTimestamp(v){try{const m=String(v).match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);if(m)return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();return new Date(v).toISOString();}catch(e){return new Date().toISOString()}}
@@ -237,6 +248,44 @@ async function shareVacancyDetail(btn){
   }
 }
 
+function isEngineerVacancy_(j){
+  const parts=[];
+  (j.sections||[]).forEach(sec=>{
+    parts.push(sec.section_title||"");
+    (sec.items||[]).forEach(item=>parts.push(item.title||"",item.note||""));
+  });
+  parts.push(j.searchText||"",j.summary||"",j.rawInput||"");
+  const text=(" "+parts.join(" ")+" ").toLowerCase();
+
+  return /(^|[^a-z0-9])(chief engineer|second engineer|third engineer|fourth engineer|1st engineer|2nd engineer|3rd engineer|4th engineer|first engineer|engine officer|engineer officer|marine engineer|engine cadet|engine department|engine dept|eto|etr|electrician|electrical officer|fitter|oiler|no\.?\s*1\s*oiler|motorman|wiper|gas engineer|refrigeration engineer|reefer engineer|kkm|masinis)(?=$|[^a-z0-9])/i.test(text);
+}
+function engineerBookPromoHTML(j){
+  const company=escapeHTML(j.company||"");
+  const batchId=escapeHTML(j.batchId||j.id||"");
+  return `<div class="section-card engineer-book-promo" id="engineerBookPromo">
+    <div class="engineer-book-inner">
+      <div class="engineer-book-icon" aria-hidden="true">⚙️</div>
+      <div class="engineer-book-copy">
+        <span class="engineer-book-label">Rekomendasi Engineer</span>
+        <h2>Interview Engineer jangan cuma hafal mesin.</h2>
+        <p>Siapkan jawaban teknikal dan situasi kerja engine department lewat buku Marine Engineer Interview Mastery.</p>
+      </div>
+      <a class="btn engineer-book-action" href="${ENGINEER_BOOK_URL}" target="_blank" rel="noopener" data-company="${company}" data-batch-id="${batchId}" onclick="trackEngineerBookPromoClick(this)">Lihat Buku →</a>
+    </div>
+  </div>`;
+}
+function trackEngineerBookPromoClick(link){
+  trackDLPEvent("engineer_book_detail_click",{
+    event_category:"Internal Promotion",
+    event_label:"Engineer book detail promo click",
+    campaign:"detail_engineer_vacancy_highlight",
+    product:"engineer_officer_interview_mastery",
+    company:link&&link.dataset?link.dataset.company:"Unknown",
+    batch_id:link&&link.dataset?link.dataset.batchId:"",
+    link_url:ENGINEER_BOOK_URL
+  });
+}
+
 function render(j){
   const app=document.getElementById("app");
   if(!j){document.body.classList.remove("has-mobile-apply");app.innerHTML=`<div class="container empty"><strong>Lowongan tidak ditemukan</strong><p>Data belum approved, sudah lewat masa arsip, atau link detail tidak valid.</p></div>`;trackDLPEvent("dlp_vacancy_detail_not_found",{event_label:"Vacancy detail not found"});return}
@@ -244,6 +293,7 @@ function render(j){
   window.__DLP_CURRENT_VACANCY={company:j.company||"Unknown",batchId:j.batchId||j.id||"",contactWhatsApp:j.whatsapp||"",pageUrl:window.location.href};
   const life=getVacancyLifecycle(j.timestamp);
   const isExpiredArchive=life.status==="expired";
+  const showEngineerBookPromo=!isExpiredArchive&&isEngineerVacancy_(j);
   const openings=countOpenings(j.sections);
   const salary=salaryRangeText(j.sections);
   const cleanJoinInfo=getCleanJoinInfo(j.joinInfo);
@@ -259,6 +309,7 @@ function render(j){
     <section class="container detail-grid">
       <main class="main-stack">
         ${isExpiredArchive?`<div class="section-card archive-card"><strong>Lowongan ini sudah expired</strong><p>Detail lowongan tetap ditampilkan sebagai arsip, tetapi kontak apply disembunyikan agar pelaut tidak mengirim lamaran ke lowongan yang sudah lewat masa tayang.</p></div>`:""}
+        ${showEngineerBookPromo?engineerBookPromoHTML(j):""}
         ${mobilePositionChipsHTML(j)}
         <div class="section-card desktop-vacancy-table-card"><h2>Daftar Lowongan</h2>${(j.sections||[]).map((sec,idx)=>`<div class="vacancy-group"><div class="group-head"><span>${idx+1}. ${escapeHTML(sec.section_title||"General Opening")}</span><span class="badge badge-blue">${(sec.items||[]).length} Posisi</span></div><div class="group-body">${sectionTableHTML(sec)}</div></div>`).join("")}</div>
         ${requirementsBenefitsHTML(j.requirements)}
@@ -280,6 +331,16 @@ function render(j){
     </section>
     ${mobileApplyBarHTML(waLink,emailLink,j)}
   `;
+  if(showEngineerBookPromo){
+    trackDLPEvent("engineer_book_detail_view",{
+      event_category:"Internal Promotion",
+      event_label:"Engineer book detail promo viewed",
+      campaign:"detail_engineer_vacancy_highlight",
+      product:"engineer_officer_interview_mastery",
+      company:j.company||"Unknown",
+      batch_id:j.batchId||j.id||""
+    });
+  }
   // View counter hidden for now to avoid showing zero-count data.
 }
 loadDetail().catch(err=>{console.warn(err);document.getElementById("app").innerHTML=`<div class="container empty"><strong>Gagal memuat detail</strong><p>Cek koneksi atau data sheet.</p></div>`});
