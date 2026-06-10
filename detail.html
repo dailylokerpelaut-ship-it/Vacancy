@@ -109,6 +109,13 @@ a{text-decoration:none;color:inherit}.container{width:calc(100% - 32px);max-widt
 .engineer-book-copy p{font-size:12.5px;color:#475569;line-height:1.6;margin:0;max-width:760px}
 .engineer-book-action{grid-column:1/-1;width:100%;margin-top:12px;justify-content:center;background:linear-gradient(135deg,#f97316 0%,#ea580c 100%);color:#fff;border:0;box-shadow:0 10px 22px rgba(249,115,22,.20);min-height:52px;font-weight:900}
 @media(max-width:720px){.engineer-book-action{margin-top:4px;min-height:50px}.engineer-book-copy h2{font-size:15px;line-height:1.3}.engineer-book-copy p{font-size:11.5px;line-height:1.55}.engineer-book-label{font-size:9.5px;padding:3px 7px;margin-bottom:6px}}
+.logbook-article-card{position:relative;overflow:hidden;background:linear-gradient(135deg,#f8fbff 0%,#ffffff 72%);border-color:#dbeafe;box-shadow:0 10px 24px rgba(37,99,235,.05)}
+.logbook-article-card:before{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:linear-gradient(90deg,#165dff 0%,#60a5fa 100%)}
+.logbook-article-label{display:inline-flex;align-items:center;gap:6px;background:#eaf1ff;color:#165dff;border:1px solid #cfe0ff;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.logbook-article-card h3{font-size:16px;line-height:1.3;letter-spacing:-.25px;color:#0f172a;margin:0 0 7px}
+.logbook-article-card p{font-size:12.5px;line-height:1.55;color:#475569;margin:0}
+.logbook-article-action{margin-top:13px;width:100%;min-height:44px}
+@media(max-width:520px){.logbook-article-card h3{font-size:15px}.logbook-article-card p{font-size:11.5px}.logbook-article-action{min-height:42px;font-size:12.5px}}
 .empty{padding:60px 20px;text-align:center;color:var(--muted);margin:30px auto}.empty strong{font-size:20px;color:var(--text);display:block;margin-bottom:8px}
 .position-chips-mobile{display:none}.position-chip-list{display:flex;gap:9px;flex-wrap:wrap}.position-chip{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#0f172a;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(15,23,42,.035)}.position-chip.more{color:var(--blue);background:var(--blue-soft);border-color:#cfe0ff}.mobile-meta-row{display:none}.mobile-meta-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#334155;padding:8px 11px;font-size:12px;font-weight:800}.mobile-apply-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9000;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);box-shadow:0 -14px 36px rgba(15,23,42,.12)}.mobile-apply-inner{width:min(720px,100%);margin-inline:auto}.mobile-apply-note{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px;color:#475569;font-size:12px;font-weight:700;line-height:1.3;text-align:center}.mobile-apply-actions{display:grid;grid-template-columns:1.12fr .88fr;gap:10px}.mobile-apply-actions.one{grid-template-columns:1fr}.mobile-apply-btn{min-height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:9px;font-weight:900;font-size:14px;line-height:1.15;text-align:center;border:1px solid transparent;box-shadow:0 10px 22px rgba(15,23,42,.10)}.mobile-apply-btn small{display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px}.mobile-apply-wa{background:var(--green);color:#fff;border-color:#15803d}.mobile-apply-email{background:#fff;color:var(--blue);border-color:#b8d0ff;box-shadow:0 8px 18px rgba(22,93,255,.08)}.mobile-apply-icon{width:22px;height:22px;display:grid;place-items:center;flex:none;color:currentColor}.mobile-apply-icon svg{width:100%;height:100%;display:block}
 @media(max-width:900px){.detail-grid{grid-template-columns:1fr}.sidebar{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
@@ -262,6 +269,59 @@ async function shareVacancyDetail(btn){
   }
 }
 
+const DLP_LOGBOOK_ARTICLES = [
+  {
+    title: "Tell Me About Yourself Pelaut: 9 Cara Menjawab",
+    excerpt: "Panduan singkat untuk membuka interview dengan jawaban yang lebih rapi dan tidak terlalu panjang.",
+    url: "https://logbook.dailylokerpelaut.com/tell-me-about-yourself-pelaut/"
+  },
+  {
+    title: "Cara Melamar Lowongan Pelaut Lewat WhatsApp",
+    excerpt: "Baca dulu sebelum chat recruiter agar pesan apply terlihat lebih sopan, jelas, dan profesional.",
+    url: "https://logbook.dailylokerpelaut.com/cara-melamar-lowongan-pelaut-whatsapp/"
+  },
+  {
+    title: "Lowongan Pelaut Asli vs Penipuan",
+    excerpt: "Kenali tanda lowongan mencurigakan sebelum mengirim data pribadi atau dokumen pelaut.",
+    url: "https://logbook.dailylokerpelaut.com/lowongan-pelaut-asli-vs-penipuan/"
+  },
+  {
+    title: "Panduan MLC 2006 Pelaut Indonesia",
+    excerpt: "Pahami hak kerja, rest hour, dan hal penting yang sering relevan dengan kehidupan kerja di kapal.",
+    url: "https://logbook.dailylokerpelaut.com/panduan-mlc-2006-pelaut-indonesia/"
+  }
+];
+
+function getRandomLogbookArticle_(){
+  if(!DLP_LOGBOOK_ARTICLES.length) return null;
+  const index=Math.floor(Math.random()*DLP_LOGBOOK_ARTICLES.length);
+  return DLP_LOGBOOK_ARTICLES[index];
+}
+
+function randomLogbookArticleHTML(j){
+  const article=getRandomLogbookArticle_();
+  if(!article) return "";
+  const company=escapeHTML(j.company||"");
+  const batchId=escapeHTML(j.batchId||j.id||"");
+  return `<div class="sidebar-card logbook-article-card" id="logbookArticleCard">
+    <span class="logbook-article-label">DLP Logbook</span>
+    <h3>${escapeHTML(article.title)}</h3>
+    <p>${escapeHTML(article.excerpt)}</p>
+    <a class="btn btn-outline logbook-article-action" href="${escapeHTML(article.url)}" target="_blank" rel="noopener" data-company="${company}" data-batch-id="${batchId}" data-article-title="${escapeHTML(article.title)}" onclick="trackLogbookArticleClick(this)">Baca Artikel →</a>
+  </div>`;
+}
+
+function trackLogbookArticleClick(link){
+  trackDLPEvent("logbook_article_detail_click",{
+    event_category:"Internal Promotion",
+    event_label:"Random logbook article click",
+    article_title:link&&link.dataset?link.dataset.articleTitle:"",
+    company:link&&link.dataset?link.dataset.company:"Unknown",
+    batch_id:link&&link.dataset?link.dataset.batchId:"",
+    link_url:link?link.href:""
+  });
+}
+
 function isEngineerVacancy_(j){
   const officerTitles=[];
   (j.sections||[]).forEach(sec=>{
@@ -314,6 +374,7 @@ function render(j){
   const life=getVacancyLifecycle(j.timestamp);
   const isExpiredArchive=life.status==="expired";
   const showEngineerBookPromo=!isExpiredArchive&&isEngineerVacancy_(j);
+  const showLogbookArticle=!isExpiredArchive;
   const openings=countOpenings(j.sections);
   const salary=salaryRangeText(j.sections);
   const cleanJoinInfo=getCleanJoinInfo(j.joinInfo);
@@ -346,11 +407,23 @@ function render(j){
           <div class="sidebar-card"><h3>Hubungi Recruiter</h3>${j.whatsapp?`<div class="contact-block"><strong>WhatsApp</strong>${j.whatsapp.split("/").map(x=>`<a href="#">${escapeHTML(displayPhone(x.trim()))}</a>`).join("")}</div>`:""}${j.email?`<div class="contact-block"><strong>Email</strong>${j.email.split(/&|,/).map(x=>`<a href="#">${escapeHTML(x.trim())}</a>`).join("")}</div>`:""}<div class="action-stack">${waLink?`<a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Hubungi via WhatsApp</a>`:""}${emailLink?`<a class="btn btn-email" href="${emailLink}" data-company="${escapeHTML(j.company)}" data-batch-id="${escapeHTML(j.batchId||j.id)}">Kirim Email</a>`:""}</div>${(waLink||emailLink)?`<div class="apply-time-note"><strong>Apply sesuai lowongan.</strong> Hindari menghubungi recruiter terlalu malam kecuali urgent/ASAP.<br>Email bisa dikirim kapan saja.</div>`:""}</div>`}
         ${j.free&&!isExpiredArchive?`<div class="sidebar-card note-card"><strong>FREE OF CHARGE</strong><p>Recruitment process tidak dipungut biaya.</p></div>`:""}
         ${detailQuickActionsHTML(j,isExpiredArchive)}
+        ${showLogbookArticle?randomLogbookArticleHTML(j):""}
         ${showEngineerBookPromo?engineerBookPromoHTML(j):""}
       </aside>
     </section>
     ${mobileApplyBarHTML(waLink,emailLink,j)}
   `;
+  if(showLogbookArticle){
+    const articleCard=document.getElementById("logbookArticleCard");
+    const articleLink=articleCard?articleCard.querySelector("[data-article-title]"):null;
+    trackDLPEvent("logbook_article_detail_view",{
+      event_category:"Internal Promotion",
+      event_label:"Random logbook article viewed",
+      article_title:articleLink&&articleLink.dataset?articleLink.dataset.articleTitle:"",
+      company:j.company||"Unknown",
+      batch_id:j.batchId||j.id||""
+    });
+  }
   if(showEngineerBookPromo){
     trackDLPEvent("engineer_book_detail_view",{
       event_category:"Internal Promotion",
