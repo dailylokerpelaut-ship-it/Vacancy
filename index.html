@@ -920,6 +920,26 @@
       #matchingBeta .matching-title-wrap h2{font-size:1rem}
     }
 
+
+.ai-interview-backdrop{position:fixed;inset:0;z-index:10050;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.52);backdrop-filter:blur(7px)}
+.ai-interview-backdrop.open{display:flex}
+.ai-interview-modal{position:relative;width:min(430px,100%);max-height:calc(100vh - 36px);overflow:auto;border:1px solid #d8b56f;border-radius:24px;background:#fff8e8;color:#0b1b4d;box-shadow:0 24px 80px rgba(15,23,42,.32);padding:23px 20px 20px;text-align:center}
+.ai-interview-modal:before{content:"";position:absolute;inset:8px;border:1px dashed rgba(11,27,77,.28);border-radius:19px;pointer-events:none}
+.ai-interview-close{position:absolute;right:13px;top:12px;z-index:2;width:36px;height:36px;border:0;background:rgba(255,255,255,.72);border-radius:999px;color:#0b1b4d;font-size:25px;line-height:1;cursor:pointer;box-shadow:0 8px 18px rgba(15,23,42,.08)}
+.ai-interview-content{position:relative;z-index:1}
+.ai-interview-kicker{display:inline-flex;align-items:center;justify-content:center;background:#ffc83d;color:#0b1b4d;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;box-shadow:inset 0 -2px 0 rgba(11,27,77,.12);margin-bottom:9px}
+.ai-interview-title{font-family:inherit;font-size:31px;line-height:1.04;margin:0;color:#0b1b4d;font-weight:950;letter-spacing:-.8px}
+.ai-interview-highlight{display:inline-block;margin:13px 0 10px;background:#ffcf48;color:#0b1b4d;border-radius:10px;padding:7px 11px;font-size:13px;font-weight:900;line-height:1.35}
+.ai-interview-desc{font-size:13px;line-height:1.55;color:#263b63;margin:0 auto 14px;max-width:330px}
+.ai-interview-features{border:1.5px dashed rgba(22,93,255,.55);border-radius:18px;padding:13px 14px;margin:14px auto 15px;text-align:left;display:grid;gap:9px;background:rgba(255,255,255,.48)}
+.ai-interview-feature{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.38;color:#0b1b4d;font-weight:800}
+.ai-interview-feature-icon{width:22px;height:22px;border-radius:999px;background:#ffcf48;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:12px;color:#0b1b4d}
+.ai-interview-audience{font-size:13px;font-weight:900;color:#0b1b4d;margin:0 0 13px}
+.ai-interview-cta{display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:14px;background:#ffc83d;color:#0b1b4d;text-decoration:none;font-size:18px;font-weight:950;box-shadow:0 8px 0 #0b1b4d,0 16px 26px rgba(15,23,42,.16);border:2px solid #0b1b4d;transition:.16s ease}
+.ai-interview-cta:hover{transform:translateY(-1px);box-shadow:0 9px 0 #0b1b4d,0 18px 28px rgba(15,23,42,.18)}
+.ai-interview-url{display:block;margin-top:15px;font-size:12px;font-weight:800;color:#263b63}
+@media(max-width:520px){.ai-interview-backdrop{padding:14px}.ai-interview-modal{border-radius:22px;padding:21px 17px 18px}.ai-interview-title{font-size:27px}.ai-interview-highlight{font-size:12px}.ai-interview-desc{font-size:12px}.ai-interview-feature{font-size:12px}.ai-interview-cta{min-height:48px;font-size:16px}}
+
 </style>
 </head>
 <body>
@@ -2525,5 +2545,101 @@
 
     initPage();
   </script>
+
+<div class="ai-interview-backdrop" id="dlpAiInterviewPopup" aria-hidden="true">
+  <div class="ai-interview-modal" role="dialog" aria-modal="true" aria-labelledby="dlpAiInterviewTitle">
+    <button type="button" class="ai-interview-close" data-ai-interview-close aria-label="Tutup popup">&times;</button>
+    <div class="ai-interview-content">
+      <div class="ai-interview-kicker">Launching</div>
+      <h2 class="ai-interview-title" id="dlpAiInterviewTitle">DLP AI<br>Interview Simulator</h2>
+      <div class="ai-interview-highlight">Interview AI pertama untuk pelaut Indonesia</div>
+      <p class="ai-interview-desc">Latihan interview voice sebelum interview asli. Jawab pertanyaan secara langsung, lalu dapatkan feedback tertulis setelah sesi selesai.</p>
+      <div class="ai-interview-features">
+        <div class="ai-interview-feature"><span class="ai-interview-feature-icon">★</span><span>3 credit simulasi interview</span></div>
+        <div class="ai-interview-feature"><span class="ai-interview-feature-icon">⚙</span><span>Mode: Crewing / Technical Deck / Technical Engine</span></div>
+        <div class="ai-interview-feature"><span class="ai-interview-feature-icon">✓</span><span>Feedback personal setelah sesi</span></div>
+      </div>
+      <p class="ai-interview-audience">Khusus untuk Deck Officer &amp; Engineer Officer</p>
+      <a class="ai-interview-cta" href="https://interview.dailylokerpelaut.com/" target="_blank" rel="noopener" data-ai-interview-cta>Coba Sekarang</a>
+      <span class="ai-interview-url">interview.dailylokerpelaut.com</span>
+    </div>
+  </div>
+</div>
+
+<script>
+
+(function(){
+  const POPUP_KEY = "dlp_ai_interview_popup_seen_date";
+  const POPUP_URL = "https://interview.dailylokerpelaut.com/";
+  const popup = document.getElementById("dlpAiInterviewPopup");
+  if(!popup) return;
+
+  function todayKey(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function hasSeenToday(){
+    try{ return localStorage.getItem(POPUP_KEY) === todayKey(); }
+    catch(err){ return false; }
+  }
+
+  function markSeen(){
+    try{ localStorage.setItem(POPUP_KEY,todayKey()); }
+    catch(err){}
+  }
+
+  function trackPopupEvent(name,label){
+    if(typeof trackDLPEvent === "function"){
+      trackDLPEvent(name,{
+        event_category:"Internal Promotion",
+        event_label:label,
+        campaign:"ai_interview_daily_popup",
+        link_url:POPUP_URL
+      });
+    }
+  }
+
+  function openPopup(){
+    popup.classList.add("open");
+    popup.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    trackPopupEvent("ai_interview_popup_view","AI Interview daily popup viewed");
+  }
+
+  function closePopup(){
+    popup.classList.remove("open");
+    popup.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+    markSeen();
+    trackPopupEvent("ai_interview_popup_close","AI Interview daily popup closed");
+  }
+
+  popup.addEventListener("click",function(event){
+    if(event.target === popup) closePopup();
+  });
+
+  const closeBtn = popup.querySelector("[data-ai-interview-close]");
+  if(closeBtn) closeBtn.addEventListener("click",closePopup);
+
+  const cta = popup.querySelector("[data-ai-interview-cta]");
+  if(cta) cta.addEventListener("click",function(){
+    markSeen();
+    trackPopupEvent("ai_interview_popup_click","AI Interview daily popup CTA click");
+  });
+
+  document.addEventListener("keydown",function(event){
+    if(event.key === "Escape" && popup.classList.contains("open")) closePopup();
+  });
+
+  if(!hasSeenToday()){
+    window.setTimeout(openPopup,900);
+  }
+})();
+
+</script>
 </body>
 </html>
