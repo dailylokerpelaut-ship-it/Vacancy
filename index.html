@@ -545,6 +545,7 @@
     .footer-actions{gap:7px}
     .footer-actions .btn{min-height:40px}
 
+    } /* Close mobile rules before tablet rules. */
     @media(max-width:880px){
       .hero-grid{grid-template-columns:1fr}
       .hero-panel{display:none}
@@ -920,7 +921,14 @@
       #matchingBeta .matching-title-wrap h2{font-size:1rem}
     }
 
-</style>
+/* Vacancy revision 2026-09-28 */
+    #matchingBeta .matching-card{grid-template-columns:1fr}
+    #matchingBeta .matching-title-wrap p{max-width:none}
+    .section-head{scroll-margin-top:85px}
+    .input{min-width:0;width:100%}
+    @media(max-width:520px){.input{font-size:16px}.summary-only,.common-reqs{font-size:13px}.role-chip{font-size:12px}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -934,7 +942,7 @@
       </a>
 
       <nav class="nav" aria-label="Main navigation">
-        <a class="active" href="http://academy.dailylokerpelaut.com/" target="_blank" rel="noopener">Academy</a>
+        <a href="https://academy.dailylokerpelaut.com/" target="_blank" rel="noopener">Academy</a>
         <a href="https://dailylokerpelaut.com/" target="_blank" rel="noopener">Tentang</a>
         <a href="https://logbook.dailylokerpelaut.com/" target="_blank" rel="noopener">Logbook</a>
       </nav>
@@ -946,7 +954,7 @@
     </div>
     <div class="mobile-nav" id="mobileNav">
       <div class="container">
-        <a href="http://academy.dailylokerpelaut.com/" target="_blank" rel="noopener" onclick="toggleMobileNav(false)">Academy</a>
+        <a href="https://academy.dailylokerpelaut.com/" target="_blank" rel="noopener" onclick="toggleMobileNav(false)">Academy</a>
         <a href="https://dailylokerpelaut.com/" target="_blank" rel="noopener">Tentang</a>
         <a href="https://logbook.dailylokerpelaut.com/" target="_blank" rel="noopener" onclick="toggleMobileNav(false)">Logbook</a>
         <button type="button" onclick="openForm()">+ Post Loker</button>
@@ -982,9 +990,10 @@
 
       <div class="container toolbar">
         <div class="search-row">
-          <input class="input" id="searchInput" placeholder="Cari posisi, perusahaan, jenis kapal, salary..." oninput="resetPageAndRender()">
+          <input class="input" id="searchInput" aria-label="Cari lowongan" placeholder="Cari posisi, perusahaan, jenis kapal, salary..." oninput="resetPageAndRender()">
           <button class="btn btn-primary" onclick="resetPageAndRender()">Cari</button>
         </div>
+        <button class="btn btn-light" type="button" onclick="document.getElementById('searchInput').value='';setKeyword('',document.querySelector('#quickFilters .chip'))">Hapus Filter</button>
         <div class="quick-filters" id="quickFilters">
           <button class="chip active" onclick="setKeyword('',this)">Semua</button>
           <button class="chip" onclick="setKeyword('tanker',this)">Tanker</button>
@@ -1069,7 +1078,7 @@
     <section class="container" id="jobs">
       <div class="section-head">
         <div>
-          <h2>Lowongan Aktif</h2>
+          <h2>Lowongan Terbaru & Arsip</h2>
           <p id="resultText">Memuat lowongan...</p>
         </div>
         <div class="today-pill" id="todayUpdate">Hari ini: – posisi</div>
@@ -1111,6 +1120,9 @@
     const EXPIRED_SOON_DAYS_BEFORE = 1;
     const JOBS_PER_PAGE = 5;
 
+    function safeStorageGet(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}
+    function safeStorageSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+    let jobsLoadError = false;
     let allJobs = [];
     let jobsLoaded = false;
     let jobsLoading = null;
@@ -1177,15 +1189,11 @@
     }
 
     function parseTimestamp(v){
-      if(!v) return new Date().toISOString();
-      try{
-        const m = String(v).match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);
-        if(m) return new Date(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]).toISOString();
-        return new Date(v).toISOString();
-      }catch(e){
-        return new Date().toISOString();
-      }
-    }
+  if(!v)return '';
+  const m=String(v).match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);
+  const d=m?new Date(Date.UTC(+m[1],+m[2],+m[3],+(m[4]||0)-7,+(m[5]||0),+(m[6]||0))):new Date(v);
+  return Number.isNaN(d.getTime())?'':d.toISOString();
+}
 
     function jobAgeDays(ts){
       if(!ts) return 0;
@@ -1199,8 +1207,9 @@
       const age = jobAgeDays(job?.timestamp);
 
       if(status === "ARCHIVED" || status === "HIDDEN") return "hidden";
-      if(age > HIDE_AFTER_DAYS) return "hidden";
-      if(status === "EXPIRED" || age > EXPIRE_DAYS) return "expired";
+      if(!job?.timestamp || !Number.isFinite(age) || age < 0) return "hidden";
+      if(age >= HIDE_AFTER_DAYS) return "hidden";
+      if(status === "EXPIRED" || age >= EXPIRE_DAYS) return "expired";
       if(age >= (EXPIRE_DAYS - EXPIRED_SOON_DAYS_BEFORE)) return "expiring";
 
       return "active";
@@ -1298,9 +1307,8 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    function safeJSON(str){
-      try{ return JSON.parse(str || "[]"); }catch(e){ return []; }
-    }
+    function safeJSON(str){try{const v=JSON.parse(str||'[]');return Array.isArray(v)?v.filter(x=>x&&typeof x==='object').map(x=>({...x,items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i==='object'):[]})):[]}catch(e){return []}}
+
 
     function countOpenings(sections){
       return (sections || []).reduce((sum, sec)=>sum + ((sec.items || []).length), 0);
@@ -1346,25 +1354,13 @@
     }
 
     function parseSalaryNumberToken(token){
-      if(!token) return null;
+ const t=String(token||'').trim();
+ if(!t)return null;
+ if(t.includes(',')&&t.includes('.')){const decimal=t.lastIndexOf(',')>t.lastIndexOf('.')?',':'.';return Number(t.replace(decimal===','?/\./g:/,/g,'').replace(decimal,'.'))}
+ if(/^\d{1,3}([.,]\d{3})+$/.test(t))return Number(t.replace(/[.,]/g,''));
+ return Number(t.replace(',','.'));
+}
 
-      let t = String(token).trim();
-      const sepCount = (t.match(/[.,]/g) || []).length;
-
-      if(sepCount > 1){
-        return Number(t.replace(/[.,]/g, ""));
-      }
-
-      if(/[.,]/.test(t)){
-        const parts = t.split(/[.,]/);
-        if(parts[1] && parts[1].length === 3){
-          return Number(parts.join(""));
-        }
-        return Number(t.replace(",", "."));
-      }
-
-      return Number(t);
-    }
 
     function detectSalaryCurrency(raw, amount){
       const s = String(raw || "").toLowerCase();
@@ -1408,48 +1404,19 @@
     }
 
     function parseSalaryEntry(raw){
-      const original = String(raw || "").trim();
+ const s=String(raw||'').trim();
+ if(!s||/negotiable|nego|tba|discuss|sesuai pengalaman/i.test(s))return null;
+ // Do not interpret contract duration, bonuses or day rates as monthly salary ranges.
+ if(/bonus|allowance|per day|\/day|per hari|\+|months?|bulan/i.test(s))return null;
+ const range=s.match(/^(?:rp\.?|idr)?\s*(\d+(?:[.,]\d+)?)\s*(?:jt|juta)?\s*[-–]\s*(\d+(?:[.,]\d+)?)\s*(?:jt|juta)$/i);
+ if(range)return {currency:'IDR',amount:Number(range[1].replace(',','.'))*1e6,maxAmount:Number(range[2].replace(',','.'))*1e6};
+ const juta=s.match(/^(?:rp\.?|idr)?\s*(\d+(?:[.,]\d+)?)\s*(?:jt|juta)$/i);
+ if(juta){const n=Number(juta[1].replace(',','.'))*1e6;return {currency:'IDR',amount:n,maxAmount:n}}
+ const nums=(s.match(/\d[\d.,]*/g)||[]).map(parseSalaryNumberToken).filter(n=>Number.isFinite(n)&&n>0);
+ if(!nums.length||nums.length>2)return null;
+ return {currency:detectSalaryCurrency(s,Math.max(...nums)),amount:Math.min(...nums),maxAmount:Math.max(...nums)};
+}
 
-      if(
-        !original ||
-        original === "-" ||
-        original === "—" ||
-        /negotiable|nego|to be discussed|tba|discuss|sesuai pengalaman/i.test(original)
-      ){
-        return null;
-      }
-
-      const lower = original.toLowerCase();
-
-      const jutaMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(jt|juta)\b/);
-      if(jutaMatch){
-        const amount = Number(jutaMatch[1].replace(",", ".")) * 1000000;
-        return {
-          currency: "IDR",
-          amount,
-          maxAmount: amount
-        };
-      }
-
-      const numberMatches = original.match(/\d[\d.,]*/g);
-      if(!numberMatches || !numberMatches.length) return null;
-
-      const amounts = numberMatches
-        .map(parseSalaryNumberToken)
-        .filter(n => Number.isFinite(n) && n > 0);
-
-      if(!amounts.length) return null;
-
-      const min = Math.min(...amounts);
-      const max = Math.max(...amounts);
-      const currency = detectSalaryCurrency(original, max);
-
-      return {
-        currency,
-        amount: min,
-        maxAmount: max
-      };
-    }
 
     function salaryRangeText(sections){
       const parsed = [];
@@ -1461,7 +1428,10 @@
         });
       });
 
-      if(!parsed.length) return "Negotiable";
+      if(!parsed.length){
+        const stated=(sections||[]).flatMap(s=>s.items||[]).map(i=>String(i.salary||'').trim()).filter(s=>s&&!/^(not mentioned|tidak disebutkan|n\/a|—|-)$/i.test(s));
+        return stated.length?(stated.every(s=>/^(negotiable|nego)$/i.test(s))?'Negotiable':'Lihat rincian gaji'):'Tidak disebutkan';
+      }
 
       const grouped = {};
 
@@ -1488,7 +1458,7 @@
         return `${minText}-${maxText}`;
       }).filter(Boolean);
 
-      return output.length ? output.join(" · ") : "Negotiable";
+      return output.length ? output.join(" · ") : "Tidak disebutkan";
     }
 
 
@@ -1513,19 +1483,19 @@
         .trim();
     }
 
-    function isPublicYes_(value){
-      const text = String(value || "").toLowerCase();
-      return /\bya\b|\byes\b|true|free|gratis|tidak dipungut biaya|free of charge/.test(text);
-    }
+    function isPublicYes_(value){return /^(ya|yes|true|1|free of charge)$/i.test(String(value||'').trim())}
+
 
     function toNumberOrNull_(value){
+      if(!String(value??'').trim())return null;
       const n = Number(String(value || "").replace(/[^\d.-]/g, ""));
       return Number.isFinite(n) ? n : null;
     }
 
     async function fetchPublicMatchingJobsFromSheet_(){
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(PUBLIC_MATCHING_SHEET_TAB)}`;
-      const res = await fetch(url, { cache: "no-store" });
+      const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(20000) });
+      if(!res.ok) throw new Error("HTTP " + res.status);
       const rows = parseGVizRows_(await res.text());
 
       return rows.map((r,i)=>({
@@ -1595,9 +1565,9 @@
       const ranks = uniqueSorted_((jobs || []).flatMap(j => j.ranks || []).concat(DLP_MATCH_FALLBACK_RANKS));
       const vessels = uniqueSorted_((jobs || []).flatMap(j => (j.vesselTypes || []).concat(j.vesselCategories || [])).concat(DLP_MATCH_FALLBACK_VESSELS));
 
-      const savedRank = localStorage.getItem("dlp_match_rank") || "";
-      const savedVessel = localStorage.getItem("dlp_match_vessel") || "";
-      const savedArea = localStorage.getItem("dlp_match_area") || "";
+      const savedRank = safeStorageGet("dlp_match_rank") || "";
+      const savedVessel = safeStorageGet("dlp_match_vessel") || "";
+      const savedArea = safeStorageGet("dlp_match_area") || "";
 
       rankSelect.innerHTML = `<option value="">Pilih rank</option>` + ranks.map(rank =>
         `<option value="${escapeHTML(rank)}">${escapeHTML(rank)}</option>`
@@ -1636,10 +1606,11 @@
       // Keep matching collapsed by default so users can still browse all vacancies comfortably.
       const body = document.getElementById("matchingBody");
       const toggle = document.getElementById("matchingToggle");
-      if(body) body.style.display = "none";
-      if(toggle){
-        toggle.textContent = "Tampilkan";
-        toggle.setAttribute("aria-expanded", "false");
+      if(body && !body.style.display) body.style.display = "none";
+      if(toggle && body){
+        const open=body.style.display==='block';
+        toggle.textContent = open?"Sembunyikan":"Tampilkan";
+        toggle.setAttribute("aria-expanded", String(open));
       }
     }
 
@@ -1659,8 +1630,8 @@
     }
 
     function labelForScore_(score){
-      if(score >= 85) return { text:"Sangat Cocok", cls:"strong" };
-      if(score >= 65) return { text:"Cocok", cls:"good" };
+      if(score >= 75) return { text:"Sangat Cocok", cls:"strong" };
+      if(score >= 50) return { text:"Cocok", cls:"good" };
       return { text:"Bisa Dipertimbangkan", cls:"consider" };
     }
 
@@ -1677,6 +1648,7 @@
         const reasons = [];
 
         const rankList = (job.ranks || []).map(normalizeMatchText_);
+        const wrongRank = !!rankNorm && !rankList.includes(rankNorm);
         const vesselTypes = (job.vesselTypes || []).map(normalizeMatchText_);
         const vesselCategories = (job.vesselCategories || []).map(normalizeMatchText_);
 
@@ -1698,25 +1670,25 @@
           reasons.push("Area sesuai");
         }
 
-        if(isPublicYes_(job.freeOfCharge)){
+        if(false){
           score += 10;
           reasons.push("Free of charge tercantum");
         }
 
-        if(job.featured){
+        if(false){
           score += 5;
         }
 
-        if(job.urgent){
+        if(false){
           score += 5;
           reasons.push("Urgent");
         }
 
         const lifecycle = getMatchingJobLifecycle_(job);
-        return { job, score, reasons, lifecycle, isExpired: lifecycle === "expired", isHidden: lifecycle === "hidden" };
+        return { job, score, reasons, lifecycle, isExpired: lifecycle === "expired", isHidden: wrongRank || !["active","expiring"].includes(lifecycle) };
       })
       .filter(item => !item.isHidden)
-      .filter(item => item.score >= 45)
+      .filter(item => item.score > 0)
       .sort((a,b) => b.score - a.score)
       .slice(0,10);
     }
@@ -1734,9 +1706,9 @@
       const vessel = document.getElementById("matchVesselSelect")?.value || "";
       const area = document.getElementById("matchAreaSelect")?.value || "";
 
-      localStorage.setItem("dlp_match_rank", rank);
-      localStorage.setItem("dlp_match_vessel", vessel);
-      localStorage.setItem("dlp_match_area", area);
+      safeStorageSet("dlp_match_rank", rank);
+      safeStorageSet("dlp_match_vessel", vessel);
+      safeStorageSet("dlp_match_area", area);
 
       trackDLPEvent("job_matching_started", {
         event_category: "Job Matching",
@@ -1838,7 +1810,7 @@
               <div class="matching-company">${escapeHTML(j.company)}</div>
               <div class="matching-summary">${escapeHTML(j.summary || "Lowongan aktif dari Daily Loker Pelaut.")}</div>
             </div>
-            <span class="match-pill ${label.cls}">${label.text} · ${item.score}%</span>
+            <span class="matching-score ${label.cls}">${label.text}</span>
           </div>
 
           <div class="matching-meta">
@@ -1876,7 +1848,8 @@
 
     async function fetchJobsFromSheet_(){
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
-      const res = await fetch(url, { cache: "no-store" });
+      const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(20000) });
+      if(!res.ok) throw new Error("HTTP " + res.status);
       const txt = await res.text();
       const json = JSON.parse(txt.substring(47).slice(0,-2));
       const rows = json.table.rows || [];
@@ -1903,7 +1876,7 @@
             whatsapp: cell(r,4),
             email: cell(r,5),
             urgent: cell(r,6).toLowerCase() === "ya",
-            free: cell(r,7).toLowerCase() !== "tidak",
+            free: /^(ya|yes|true|1|free of charge)$/i.test(cell(r,7).trim()),
             joinInfo: cell(r,8),
             summary: cell(r,9),
             featured: cell(r,10).toLowerCase() === "ya",
@@ -1924,11 +1897,13 @@
 
       jobsLoading = fetchJobsFromSheet_()
         .then(jobs=>{
+          jobsLoadError = false;
           allJobs = jobs;
           jobsLoaded = true;
           return allJobs;
         })
         .catch(err=>{
+          jobsLoadError = true;
           console.warn("Failed to load sheet:", err);
           allJobs = [];
           jobsLoaded = true;
@@ -2021,12 +1996,13 @@
           j.joinInfo,
           j.searchText,
           j.rawInput,
-          ...(j.sections||[]).map(s=>s.section_title).join(" "),
+          (j.sections||[]).map(s=>s.section_title).join(" "),
           ...(j.sections||[]).flatMap(s=>(s.items||[]).map(i=>`${i.title} ${i.salary} ${i.contract} ${i.note}`))
-        ].join(" ").toLowerCase();
+        ].join(" ").toLowerCase().replace(/[^a-z0-9]+/g," ");
 
-        if(q && !haystack.includes(q)) return false;
-        if(keywordFilter && !haystack.includes(keywordFilter)) return false;
+        if(q && !q.replace(/[^a-z0-9]+/g," ").trim().split(/\s+/).every(t=>haystack.includes(t))) return false;
+        if(getJobLifecycle(j)==="hidden") return false;
+        if(keywordFilter && !haystack.includes(keywordFilter.replace(/[^a-z0-9]+/g," "))) return false;
         return true;
       });
     }
@@ -2059,6 +2035,11 @@
       document.getElementById("loadingEl").style.display = "none";
       el.style.display = "grid";
 
+      if(jobsLoadError){
+        document.getElementById("resultText").textContent="Koneksi data bermasalah";
+        el.innerHTML=`<div class="empty"><strong>Lowongan belum berhasil dimuat</strong><p>Periksa koneksi lalu coba lagi.</p><button class="btn btn-primary" onclick="jobsLoaded=false;initPage()">Coba Lagi</button></div>`;
+        paginationEl.style.display="none"; return;
+      }
       if(!jobs.length){
         document.getElementById("resultText").textContent = `0 lowongan ditemukan`;
         el.innerHTML = `<div class="empty"><strong>Belum ada lowongan ditemukan</strong><p>Coba kata kunci lain atau refresh beberapa saat lagi.</p></div>`;
@@ -2074,7 +2055,7 @@
       const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
       const pageJobs = jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
 
-      document.getElementById("resultText").textContent = `Halaman ${currentPage} dari ${totalPages}`;
+      document.getElementById("resultText").textContent = `${jobs.length} lowongan · Halaman ${currentPage} dari ${totalPages}`;
       el.innerHTML = pageJobs.map(jobCardHTML).join("");
       applyReactionCountsToVisibleButtons();
       renderPagination(totalPages);
@@ -2161,7 +2142,7 @@
       const msg = encodeURIComponent(`Halo, saya tertarik dengan lowongan di ${j.company} yang saya lihat di Daily Loker Pelaut.`);
       const waLink = (!hideApplyContacts && waIntl) ? `https://wa.me/${waIntl}?text=${msg}` : "";
       const emailClean = String(j.email || "").trim();
-      const emailLink = (!hideApplyContacts && isValidEmail(emailClean)) ? `mailto:${emailClean}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
+      const emailLink = (!hideApplyContacts && isValidEmail(emailClean)) ? `mailto:${encodeURIComponent(emailClean)}?subject=${encodeURIComponent("Lamaran / Inquiry Lowongan")}` : "";
       const detailLink = `detail.html?id=${encodeURIComponent(batchId)}`;
       const shareUrl = new URL(detailLink, window.location.href).href;
       const cardClass = `job-card ${isExpiredRecent ? "job-card-expired" : ""} ${isExpiringSoon ? "job-card-expiring" : ""}`.trim();
@@ -2202,7 +2183,7 @@
 
         <div class="card-summary">
           <div class="summary-box"><strong>${escapeHTML(salary)}</strong><span>Salary Range</span></div>
-          <div class="summary-box"><strong>${joinInfoClean?escapeHTML(joinInfoClean):"Update"}</strong><span>Join Info</span></div>
+          <div class="summary-box"><strong>${joinInfoClean?escapeHTML(joinInfoClean):"Tidak disebutkan"}</strong><span>Join Info</span></div>
         </div>
 
         ${j.summary?`<div class="common-reqs summary-only">${escapeHTML(j.summary)}</div>`:""}
@@ -2271,6 +2252,7 @@
     function jsonpRequest(url){
       return new Promise((resolve, reject)=>{
         const callbackName = "dlpReactionCallback_" + Math.random().toString(36).slice(2);
+        const timeout = setTimeout(()=>{cleanup();reject(new Error("Request timeout"))},15000);
 
         window[callbackName] = function(data){
           cleanup();
@@ -2285,6 +2267,7 @@
         };
 
         function cleanup(){
+          clearTimeout(timeout);
           delete window[callbackName];
           if(script.parentNode){
             script.parentNode.removeChild(script);
@@ -2537,12 +2520,12 @@
   }
 
   function hasSeenToday(){
-    try{ return localStorage.getItem(POPUP_KEY) === todayKey(); }
+    try{ const seen=Number(localStorage.getItem(POPUP_KEY)); return seen>0 && Date.now()-seen<3*864e5; }
     catch(err){ return false; }
   }
 
   function markSeen(){
-    try{ localStorage.setItem(POPUP_KEY,todayKey()); }
+    try{ localStorage.setItem(POPUP_KEY,String(Date.now())); }
     catch(err){}
   }
 
@@ -2595,8 +2578,8 @@
       position:"absolute",
       right:"10px",
       top:"9px",
-      width:"32px",
-      height:"32px",
+      width:"44px",
+      height:"44px",
       border:"0",
       borderRadius:"999px",
       background:"rgba(255,255,255,.86)",
@@ -2626,7 +2609,7 @@
       boxShadow:"inset 0 -2px 0 rgba(11,27,77,.12)",
       marginBottom:"8px"
     });
-    kicker.textContent = "Launching";
+    kicker.textContent = "Latihan Interview Pelaut";
 
     const title = style(document.createElement("div"), {
       fontSize: window.innerWidth <= 520 ? "19px" : "21px",
@@ -2650,7 +2633,7 @@
       fontWeight:"900",
       lineHeight:"1.35"
     });
-    highlight.textContent = "Interview AI pertama untuk pelaut Indonesia";
+    highlight.textContent = "Lebih siap sebelum interview asli";
 
     const desc = style(document.createElement("p"), {
       fontSize: window.innerWidth <= 520 ? "11.5px" : "12px",
@@ -2667,7 +2650,7 @@
       color:"#0b1b4d",
       margin:"0 0 11px"
     });
-    audience.textContent = "Khusus untuk Deck Officer & Engineer Officer";
+    audience.textContent = "Untuk Officer & Rating — Deck & Engine";
 
     const cta = style(document.createElement("a"), {
       display:"flex",
@@ -2686,7 +2669,7 @@
     cta.href = POPUP_URL;
     cta.target = "_blank";
     cta.rel = "noopener";
-    cta.textContent = "Coba Sekarang";
+    cta.textContent = "Lihat Latihan Interview";
 
     const url = style(document.createElement("div"), {
       marginTop:"11px",
@@ -2711,12 +2694,13 @@
     card.append(close,kicker,title,highlight,desc,audience,cta,url);
     wrap.appendChild(card);
     document.body.appendChild(wrap);
+    markSeen();
     trackPopupEvent("ai_interview_popup_view","AI Interview daily popup viewed");
   }
 
   const forceShowPopup = new URLSearchParams(window.location.search).get("showpopup") === "1";
   if(forceShowPopup || !hasSeenToday()){
-    window.setTimeout(openPopup,900);
+    window.setTimeout(openPopup,8000);
   }
 })();
 </script>
