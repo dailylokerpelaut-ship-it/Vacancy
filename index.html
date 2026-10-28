@@ -928,7 +928,33 @@
     .input{min-width:0;width:100%}
     @media(max-width:520px){.input{font-size:16px}.summary-only,.common-reqs{font-size:13px}.role-chip{font-size:12px}}
     @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
-  </style>
+  
+    /* Revision: compact discovery, clear state, unobstructed reading. */
+    [hidden]{display:none!important}
+    .container.toolbar{margin-inline:auto}
+    .hero-main{padding:20px}
+    .hero h1{font-size:clamp(26px,3vw,34px);margin-bottom:8px}
+    .hero-panel{padding:18px;gap:12px}
+    .hero-panel .panel-small{display:none}
+    .hero-panel .panel-number{font-size:21px}
+    .hero-panel .panel-note{margin:8px 0}
+    .vacancy-tabs{display:flex;gap:8px;margin:0 0 14px}
+    #archiveNote{color:var(--muted);margin-bottom:14px}
+    .job-card .company-name h3{font-size:17px;line-height:1.4}
+    .job-card .preview-head>span:first-child{font-size:18px;font-weight:800}
+    .job-card .preview-head{flex-wrap:wrap;gap:8px}
+    .job-card .group-preview{margin-top:12px}
+    .job-card .common-reqs{padding:10px 12px;margin-top:10px}
+    .role-chip{white-space:normal}
+    .more-chip{text-decoration:underline}
+    .inline-ai-promo{border:1px solid #cbdcf4;border-radius:16px;background:#eff6ff;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .inline-ai-promo h3{margin:8px 0;font-size:19px}
+    .inline-ai-promo p{margin:0;color:#475569}
+    #jobs{scroll-margin-top:90px}
+    .footer-actions .vacancy-detail-link{font-weight:800}
+    @media(max-width:720px){.hero-main{padding:16px}.inline-ai-promo{align-items:stretch;flex-direction:column;padding:16px}.job-card .preview-head>span:first-child{font-size:16px}.job-card .company-name h3{font-size:15px}.footer-actions .vacancy-detail-link{grid-column:1/-1}}
+
+</style>
 </head>
 <body>
   <header class="site-header">
@@ -973,7 +999,7 @@
           <div class="stats-row">
             <div class="stat-card"><strong id="statTotal">–</strong><span>Loker Aktif</span></div>
             <div class="stat-card"><strong id="statCompanies">–</strong><span>Perusahaan</span></div>
-            <div class="stat-card"><strong id="statTodayPositions">–</strong><span>Posisi Minggu Ini</span></div>
+            <div class="stat-card"><strong id="statTodayPositions">–</strong><span>Entri Rank Minggu Ini</span></div>
           </div>
         </div>
 
@@ -993,7 +1019,7 @@
           <input class="input" id="searchInput" aria-label="Cari lowongan" placeholder="Cari posisi, perusahaan, jenis kapal, salary..." oninput="resetPageAndRender()">
           <button class="btn btn-primary" onclick="resetPageAndRender()">Cari</button>
         </div>
-        <button class="btn btn-light" type="button" onclick="document.getElementById('searchInput').value='';setKeyword('',document.querySelector('#quickFilters .chip'))">Hapus Filter</button>
+        <button id="clearFilters" hidden class="btn btn-light" type="button" onclick="document.getElementById('searchInput').value='';setKeyword('',document.querySelector('#quickFilters .chip'))">Hapus Filter</button>
         <div class="quick-filters" id="quickFilters">
           <button class="chip active" onclick="setKeyword('',this)">Semua</button>
           <button class="chip" onclick="setKeyword('tanker',this)">Tanker</button>
@@ -1004,8 +1030,7 @@
         </div>
       </div>
 
-      <div class="container">
-        <section class="ad-highlight pelaut-promo" id="pelautPromo" aria-label="Highlight Buku Interview Mastery untuk Pelaut">
+      <template id="bookPromoTemplate"><section class="ad-highlight pelaut-promo" id="pelautPromo" aria-label="Highlight Buku Interview Mastery untuk Pelaut">
           <div class="ad-highlight-inner">
             <div class="promo-main">
               <div class="promo-icon" aria-hidden="true">📘</div>
@@ -1022,8 +1047,7 @@
               <span class="ad-url">pelaut.dailylokerpelaut.com</span>
             </div>
           </div>
-        </section>
-      </div>
+        </section></template>
 
       <div class="container matching-beta" id="matchingBeta">
         <section class="matching-card" id="matchingCard" aria-label="Lowongan Cocok Untuk Kamu">
@@ -1078,12 +1102,17 @@
     <section class="container" id="jobs">
       <div class="section-head">
         <div>
-          <h2>Lowongan Terbaru & Arsip</h2>
-          <p id="resultText">Memuat lowongan...</p>
+          <h2>Lowongan Pelaut</h2>
+          <p aria-live="polite" id="resultText">Memuat lowongan...</p>
         </div>
         <div class="today-pill" id="todayUpdate">Hari ini: – posisi</div>
       </div>
 
+      <div class="vacancy-tabs" role="group" aria-label="Status lowongan">
+        <button id="activeTab" class="chip active" aria-pressed="true" onclick="setVacancyTab('active')">Aktif</button>
+        <button id="archiveTab" class="chip" aria-pressed="false" onclick="setVacancyTab('archive')">Arsip</button>
+      </div>
+      <p id="archiveNote" hidden>Arsip lowongan yang sudah berakhir. Kontak lamaran ditutup.</p>
       <div class="loading" id="loadingEl">
         <div class="skeleton"></div>
         <div class="skeleton"></div>
@@ -1309,6 +1338,31 @@
 
     function safeJSON(str){try{const v=JSON.parse(str||'[]');return Array.isArray(v)?v.filter(x=>x&&typeof x==='object').map(x=>({...x,items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i==='object'):[]})):[]}catch(e){return []}}
 
+
+
+// A rank row is not a headcount. Only explicit quantities are exact.
+function crewQuantity(item){
+  const title=String(item.title||'').normalize('NFKC');
+  if(/\bset\s*(?:of\s*)?crew\b|\bfull\s*crew\b/i.test(title)) return null;
+  const match=title.match(/(?:^|[\s(\[])((?:[1-9]\d{0,2}))\s*[x×](?=$|[\s)\]])|(?:^|[\s(\[])[x×]\s*([1-9]\d{0,2})(?=$|[\s)\]])|(?:^|[\s(\[])([1-9]\d{0,2})\s*(?:persons?|people|crew|orang)(?=$|[\s)\]])/i);
+  return match ? Number(match[1]||match[2]||match[3]) : null;
+}
+function crewMetrics(sections){
+  let ranks=0,total=0,explicit=0;
+  for(const sec of sections||[]) for(const item of sec.items||[]){
+    ranks++; const quantity=crewQuantity(item);
+    if(quantity!==null){total+=quantity;explicit++;}else{total++;}
+  }
+  return {ranks,total,explicit,exact:ranks>0&&explicit===ranks};
+}
+function crewLabel(sections){
+  const m=crewMetrics(sections);
+  return m.explicit ? (m.exact?'':'Minimal ')+m.total+' crew' : 'Jumlah crew belum disebutkan';
+}
+function openingLabel(sections){
+  const m=crewMetrics(sections);
+  return m.ranks+' posisi/rank'+(m.explicit?' · '+crewLabel(sections):'');
+}
 
     function countOpenings(sections){
       return (sections || []).reduce((sum, sec)=>sum + ((sec.items || []).length), 0);
@@ -1827,7 +1881,7 @@
               data-company="${escapeHTML(j.company)}"
               data-batch-id="${escapeHTML(j.batchId)}"
               data-position="${escapeHTML(rankText)}"
-              onclick="trackMatchingJobClick(this)">Cek Detail</a>
+              onclick="trackMatchingJobClick(this)">Baca Detail &amp; Syarat</a>
           </div>
         </article>`;
     }
@@ -1986,6 +2040,25 @@
       if(head) head.scrollIntoView({ behavior:"smooth", block:"start" });
     }
 
+    let vacancyTab = 'active';
+    function setVacancyTab(tab){
+      vacancyTab=tab==='archive'?'archive':'active';currentPage=1;renderJobs();
+    }
+    function updateVacancyControls(){
+      const activeCount=allJobs.filter(j=>['active','expiring'].includes(getJobLifecycle(j))).length;
+      const archiveCount=allJobs.filter(j=>getJobLifecycle(j)==='expired').length;
+      for(const [id,value,count,label] of [['activeTab','active',activeCount,'Aktif'],['archiveTab','archive',archiveCount,'Arsip']]){
+        const button=document.getElementById(id);
+        button.textContent=label+' ('+count+')';
+        button.classList.toggle('active',vacancyTab===value);
+        button.setAttribute('aria-pressed',String(vacancyTab===value));
+      }
+      document.getElementById('archiveNote').hidden=vacancyTab!=='archive';
+      document.getElementById('clearFilters').hidden=!(keywordFilter||document.getElementById('searchInput').value.trim());
+    }
+    function inlineAIPromoHTML(){
+      return `<aside class="inline-ai-promo"><div><span class="badge badge-blue">Persiapan Interview</span><h3>DLP AI Simulator untuk Officer &amp; Rating</h3><p>Latih jawaban interview sebelum menghubungi recruiter.</p></div><a class="btn btn-primary" href="https://interview.dailylokerpelaut.com/" target="_blank" rel="noopener" onclick="trackDLPEvent('ai_interview_inline_click',{event_category:'Internal Promotion'})">Coba AI Simulator →</a></aside>`;
+    }
     function filterJobs(){
       const q = (document.getElementById("searchInput").value || "").toLowerCase().trim();
 
@@ -2001,7 +2074,8 @@
         ].join(" ").toLowerCase().replace(/[^a-z0-9]+/g," ");
 
         if(q && !q.replace(/[^a-z0-9]+/g," ").trim().split(/\s+/).every(t=>haystack.includes(t))) return false;
-        if(getJobLifecycle(j)==="hidden") return false;
+        const life=getJobLifecycle(j);
+        if(vacancyTab==='archive' ? life!=='expired' : !['active','expiring'].includes(life)) return false;
         if(keywordFilter && !haystack.includes(keywordFilter.replace(/[^a-z0-9]+/g," "))) return false;
         return true;
       });
@@ -2022,13 +2096,14 @@
       const todayUpdate = document.getElementById("todayUpdate");
       if(todayUpdate){
         todayUpdate.textContent = todayStats.positions
-          ? `Hari ini: ${todayStats.positions} posisi`
+          ? `Hari ini: ${todayStats.positions} entri rank`
           : "Hari ini: belum ada update";
       }
     }
 
     function renderJobs(){
       renderStats();
+      updateVacancyControls();
       const jobs = filterJobs();
       const el = document.getElementById("jobsEl");
       const paginationEl = document.getElementById("paginationEl");
@@ -2055,8 +2130,8 @@
       const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
       const pageJobs = jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
 
-      document.getElementById("resultText").textContent = `${jobs.length} lowongan · Halaman ${currentPage} dari ${totalPages}`;
-      el.innerHTML = pageJobs.map(jobCardHTML).join("");
+      document.getElementById("resultText").textContent = `${jobs.length} lowongan ${vacancyTab==='active'?'aktif':'arsip'} · Halaman ${currentPage} dari ${totalPages}`;
+      el.innerHTML = pageJobs.map((job,idx)=>jobCardHTML(job,idx)+(vacancyTab==='active'&&currentPage===1?(idx===1?document.getElementById('bookPromoTemplate').innerHTML:idx===3?inlineAIPromoHTML():''):'')).join("");
       applyReactionCountsToVisibleButtons();
       renderPagination(totalPages);
     }
@@ -2107,9 +2182,9 @@
       return "";
     }
 
-    function sectionPreviewHTML(sec){
+    function sectionPreviewHTML(sec,detailLink){
       const items = sec.items || [];
-      const shown = items.slice(0, 3);
+      const shown = items.slice(0, 8);
       const left = items.length - shown.length;
       const title = sec.section_title || "General Opening";
 
@@ -2117,11 +2192,11 @@
         <div class="preview-section">
           <div class="preview-head">
             <span>${escapeHTML(title)}</span>
-            <span class="badge badge-blue">${items.length} posisi</span>
+            <span class="badge badge-blue">${escapeHTML(openingLabel([sec]))}</span>
           </div>
           <div class="preview-items">
             ${shown.map(item=>`<span class="role-chip">${escapeHTML(cleanRoleTitle(item.title))}</span>`).join("")}
-            ${left>0?`<span class="role-chip more-chip">+${left} lainnya →</span>`:""}
+            ${left>0?`<a class="role-chip more-chip vacancy-detail-link" href="${detailLink}">Lihat ${left} rank lainnya →</a>`:""}
           </div>
         </div>
       `;
@@ -2163,8 +2238,8 @@
               </div>
               <div class="meta-line">
                 <span class="updated-time">🕒 Update ${escapeHTML(relativeTime(j.timestamp))}</span>
-                ${joinInfoClean?`<span>📅 ${escapeHTML(joinInfoClean)}</span>`:""}
-                <span>📌 ${openings} posisi dibuka</span>
+                
+                <span>📌 ${escapeHTML(openingLabel(j.sections))}</span>
                 <button
                   class="reaction-btn"
                   type="button"
@@ -2186,10 +2261,11 @@
           <div class="summary-box"><strong>${joinInfoClean?escapeHTML(joinInfoClean):"Tidak disebutkan"}</strong><span>Join Info</span></div>
         </div>
 
-        ${j.summary?`<div class="common-reqs summary-only">${escapeHTML(j.summary)}</div>`:""}
+        
 
         <div class="group-preview">
-          ${(j.sections||[]).slice(0,3).map(sectionPreviewHTML).join("")}
+          ${(j.sections||[]).slice(0,3).map(sec=>sectionPreviewHTML(sec,detailLink)).join("")}
+          ${(j.sections||[]).length>3?`<a class="vacancy-detail-link" href="${detailLink}">Lihat ${(j.sections||[]).length-3} grup kapal lainnya →</a>`:""}
         </div>
 
         ${j.requirements.length?`
@@ -2207,7 +2283,7 @@
         <div class="card-footer">
           <div class="footer-actions ${isExpiredRecent ? "expired-actions" : ""}">
             <a
-              class="btn btn-outline vacancy-detail-link"
+              class="btn btn-primary vacancy-detail-link"
               href="${detailLink}"
               data-company="${escapeHTML(j.company)}"
               data-batch-id="${escapeHTML(batchId)}"
@@ -2215,7 +2291,7 @@
 
             ${waLink?`
               <a
-                class="btn btn-wa apply-link"
+                class="btn btn-outline apply-link"
                 target="_blank"
                 rel="noopener"
                 href="${waLink}"
@@ -2509,201 +2585,7 @@
     initPage();
   </script>
 
-<script>
-(function(){
-  const POPUP_KEY = "dlp_ai_interview_popup_seen_date";
-  const POPUP_URL = "https://interview.dailylokerpelaut.com/";
 
-  function todayKey(){
-    const d = new Date();
-    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  }
-
-  function hasSeenToday(){
-    try{ const seen=Number(localStorage.getItem(POPUP_KEY)); return seen>0 && Date.now()-seen<3*864e5; }
-    catch(err){ return false; }
-  }
-
-  function markSeen(){
-    try{ localStorage.setItem(POPUP_KEY,String(Date.now())); }
-    catch(err){}
-  }
-
-  function trackPopupEvent(name,label){
-    if(typeof trackDLPEvent === "function"){
-      trackDLPEvent(name,{
-        event_category:"Internal Promotion",
-        event_label:label,
-        campaign:"ai_interview_daily_popup",
-        link_url:POPUP_URL
-      });
-    }
-  }
-
-  function style(el,css){
-    Object.assign(el.style,css);
-    return el;
-  }
-
-  function openPopup(){
-    if(document.getElementById("dlpAiInterviewPopup")) return;
-
-    const wrap = style(document.createElement("div"), {
-      position:"fixed",
-      left:"50%",
-      bottom:"16px",
-      transform:"translateX(-50%)",
-      width:"min(410px, calc(100vw - 28px))",
-      zIndex:"10060",
-      boxSizing:"border-box",
-      fontFamily:"Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    });
-    wrap.id = "dlpAiInterviewPopup";
-    wrap.setAttribute("role","dialog");
-    wrap.setAttribute("aria-label","DLP AI Interview Simulator");
-
-    const card = style(document.createElement("div"), {
-      position:"relative",
-      overflow:"hidden",
-      border:"1px solid #d8b56f",
-      borderRadius:"22px",
-      background:"#fff8e8",
-      color:"#0b1b4d",
-      boxShadow:"0 18px 54px rgba(15,23,42,.24)",
-      padding:"18px 16px 16px",
-      boxSizing:"border-box"
-    });
-
-    const close = style(document.createElement("button"), {
-      position:"absolute",
-      right:"10px",
-      top:"9px",
-      width:"44px",
-      height:"44px",
-      border:"0",
-      borderRadius:"999px",
-      background:"rgba(255,255,255,.86)",
-      color:"#0b1b4d",
-      fontSize:"22px",
-      lineHeight:"1",
-      cursor:"pointer",
-      boxShadow:"0 8px 18px rgba(15,23,42,.08)",
-      zIndex:"2"
-    });
-    close.type = "button";
-    close.innerHTML = "&times;";
-    close.setAttribute("aria-label","Tutup popup");
-
-    const kicker = style(document.createElement("div"), {
-      display:"inline-flex",
-      alignItems:"center",
-      justifyContent:"center",
-      background:"#ffc83d",
-      color:"#0b1b4d",
-      borderRadius:"999px",
-      padding:"5px 11px",
-      fontSize:"10px",
-      fontWeight:"900",
-      letterSpacing:".08em",
-      textTransform:"uppercase",
-      boxShadow:"inset 0 -2px 0 rgba(11,27,77,.12)",
-      marginBottom:"8px"
-    });
-    kicker.textContent = "Latihan Interview Pelaut";
-
-    const title = style(document.createElement("div"), {
-      fontSize: window.innerWidth <= 520 ? "19px" : "21px",
-      lineHeight:"1.08",
-      margin:"0",
-      paddingRight:"28px",
-      color:"#0b1b4d",
-      fontWeight:"950",
-      letterSpacing:"-.45px"
-    });
-    title.innerHTML = "DLP AI<br>Interview Simulator";
-
-    const highlight = style(document.createElement("div"), {
-      display:"inline-block",
-      margin:"9px 0 8px",
-      background:"#ffcf48",
-      color:"#0b1b4d",
-      borderRadius:"9px",
-      padding:"6px 9px",
-      fontSize: window.innerWidth <= 520 ? "11px" : "12px",
-      fontWeight:"900",
-      lineHeight:"1.35"
-    });
-    highlight.textContent = "Lebih siap sebelum interview asli";
-
-    const desc = style(document.createElement("p"), {
-      fontSize: window.innerWidth <= 520 ? "11.5px" : "12px",
-      lineHeight:"1.48",
-      color:"#263b63",
-      margin:"0 0 11px",
-      maxWidth:"330px"
-    });
-    desc.textContent = "Latihan interview voice sebelum interview asli. Jawab pertanyaan langsung, lalu dapatkan feedback tertulis setelah sesi selesai.";
-
-    const audience = style(document.createElement("p"), {
-      fontSize:"12px",
-      fontWeight:"900",
-      color:"#0b1b4d",
-      margin:"0 0 11px"
-    });
-    audience.textContent = "Untuk Officer & Rating — Deck & Engine";
-
-    const cta = style(document.createElement("a"), {
-      display:"flex",
-      alignItems:"center",
-      justifyContent:"center",
-      minHeight:"44px",
-      borderRadius:"13px",
-      background:"#ffc83d",
-      color:"#0b1b4d",
-      textDecoration:"none",
-      fontSize: window.innerWidth <= 520 ? "14px" : "15px",
-      fontWeight:"950",
-      boxShadow:"0 6px 0 #0b1b4d, 0 12px 20px rgba(15,23,42,.14)",
-      border:"2px solid #0b1b4d"
-    });
-    cta.href = POPUP_URL;
-    cta.target = "_blank";
-    cta.rel = "noopener";
-    cta.textContent = "Lihat Latihan Interview";
-
-    const url = style(document.createElement("div"), {
-      marginTop:"11px",
-      fontSize:"11px",
-      fontWeight:"800",
-      color:"#263b63",
-      textAlign:"center"
-    });
-    url.textContent = "interview.dailylokerpelaut.com";
-
-    close.addEventListener("click", function(){
-      markSeen();
-      wrap.remove();
-      trackPopupEvent("ai_interview_popup_close","AI Interview daily popup closed");
-    });
-
-    cta.addEventListener("click", function(){
-      markSeen();
-      trackPopupEvent("ai_interview_popup_click","AI Interview daily popup CTA click");
-    });
-
-    card.append(close,kicker,title,highlight,desc,audience,cta,url);
-    wrap.appendChild(card);
-    document.body.appendChild(wrap);
-    markSeen();
-    trackPopupEvent("ai_interview_popup_view","AI Interview daily popup viewed");
-  }
-
-  const forceShowPopup = new URLSearchParams(window.location.search).get("showpopup") === "1";
-  if(forceShowPopup || !hasSeenToday()){
-    window.setTimeout(openPopup,8000);
-  }
-})();
-</script>
 
 </body>
 </html>
